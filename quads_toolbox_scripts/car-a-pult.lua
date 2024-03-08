@@ -2,7 +2,7 @@
 --Original Script by Quad_Plex
 --V2.1 updated for gta 2944
 -----------------------------------#
-require("scripts/quads_toolbox/toolbox_data/globals_and_utils")
+require("scripts/quads_toolbox_scripts/toolbox_data/globals_and_utils")
 
 local weapon_data = {}
 local enabled = false

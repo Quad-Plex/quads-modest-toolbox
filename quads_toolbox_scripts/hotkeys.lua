@@ -1,4 +1,4 @@
-require("scripts/quads_toolbox/toolbox_data/globals_and_utils")
+require("scripts/quads_toolbox_scripts/toolbox_data/globals_and_utils")
 --F6, Max health and armor
 menu.register_hotkey(117, function() displayHudBanner("CHEAT_HEALTH_ARMOR", "PIM_FULL1", "", 109) end)
 -- F7, Repair

@@ -1,4 +1,4 @@
-require("scripts/quads_toolbox/toolbox_data/globals_and_utils")
+require("scripts/quads_toolbox_scripts/toolbox_data/globals_and_utils")
 
 ---------------------------------------------------------------------------
 --Janky Speedometer implementation using HUD messages
@@ -67,7 +67,7 @@ end)
 
 --------------------------------
 --functions for carboost
-local _, cars_data = pcall(json.loadfile, "scripts/quads_toolbox/toolbox_data/KNOWN_BOOSTED_CARS.json")
+local _, cars_data = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/KNOWN_BOOSTED_CARS.json")
 
 local multiplier_percent = 70
 local function boostVehicle(vehicle_data, vehicle, boost)
@@ -189,7 +189,7 @@ function carBoost()
                     current:get_initial_drag_coeff(), --18
                     current:get_number_plate_text()       --19
                 }
-                json.savefile("scripts/quads_toolbox/toolbox_data/KNOWN_BOOSTED_CARS.json", cars_data)
+                json.savefile("scripts/quads_toolbox_scripts/toolbox_data/KNOWN_BOOSTED_CARS.json", cars_data)
             end
 
             --boost car if data has been read successfully

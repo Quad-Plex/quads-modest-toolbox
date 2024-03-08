@@ -1,4 +1,4 @@
-require("scripts/quads_toolbox/toolbox_data/globals_and_utils")
+require("scripts/quads_toolbox_scripts/toolbox_data/globals_and_utils")
 --------------------------------
 --UNDEAD OFFRADAR
 --------------------------------

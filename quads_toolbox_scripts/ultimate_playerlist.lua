@@ -1,9 +1,9 @@
-require("scripts/quads_toolbox/toolbox_data/VEHICLES_WEAPONS")
-require("scripts/quads_toolbox/toolbox_data/PED_FLAG_TABLE")
-require("scripts/quads_toolbox/toolbox_data/globals_and_utils")
+require("scripts/quads_toolbox_scripts/toolbox_data/VEHICLES_WEAPONS")
+require("scripts/quads_toolbox_scripts/toolbox_data/PED_FLAG_TABLE")
+require("scripts/quads_toolbox_scripts/toolbox_data/globals_and_utils")
 
 local savedInteriors = {}
-local success, jsonInteriors = pcall(json.loadfile, "scripts/quads_toolbox/toolbox_data/SAVED_INTERIORS.json")
+local success, jsonInteriors = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/SAVED_INTERIORS.json")
 if success then
     --Load the saved interiors from file
     for _, data in pairs(jsonInteriors) do
@@ -40,7 +40,7 @@ local function saveNewInterior(pos)
     for _, interior in pairs(savedInteriors) do
         serializeInteriors[_] = { interior.x, interior.y, interior.z }
     end
-    json.savefile("scripts/quads_toolbox/toolbox_data/SAVED_INTERIORS.json", serializeInteriors)
+    json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVED_INTERIORS.json", serializeInteriors)
 end
 
 --Used for loop-actions running on a player
@@ -110,12 +110,12 @@ end
 --teleports all peds to player
 local teleportType = { [0] = "right on Player", "in Front of Player" }
 local teleportTypeSelection = 0
-local function tpPedToPlayer(ply, teleportType)
+local function tpPedToPlayer(ply, tpType)
     for ped in replayinterface.get_peds() do
         if ped and ped ~= nil and ped:get_pedtype() >= 4 and not ped:is_in_vehicle() and ped ~= localplayer then
             ped:set_freeze_momentum(true)
             local pos
-            if teleportType == "in Front of Player" then
+            if tpType == "in Front of Player" then
                 pos = ply:get_position() + ply:get_heading() * (math.random(40, 70) / 10)
             else
                 pos = ply:get_position() + vector3((math.random(-10, 10) / 10), (math.random(-10, 10) / 10), (math.random(-10, 10) / 10))

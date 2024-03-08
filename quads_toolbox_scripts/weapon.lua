@@ -1,5 +1,5 @@
-require("scripts/quads_toolbox/toolbox_data/globals_and_utils")
-local function OnWeaponChanged(oldWeapon, newWeapon)
+require("scripts/quads_toolbox_scripts/toolbox_data/globals_and_utils")
+local function OnWeaponChanged(_, newWeapon)
 	if newWeapon ~= nil then
 		local NAME = localplayer:get_current_weapon():get_name_hash()
 		if NAME == joaat("weapon_stungun_mp") or NAME == joaat("weapon_stungun") then

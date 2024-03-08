@@ -1,4 +1,4 @@
-require("scripts/quads_toolbox/toolbox_data/globals_and_utils")
+require("scripts/quads_toolbox_scripts/toolbox_data/globals_and_utils")
 
 local keepSearching = false
 local lower_bound = 100000
