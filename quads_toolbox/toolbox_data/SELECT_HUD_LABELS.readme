@@ -1,0 +1,52 @@
+-----------------------------------------
+---- Hud Labels ----
+-----------------------------------------
+
+--For GXT Labels look here:
+--https://github.com/root-cause/v-labels/blob/master/labels.json
+--not every label will work with this display but many short ones do
+
+--Regarding DisplayBoxType:
+--109/112 doesn't play a sound so they're good for just displaying stuff
+--11 displays the configured stuff
+--10 displays my name (or 'undefined'? lol)
+--9 fades in from black (as do many others)
+
+--Useful gfx strings:
+--AMCH_KMHN             - number with 'km/h'
+--FM_AE_SORT_3          - 'Speed'
+--MBA_YES               - 'yes'
+--MBA_NO                - 'no'
+--IAA_LAUNCH            - 'Launch'
+--PIM_NCL_PRIV0         - 'disabled'
+--PIM_NCL_PRIV1         - 'enabled'
+--CANNON_CAM_ACTIVE     - 'Active'
+--CANNON_CAM_INACTIVE   - 'Inactive'
+--FM_ISC_RAT1           - number with percent symbol
+--FMMC_NO               - just the given number
+--CELL_840              - 'Default'
+--MO_CCONF_2            - 'Alternate'
+--BLIP_125              - 'Vehicle Spawn'
+--RESPAWN_W             - Red 'Wasted' text
+--BLIP_3                - 'Police'
+--PM_UCON_T32           - 'Off the Radar'
+--GB_TICK_MC_FHE        - 'Health bonus activated'
+--CHEAT_HEALTH_ARMOR    - 'Max health and armor.'
+--PIM_FULL1             - 'Full Ammo'
+--BLIP_402              - 'Repair'
+--GREEN_LIV5            - 'Invincible'
+--GBC_HUD_VH            - 'Vehicle Health'
+--VEUI_SHAKE_EXPLOSION  - 'Explosion'
+--PSF_FLYING            - 'Flying +'
+--FM_PLY_CHEAT          - 'CHEATER'
+--GBC_STPASS_CHE        - 'Cheaters caught'
+--LOSE_WANTED           - 'Lose the Cops'
+--LEST_NCOPS            - 'COPS TURN BLIND EYE'
+--FGTXT_F_F3            - 'fuck you' lmao love this one
+--VVHUD_GHOST           - 'Ghost'
+--PIM_GS_09             - 'Protection'
+--FACE_F_FAT            - 'Fat'
+--FMSTP_PRCL3           - 'Vehicle'
+--HUD_RANDOM            - 'Random'
+--HEIST_WARN_4          - 'Warning'
+--SPEC_HEADER           - 'Spectator'
