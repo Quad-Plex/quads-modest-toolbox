@@ -58,4 +58,13 @@ end
 gunOptionsSub:add_toggle("Enable Car-A-Pult", function() return enabled end, carAPult)
 
 --multiply key on numpad
-menu.register_hotkey(106, carAPult)
+local carapultHotkey
+menu.register_callback('ToggleCarapultHotkey', function()
+	if not carapultHotkey then
+		carapultHotkey = menu.register_hotkey(106, carAPult)
+	else
+		menu.remove_hotkey(carapultHotkey)
+		carapultHotkey = nil
+	end
+end)
+

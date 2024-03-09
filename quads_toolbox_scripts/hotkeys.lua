@@ -1,6 +1,13 @@
 require("scripts/quads_toolbox_scripts/toolbox_data/globals_and_utils")
 
 --Todo: add elements to configSub to enable/disable hotkeys and more settings
+local carapultHotkeyToggle = false
+configSub:add_toggle("Enable Car-A-Pult Hotkey", function()
+    return carapultHotkeyToggle
+end, function(toggle)
+    carapultHotkeyToggle = toggle
+    menu.emit_event("ToggleCarapultHotkey")
+end)
 
 --F6, Max health and armor
 menu.register_hotkey(117, function() displayHudBanner("CHEAT_HEALTH_ARMOR", "PIM_FULL1", "", 109) end)
@@ -30,7 +37,9 @@ menu.register_hotkey(120, function()
     end
 end)
 --Del, Lose Wanted level
-menu.register_hotkey(46, function() displayHudBanner("LOSE_WANTED", "LEST_NCOPS", "", 109) end)
+menu.register_hotkey(46, function()
+    displayHudBanner("LOSE_WANTED", "LEST_NCOPS", "", 109)
+end)
 
 --------------------------------
 --Cops Ignore Hotkey (PgDwn)
