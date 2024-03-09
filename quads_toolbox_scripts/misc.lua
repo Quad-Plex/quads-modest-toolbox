@@ -14,7 +14,7 @@ require("scripts/quads_toolbox_scripts/toolbox_data/globals_and_utils")
 
 function mpx() return "MP" .. stats.get_int("MPPLY_LAST_MP_CHAR") .. "_" end --Returns 0 or 1
 
-toolbox:add_action("Make Nightclub Popular", function()
+miscOptionsSub:add_action("Make Nightclub Popular", function()
 	stats.set_int(mpx() .. "CLUB_POPULARITY", 1000)
 end)
 
@@ -37,7 +37,7 @@ local function refillInventory()
 	stats.set_int(mpx().."MP_CHAR_ARMOUR_5_COUNT", 10)
 end
 
-toolbox:add_action("Refill Inventory", function()
+miscOptionsSub:add_action("Refill Inventory", function()
 	refillInventory()
 end)
 
@@ -46,7 +46,7 @@ end)
 --------------------------------
 local openTypes = { [0]="Unlock All", "Lock All"}
 local openType = 0
-toolbox:add_array_item("Car Hotwire Kit:", openTypes, function() return openType end, function(value)
+miscOptionsSub:add_array_item("Car Hotwire Kit:", openTypes, function() return openType end, function(value)
 	openType = value
 	for veh in replayinterface.get_vehicles() do
 		if openTypes[openType] == "Unlock All" then
@@ -60,7 +60,7 @@ end)
 
 ----------------Sessanta shit------------------
 local base_local = 306
-toolbox:add_action("New Sessanta Vehicle", function()
+miscOptionsSub:add_action("New Sessanta Vehicle", function()
 	local shop_controller = script("shop_controller")
 	if shop_controller and shop_controller:is_active() then
 		stats.set_int("MP" .. stats.get_int("MPPLY_LAST_MP_CHAR") .. "_TUNER_CLIENT_VEHICLE_POSSIX", 1)
@@ -106,4 +106,4 @@ local function podiumChanger(sub)
 	end
 end
 local podiumSub
-podiumSub = toolbox:add_submenu("Change Podium vehicle", function() podiumChanger(podiumSub) end)
+podiumSub = miscOptionsSub:add_submenu("Change Podium vehicle", function() podiumChanger(podiumSub) end)

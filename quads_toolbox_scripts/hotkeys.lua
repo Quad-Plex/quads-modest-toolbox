@@ -1,4 +1,7 @@
 require("scripts/quads_toolbox_scripts/toolbox_data/globals_and_utils")
+
+--Todo: add elements to configSub to enable/disable hotkeys and more settings
+
 --F6, Max health and armor
 menu.register_hotkey(117, function() displayHudBanner("CHEAT_HEALTH_ARMOR", "PIM_FULL1", "", 109) end)
 -- F7, Repair

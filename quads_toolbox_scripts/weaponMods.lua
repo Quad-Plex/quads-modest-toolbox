@@ -65,13 +65,14 @@ local function ToggleAtomizer()
 	ToggleWeaponStats(atomizerToggle, 70, 5, 9999, -10, "UNLOCK_RAYGUN")
 end
 
+gunOptionsSub:add_toggle("Constant Atomizer", function() return atomizerToggle end, function(_) ToggleAtomizer() end)
+menu.register_hotkey(161, ToggleAtomizer) --Right Shift
+
 local explosionToggle = false
 local function ToggleExplosionGun()
 	explosionToggle = not (localplayer:get_current_weapon():get_explosion_type() == 31)
 	ToggleWeaponStats(explosionToggle, 31, 5, 9999, 1000, "VEUI_SHAKE_EXPLOSION")
 end
 
-toolbox:add_toggle("Constant Atomizer", function() return atomizerToggle end, function(_) ToggleAtomizer() end)
-menu.register_hotkey(161, ToggleAtomizer) --Right Shift
-toolbox:add_toggle("Explosion Gun", function() return explosionToggle end, function(_) ToggleExplosionGun() end)
+gunOptionsSub:add_toggle("Explosion Gun", function() return explosionToggle end, function(_) ToggleExplosionGun() end)
 menu.register_hotkey(163, ToggleExplosionGun) --Right Ctrl

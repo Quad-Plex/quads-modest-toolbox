@@ -55,7 +55,7 @@ local function carAPult()
 	end
 end
 
-toolbox:add_toggle("Enable Car-A-Pult", function() return enabled end, carAPult)
+gunOptionsSub:add_toggle("Enable Car-A-Pult", function() return enabled end, carAPult)
 
 --multiply key on numpad
 menu.register_hotkey(106, carAPult)

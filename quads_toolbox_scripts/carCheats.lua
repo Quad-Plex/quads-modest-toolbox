@@ -22,7 +22,7 @@ function speedDisplay()
     end
 end
 menu.register_callback('speedDisplay', speedDisplay)
-toolbox:add_toggle("Toggle Speed Display", function() return speedDisplayEnabled
+vehicleOptionsSub:add_toggle("Toggle Speed Display", function() return speedDisplayEnabled
 end, function(n)
     speedDisplayEnabled = n
     menu.emit_event("speedDisplay")
@@ -202,12 +202,12 @@ function carBoost()
 end
 
 menu.register_hotkey(45, carBoost) --Insrt key
-toolbox:add_int_range("Car Boost strength |%", 5, 0, 690, function()
+vehicleOptionsSub:add_int_range("Car Boost strength |%", 5, 0, 690, function()
     return multiplier_percent
 end, function(value)
     multiplier_percent = value
 end)
-toolbox:add_action("Reset all modified cars' handling", function()
+vehicleOptionsSub:add_action("Reset all modified cars' handling", function()
     for model_key, _ in pairs(cars_data) do
         for veh in replayinterface.get_vehicles() do
             if tostring(veh:get_model_hash()) == model_key then

@@ -271,11 +271,11 @@ local function initializePickups(sub)
 	end
 	updateable = true
 end
-pickupMenu = toolbox:add_submenu("     ///// Pickup-Tools \\\\\\\\\\", function() initializePickups(pickupMenu) end)
+local pickupMenu
+pickupMenu = listsSub:add_submenu("     ///// Pickup-Tools \\\\\\\\\\", function() initializePickups(pickupMenu) end)
 
-menu.add_player_action("Give Railgun", function(player_index)
-	local ply = player.get_player_ped(player_index)
-	createCustomPickupWithCustomModel(joaat("PICKUP_WEAPON_RAILGUNXM3"), "W_AR_RailGun_XM3", 69, ply)
-end)
-
-
+--Debug function to test pickups syncing (spoiler: they never do.)
+--menu.add_player_action("Give Railgun", function(player_index)
+--	local ply = player.get_player_ped(player_index)
+--	createCustomPickupWithCustomModel(joaat("PICKUP_WEAPON_RAILGUNXM3"), "W_AR_RailGun_XM3", 69, ply)
+--end)

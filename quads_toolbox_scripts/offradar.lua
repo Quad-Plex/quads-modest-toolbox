@@ -14,4 +14,10 @@ local function offRadar()
 	end
 end
 
+miscOptionsSub:add_toggle("Undead Offradar:", function()
+    return localplayer:get_max_health() == 0.0
+end, function(_)
+    offRadar()
+end)
+
 menu.register_hotkey(121, offRadar) --F10

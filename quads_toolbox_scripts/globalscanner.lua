@@ -139,4 +139,4 @@ local function updateGlobalScanner(sub)
     ::finish::
 end
 
-scannerMenu = toolbox:add_submenu("(((( Global Scanner ))))", function() updateGlobalScanner(scannerMenu) end)
+scannerMenu = debugToolsSub:add_submenu("(((( Global Scanner ))))", function() updateGlobalScanner(scannerMenu) end)

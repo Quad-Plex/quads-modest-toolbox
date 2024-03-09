@@ -1717,8 +1717,7 @@ function modWatcher()
 end
 menu.register_callback('startModWatcher', modWatcher)
 
-local playerMenu
-playerMenu = menu.add_player_submenu(centeredText("====== ULTIMATE Player List ======"), function()
+local function playerListInitializer()
     if not modWatchEnabled then
         menu.emit_event('startModWatcher')
         return
@@ -1726,15 +1725,14 @@ playerMenu = menu.add_player_submenu(centeredText("====== ULTIMATE Player List =
     if updateable then
         SubMenus(playerMenu)
     end
+end
+
+local playerMenu
+playerMenu = menu.add_player_submenu(centeredText("====== ULTIMATE Player List ======"), function()
+    playerListInitializer()
 end)
 
 local playerMenu2
-playerMenu2 = toolbox:add_submenu(centeredText("====== ULTIMATE Player List ======"), function()
-    if not modWatchEnabled then
-        menu.emit_event('startModWatcher')
-        return
-    end
-    if updateable then
-        SubMenus(playerMenu2)
-    end
+playerMenu2 = listsSub:add_submenu(centeredText("====== ULTIMATE Player List ======"), function()
+    playerListInitializer()
 end)

@@ -25,7 +25,7 @@ function removeTrafficThread()
 end
 menu.register_callback('removeTraffic', removeTrafficThread)
 
-toolbox:add_toggle("Remove nearby traffic", function()
+vehicleOptionsSub:add_toggle("Remove nearby traffic", function()
     return removeTrafficToggle
 end, function(value)
     removeTrafficToggle = value

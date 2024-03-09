@@ -1,5 +1,5 @@
 require("scripts/quads_toolbox_scripts/toolbox_data/globals_and_utils")
-local enable = false
+local noclipToggle = false
 local speed = 2
 local hotkeys = {}
 
@@ -12,14 +12,14 @@ local function getEntity()
 end
 
 local function move(direction)
-	if not enable then return end
+	if not noclipToggle then return end
 	local entity = getEntity()
 	local newPos = entity:get_position() + direction
 	entity:set_position(newPos)
 end
 
 local function rotate(amount)
-	if not enable then return end
+	if not noclipToggle then return end
 	local entity = getEntity()
 	local direction = entity:get_rotation()
 	entity:set_rotation(direction + vector3(amount,0,0))
@@ -32,9 +32,9 @@ local function adjustSpeed(amount)
 	end
 end
 
-local function NoClip(noclipToggle)
+local function NoClip(toggle)
 	if localplayer ~= nil then
-		if noclipToggle then
+		if toggle then
 			localplayer:set_freeze_momentum(true)
 			localplayer:set_no_ragdoll(true)
 			localplayer:set_config_flag(292, true)
@@ -62,7 +62,9 @@ local function NoClip(noclipToggle)
 	end
 end
 
+miscOptionsSub:add_toggle("Noclip:", function() return noclipToggle end, function(n) noclipToggle = n NoClip(noclipToggle)  end)
+
 menu.register_hotkey(111, function()
-	enable = not enable
-	NoClip(enable)
+	noclipToggle = not noclipToggle
+	NoClip(noclipToggle)
 end)

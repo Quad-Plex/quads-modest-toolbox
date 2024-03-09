@@ -1,7 +1,7 @@
 --Report Stats
 local function null() end
 local MAX_INT = 2147483647
-local ReportsStats_submenu=toolbox:add_submenu("Reports Stats")
+local ReportsStats_submenu= miscOptionsSub:add_submenu("Reports Stats")
 ReportsStats_submenu:add_action("[These Stats are READ ONLY]", function() end)
 ReportsStats_submenu:add_int_range("Griefing Reports", 0, 0, MAX_INT, function() return stats.get_int("MPPLY_GRIEFING") end, null)
 ReportsStats_submenu:add_int_range("Exploits",0,0,0,function()if localplayer then return stats.get_int("MPPLY_EXPLOITS")end end, function() end)

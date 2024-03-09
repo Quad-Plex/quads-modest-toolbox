@@ -97,10 +97,10 @@ end
 
 local colorStyle = 1
 local colorStyles = { "Rainbow", "Strobelight", "Random" }
-toolbox:add_bare_item("", function()
+vehicleOptionsSub:add_bare_item("", function()
     return "------- 🌈 Color Changer -------"
 end, null, null, null)
-toolbox:add_array_item("Car Color Changer:", colorStyles, function()
+vehicleOptionsSub:add_array_item("Car Color Changer:", colorStyles, function()
     return colorStyle
 end, function(value)
     colorStyle = value
@@ -109,17 +109,17 @@ end, function(value)
         menu.emit_event("rainbowRunner")
     end
 end)
-toolbox:add_toggle("uniform color", function()
+vehicleOptionsSub:add_toggle("uniform color", function()
     return uniform
 end, function(value)
     uniform = value
 end)
-toolbox:add_toggle("affect traffic", function()
+vehicleOptionsSub:add_toggle("affect traffic", function()
     return affect_traffic
 end, function(value)
     affect_traffic = value
 end)
-toolbox:add_int_range("Rainbow Speed Multiplier|x", 1, 1, 69, function()
+vehicleOptionsSub:add_int_range("Rainbow Speed Multiplier|x", 1, 1, 69, function()
     return mul
 end, function(value)
     mul = value
