@@ -17,9 +17,6 @@ function randomColor(_, _, _)
     return math.random(0, 255), math.random(0, 255), math.random(0, 255)
 end
 
-
---TODO: Check if this uniformtoggle thing and commented out logic was needed for anything
-local uniformtoggle = false
 function strobeLight(color_red, color_green, color_blue)
     local slp = 0.8
     if affect_traffic then
@@ -30,12 +27,6 @@ function strobeLight(color_red, color_green, color_blue)
     else
         color_red, color_green, color_blue = 255, 255, 255
     end
-    --if not uniform and uniformtoggle then
-    --	uniformtoggle = not uniformtoggle
-    --else
-    --	sleep(slp / mul)
-    --	uniformtoggle = true
-    --end
     return color_red, color_green, color_blue
 end
 

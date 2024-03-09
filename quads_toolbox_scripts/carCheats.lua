@@ -7,9 +7,9 @@ local speedDisplayEnabled = false
 function speedDisplay()
     while true do
         if speedDisplayEnabled then
-            local myplayer = player.get_player_ped()
-            local current_vehicle = myplayer:get_current_vehicle()
-            if current_vehicle == nil or not myplayer:is_in_vehicle() then
+            local myPlayer = player.get_player_ped()
+            local current_vehicle = myPlayer:get_current_vehicle()
+            if current_vehicle == nil or not myPlayer:is_in_vehicle() then
                 return
             end
             local velocity = current_vehicle:get_velocity()
@@ -93,8 +93,8 @@ local function boostVehicle(vehicle_data, vehicle, boost)
         roll_centre_front = vehicle_data[14] + (0.300 * (multiplier_percent / 100)) --these two stop the car from rolling even at high speeds, it rolls inwards instead
         roll_centre_rear = vehicle_data[15] + (0.300 * (multiplier_percent / 100))
         drive_bias = 0.5   --all wheel drive
-        traction_loss_mult = 1
-        initial_drag_coeff = 1  --no drag forces
+        traction_loss_multiplier = 1
+        initial_drag_coefficient = 1  --no drag forces
         number_plate_text = "BOOSTEDD"
     else
         --restore mode
@@ -114,8 +114,8 @@ local function boostVehicle(vehicle_data, vehicle, boost)
         roll_centre_front = vehicle_data[14]
         roll_centre_rear = vehicle_data[15]
         drive_bias = vehicle_data[16]
-        traction_loss_mult = vehicle_data[17]
-        initial_drag_coeff = vehicle_data[18]
+        traction_loss_multiplier = vehicle_data[17]
+        initial_drag_coefficient = vehicle_data[18]
         number_plate_text = vehicle_data[19]
     end
 
@@ -135,8 +135,8 @@ local function boostVehicle(vehicle_data, vehicle, boost)
     vehicle:set_drive_bias_front(drive_bias)
     vehicle:set_collision_damage_multiplier(collision_dmg_multiplier)
     vehicle:set_engine_damage_multiplier(engine_dmg_multiplier)
-    vehicle:set_traction_loss_multiplier(traction_loss_mult)
-    vehicle:set_initial_drag_coeff(initial_drag_coeff)
+    vehicle:set_traction_loss_multiplier(traction_loss_multiplier)
+    vehicle:set_initial_drag_coeff(initial_drag_coefficient)
     vehicle:set_max_speed(10000)
     vehicle:set_number_plate_text(number_plate_text)
 end

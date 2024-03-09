@@ -16,7 +16,6 @@ require("scripts/quads_toolbox_scripts/car-a-pult")
 require("scripts/quads_toolbox_scripts/weapon")
 
 greyText(toolbox, centeredText("========= Misc Options ========="))
-require("scripts/quads_toolbox_scripts/heist passed")
 require("scripts/quads_toolbox_scripts/noclip")
 require("scripts/quads_toolbox_scripts/offradar")
 require("scripts/quads_toolbox_scripts/stats")

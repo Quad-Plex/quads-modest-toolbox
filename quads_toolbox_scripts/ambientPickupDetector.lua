@@ -67,11 +67,11 @@ local function collectPickup(pickup)
 	localplayer:set_godmode(true)
 	localplayer:set_max_health(0.0)
 	
-	local pickuppos = pickup:get_position()
-	pickuppos.z = pickuppos.z - 0.3
+	local pickupPos = pickup:get_position()
+	pickupPos.z = pickupPos.z - 0.3
 	sleep(0.1)
 	for _ = 0, 100 do
-		localplayer:set_position(pickuppos)
+		localplayer:set_position(pickupPos)
 	end
 	sleep(0.4)
 	local tries = 0
@@ -96,11 +96,11 @@ local function collectAllPickups()
 		localplayer:set_max_health(0.0)
 		
 		for pickup in replayinterface.get_pickups() do
-			local pickuppos = pickup:get_position()
-			pickuppos.z = pickuppos.z - 0.25
+			local pickupPos = pickup:get_position()
+			pickupPos.z = pickupPos.z - 0.25
 			sleep(0.2)
 			for _ = 0, 100 do
-				localplayer:set_position(pickuppos)
+				localplayer:set_position(pickupPos)
 			end
 			sleep(0.3)
 		end

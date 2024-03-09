@@ -2,7 +2,7 @@ require("scripts/quads_toolbox_scripts/toolbox_data/globals_and_utils")
 --------------------------------
 --UNDEAD OFFRADAR
 --------------------------------
-local function offradar()
+local function offRadar()
 	if localplayer ~= nil then 
 		if localplayer:get_max_health() > 100 then
 			localplayer:set_max_health(0.0)
@@ -14,4 +14,4 @@ local function offradar()
 	end
 end
 
-menu.register_hotkey(121, offradar) --F10
+menu.register_hotkey(121, offRadar) --F10

@@ -69,7 +69,7 @@ local networked_pickup_trigger = 262145 + 31218
 local pickup_data_global = 2707016
 local ambient_variable_check = 4535851
 function createPickup(pos, value)
-    freemode_script = script("freemode")
+    local freemode_script = script("freemode")
     if freemode_script:is_active() then
         globals.set_int(networked_pickup_trigger, 0)
         globals.set_uint(ambient_spawn_trigger, 1)
@@ -175,11 +175,11 @@ getPlayerOrgType = function(plyId)
 end
 
 getPlayerOrgName = function(plyId)
-    orgname = globals.get_string(playerOrgGlobal + 1 + (plyId * 609) + 10 + 105, 30)
-    if orgname == "" then
-        orgname = "Organisation"
+    local orgName = globals.get_string(playerOrgGlobal + 1 + (plyId * 609) + 10 + 105, 30)
+    if orgName == "" then
+        orgName = "Organisation"
     end
-    return orgname
+    return orgName
 end
 
 getPlayerOrgID = function(plyId)
@@ -187,12 +187,12 @@ getPlayerOrgID = function(plyId)
 end
 
 joinPlayerOrg = function(plyId)
-    plyOrgId = getPlayerOrgId(plyId)
+    local plyOrgId = getPlayerOrgId(plyId)
     globals.set_int(playerOrgGlobal + 1 + (localplayer:get_player_id() * 609) + 10, plyOrgId)
 end
 
 ------------------------Set Wanted Level Remote----------------------
---Global_2657921[bVar0 /*463*/].f_214 playerid
+--Global_2657921[bVar0 /*463*/].f_214 playerId
 --Global_2657704[bVar0 /*463*/].f_215 num of stars (0-5)
 local wantedLevelGlobal = 2657921
 giveWantedLevel = function(plyId, numStars)
@@ -263,50 +263,50 @@ local clothes_store = utils_Set({ 2097282, 2097154 })
 local heist_planning_board = utils_Set({ 704 })
 local loading_blips = utils_Set({ 0, 6 })
 getPlayerBlipType = function(plyId)
-    local plyblip = globals.get_int(playerBlipTypeGlobal + (plyId * 463) + 73 + 3)
+    local plyBlip = globals.get_int(playerBlipTypeGlobal + (plyId * 463) + 73 + 3)
 
-    if vehicle_blips[plyblip] then
+    if vehicle_blips[plyBlip] then
         return "VEHICLE"
-    elseif interior_blips[plyblip] then
+    elseif interior_blips[plyBlip] then
         return "INTERIOR"
-    elseif plane_ghost_blips[plyblip] then
+    elseif plane_ghost_blips[plyBlip] then
         return "PLANE GHOST"
-    elseif ultralight_ghost_blips[plyblip] then
+    elseif ultralight_ghost_blips[plyBlip] then
         return "ULTRALIGHT GHOST"
-    elseif beast_blips[plyblip] then
+    elseif beast_blips[plyBlip] then
         return "BEAST"
-    elseif ls_customs_blip[plyblip] then
+    elseif ls_customs_blip[plyBlip] then
         return "LS CUSTOMS"
-    elseif clothes_store[plyblip] then
+    elseif clothes_store[plyBlip] then
         return "CLOTHES"
-    elseif normal_blips[plyblip] then
+    elseif normal_blips[plyBlip] then
         return "NORMAL"
-    elseif cashier_blip[plyblip] then
+    elseif cashier_blip[plyBlip] then
         return "CASHIER"
-    elseif loading_blips[plyblip] then
+    elseif loading_blips[plyBlip] then
         return "LOADING"
-    elseif ls_car_meet[plyblip] then
+    elseif ls_car_meet[plyBlip] then
         return "CAR MEET"
-    elseif junk_parachute_blip[plyblip] then
+    elseif junk_parachute_blip[plyBlip] then
         return "JUNK PARACHUTE"
-    elseif auto_shop[plyblip] then
+    elseif auto_shop[plyBlip] then
         return "AUTO SHOP"
-    elseif hangar_modshop_blip[plyblip] then
+    elseif hangar_modshop_blip[plyBlip] then
         return "HANGAR_MODSHOP"
-    elseif delivery_mission_blips[plyblip] then
+    elseif delivery_mission_blips[plyBlip] then
         return "DELIVERY_MISSION"
-    elseif kosatka_blip[plyblip] then
+    elseif kosatka_blip[plyBlip] then
         return "KOSATKA"
-    elseif ammo_nation_blip[plyblip] then
+    elseif ammo_nation_blip[plyBlip] then
         return "AMMO NATION"
-    elseif ballistic_armor_blip[plyblip] then
+    elseif ballistic_armor_blip[plyBlip] then
         return "BALLISTIC ARMOR"
-    elseif heist_planning_board[plyblip] then
+    elseif heist_planning_board[plyBlip] then
         return "HEIST BOARD"
-    elseif unsure_blips[plyblip] then
-        return "UNSURE: " .. plyblip
+    elseif unsure_blips[plyBlip] then
+        return "UNSURE: " .. plyBlip
     else
-        return "Blip:" .. plyblip
+        return "Blip:" .. plyBlip
     end
 end
 
@@ -324,34 +324,33 @@ end
 -- 1.67 globals. Found by: (AppleVegas), updated for 1.69 by Quad_Plex
 --easily updated by looking for TXT_BNTY_NPC1 in freemode.c
 --Global_2359296[func_900() /*5569*/].f_5151.f_14
-local global_basebounty = 2738587
-local global_overrideBase = 262145
+local global_bounty_base = 2738587
+local global_overrideBounty = 262145
 local global_selfBounty_value = 2359296 + 1 + (0 * 5569) + 5151 + 14
 --trigger needs to be 0
-local global_selfBounty_trigger = global_basebounty + 1893 + 57
+local global_selfBounty_trigger = global_bounty_base + 1893 + 57
 local minPay = 1000
 local function calculateFee(amount)
     return amount > minPay and (amount - minPay) * -1 or minPay - amount
 end
 
-
 function overrideBounty(amount)
     local fee = calculateFee(amount)
-    globals.set_int(global_overrideBase + 2348, minPay)
-    globals.set_int(global_overrideBase + 2349, minPay)
-    globals.set_int(global_overrideBase + 2350, minPay)
-    globals.set_int(global_overrideBase + 2351, minPay)
-    globals.set_int(global_overrideBase + 2352, minPay)
-    globals.set_int(global_overrideBase + 7178, fee)
+    globals.set_int(global_overrideBounty + 2348, minPay)
+    globals.set_int(global_overrideBounty + 2349, minPay)
+    globals.set_int(global_overrideBounty + 2350, minPay)
+    globals.set_int(global_overrideBounty + 2351, minPay)
+    globals.set_int(global_overrideBounty + 2352, minPay)
+    globals.set_int(global_overrideBounty + 7178, fee)
 end
 
 function resetOverrideBounty()
-    globals.set_int(global_overrideBase + 2348, 2000)
-    globals.set_int(global_overrideBase + 2349, 4000)
-    globals.set_int(global_overrideBase + 2350, 6000)
-    globals.set_int(global_overrideBase + 2351, 8000)
-    globals.set_int(global_overrideBase + 2352, 10000)
-    globals.set_int(global_overrideBase + 7178, 1000)
+    globals.set_int(global_overrideBounty + 2348, 2000)
+    globals.set_int(global_overrideBounty + 2349, 4000)
+    globals.set_int(global_overrideBounty + 2350, 6000)
+    globals.set_int(global_overrideBounty + 2351, 8000)
+    globals.set_int(global_overrideBounty + 2352, 10000)
+    globals.set_int(global_overrideBounty + 7178, 1000)
 end
 
 function sendBountyToYourself(money)
@@ -368,9 +367,9 @@ function sendBounty(id, amount, skipOverride)
     if not skipOverride then
         overrideBounty(amount)
     end
-    globals.set_int(global_basebounty + 4571, id)
-    globals.set_int(global_basebounty + 4571 + 1, 1)
-    globals.set_bool(global_basebounty + 4571 + 2 + 1, true)
+    globals.set_int(global_bounty_base + 4571, id)
+    globals.set_int(global_bounty_base + 4571 + 1, 1)
+    globals.set_bool(global_bounty_base + 4571 + 2 + 1, true)
     sleep(0.5)
     if not skipOverride then
         resetOverrideBounty()
@@ -420,7 +419,7 @@ function isSpectatingMe(plyId)
 end
 
 function amISpectating(plyId)
-    --Check the scanned Global first, only works for TV spectation, not modest's Quick Spectate
+    --Check the scanned Global first, only works in TV spectator mode, not modest's Quick Spectate
     if globals.get_int(specPlayerIDGlobal) == plyId then return true end
     local ply = player.get_player_ped(plyId)
     if not ply then return end
@@ -544,13 +543,13 @@ end
 
 function centeredText(str)
     len = 18 - math.floor(string.len(str) / 2 + 0.5)
-    centertext = ""
+    local centeredText = ""
 
     for _ = 0, len do
-        centertext = centertext .. " "
+        centeredText = centeredText .. " "
     end
 
-    return centertext .. str
+    return centeredText .. str
 end
 
 -----------------------Number Formatter--------------------------
