@@ -1,6 +1,6 @@
 --Initialize all scripts
 require("scripts/quads_toolbox_scripts/toolbox_data/globals_and_utils")
-toolboxSub = menu.add_submenu("___--=== Quad's Modest Toolbox ===--___")
+local toolboxSub = menu.add_submenu("___--=== Quad's Modest Toolbox ===--___")
 
 listsSub = toolBox:add_submenu(centeredText( "========= 📄 Submenus: ========="))
 require("scripts/quads_toolbox_scripts/ultimate_playerlist")
