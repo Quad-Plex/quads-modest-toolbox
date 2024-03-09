@@ -11,4 +11,4 @@ Todo:
 - Perhaps create separate lua files for the looped troll actions to separate their threads
 - Add Readme and FAQ description for unclear actions
 - More testing with the invisible MOC maybe
-- More testing with the speedometer and maye other labels/displayboxtypes for the quick display
+- More testing with the speedometer (find displayboxtype without fade-in maybe?)
