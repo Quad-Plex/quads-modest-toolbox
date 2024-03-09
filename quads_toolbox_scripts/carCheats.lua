@@ -22,9 +22,10 @@ function speedDisplay()
     end
 end
 menu.register_callback('speedDisplay', speedDisplay)
-vehicleOptionsSub:add_toggle("Toggle Speed Display", function() return speedDisplayEnabled
-end, function(n)
-    speedDisplayEnabled = n
+vehicleOptionsSub:add_toggle("Toggle Speed Display", function()
+    return speedDisplayEnabled
+end, function(toggle)
+    speedDisplayEnabled = toggle
     menu.emit_event("speedDisplay")
 end)
 
@@ -32,7 +33,7 @@ end)
 --car jump, numpad comma (Script by Quad_Plex)
 --------------------------------
 local blocked = false
-menu.register_hotkey(110, function()
+local function carJump()
     if not blocked then
         blocked = true
         if localplayer ~= nil and localplayer:is_in_vehicle() then
@@ -42,20 +43,22 @@ menu.register_hotkey(110, function()
             local oldTracMax = vehicle:get_traction_curve_max()
             vehicle:set_traction_curve_min(0)
             vehicle:set_traction_curve_max(0)
-            vehicle:set_gravity(-50)
-            sleep(0.18)
+            vehicle:set_gravity(-60)
+            sleep(0.14)
             vehicle:set_gravity(oldGrav)
             vehicle:set_traction_curve_min(oldTracMin)
             vehicle:set_traction_curve_max(oldTracMax)
         end
         blocked = false
     end
-end)
+end
+menu.register_hotkey(110, carJump)
+vehicleOptionsSub:add_action("Quick Vehicle Jump", carJump)
 
 --------------------------------
 --massive car, F12 key
 --------------------------------
-menu.register_hotkey(123, function()
+local function makeCarMassive()
     if localplayer ~= nil and localplayer:is_in_vehicle() then
         local vehicle = localplayer:get_current_vehicle()
         if vehicle then
@@ -63,7 +66,9 @@ menu.register_hotkey(123, function()
             displayHudBanner("FACE_F_FAT", "FMSTP_PRCL3", 69, 109)
         end
     end
-end)
+end
+menu.register_hotkey(123, makeCarMassive)
+vehicleOptionsSub:add_action("Set Car Mass to 26969", makeCarMassive)
 
 --------------------------------
 --functions for carboost
@@ -167,7 +172,7 @@ function carBoost()
         if current:get_gravity() ~= 21.420 then
             :: retry ::
             --Save car data to map if its not in there already
-            if not cars_data[tostring(current:get_model_hash()) ] then
+            if not cars_data[tostring(current:get_model_hash())] then
                 cars_data[tostring(current:get_model_hash())] = {
                     current:get_acceleration(), --1
                     current:get_brake_force(), --2
@@ -202,17 +207,20 @@ function carBoost()
 end
 
 menu.register_hotkey(45, carBoost) --Insrt key
+vehicleOptionsSub:add_toggle("ULTIMATE BOOST", function()
+    return localplayer:get_current_vehicle():get_gravity() == 21.420
+end, carBoost)
 vehicleOptionsSub:add_int_range("Car Boost strength |%", 5, 0, 690, function()
     return multiplier_percent
 end, function(value)
     multiplier_percent = value
 end)
-vehicleOptionsSub:add_action("Reset all modified cars' handling", function()
+vehicleOptionsSub:add_action("Reset all modified handling data", function()
     for model_key, _ in pairs(cars_data) do
         for veh in replayinterface.get_vehicles() do
             if tostring(veh:get_model_hash()) == model_key then
                 reloadVehicle(veh)
-				break
+                break
             end
         end
     end

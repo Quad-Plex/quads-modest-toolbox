@@ -1,7 +1,8 @@
 Todo:
-- Create separate submenu entries for the script categories
+- ~~Create separate submenu entries for the script categories~~
 - Write a global updater.lua that allows changing of base globals and has 'Test' buttons under each base global int range
-- action key for the vehicle jump
+- ~~action key for the vehicle jump~~
+- add more gun options like water jet gun/fire gun etc
 - FIX THE PICKUPS/MODEL LIST JFC what have I done there
 - make the hotkeys customizable and save them to json
 - add more settings to playerlist and save to json
