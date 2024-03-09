@@ -1,6 +1,6 @@
 -------------------------------
 -- Original Script by Quad_Plex
--- Pickup-Detector v0.4.20
+-- Pickup-Suite v0.4.20
 -------------------------------
 
 --TODO: Check if PICKUP_PORTABLE_FM_CONTENT_MISSION_ENTITY_SMALL can be created this way
@@ -272,7 +272,7 @@ local function initializePickups(sub)
 	updateable = true
 end
 local pickupMenu
-pickupMenu = listsSub:add_submenu("     ///// Pickup-Tools \\\\\\\\\\", function() initializePickups(pickupMenu) end)
+pickupMenu = subMenusSub:add_submenu("     ///// Pickup-Suite \\\\\\\\\\", function() initializePickups(pickupMenu) end)
 
 --Debug function to test pickups syncing (spoiler: they never do.)
 --menu.add_player_action("Give Railgun", function(player_index)

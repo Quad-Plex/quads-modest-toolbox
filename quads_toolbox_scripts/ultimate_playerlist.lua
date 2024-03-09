@@ -1733,6 +1733,6 @@ playerMenu = menu.add_player_submenu(centeredText("====== ULTIMATE Player List =
 end)
 
 local playerMenu2
-playerMenu2 = listsSub:add_submenu(centeredText("====== ULTIMATE Player List ======"), function()
+playerMenu2 = subMenusSub:add_submenu(centeredText("====== ULTIMATE Player List ======"), function()
     playerListInitializer()
 end)

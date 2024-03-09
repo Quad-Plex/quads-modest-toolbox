@@ -1,10 +1,13 @@
 --Initialize all scripts
 require("scripts/quads_toolbox_scripts/toolbox_data/globals_and_utils")
-local toolboxSub = menu.add_submenu("___--=== Quad's Modest Toolbox ===--___")
+local toolboxSub = menu.add_submenu("---=== ☣️ Quad's Modest Toolbox ☣️ ===--")
 
-listsSub = toolBox:add_submenu(centeredText( "========= 📄 Submenus: ========="))
+greyText(toolboxSub, centeredText("☣️ Quad's Modest Toolbox ☣️"))
+text(toolboxSub, centeredText("__--¯¯--__--¯¯--__--¯¯--__--¯¯--__"))
+
+subMenusSub = toolboxSub:add_submenu(centeredText( "========= 📄 Submenus: ========="))
 require("scripts/quads_toolbox_scripts/ultimate_playerlist")
-require("scripts/quads_toolbox_scripts/ambientPickupDetector")
+require("scripts/quads_toolbox_scripts/ambientPickupSuite")
 
 vehicleOptionsSub = toolboxSub:add_submenu(centeredText( "======== 🚗 Vehicle Options ========"))
 require("scripts/quads_toolbox_scripts/trafficremover")
