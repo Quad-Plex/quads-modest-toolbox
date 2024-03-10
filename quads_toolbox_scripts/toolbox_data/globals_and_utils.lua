@@ -66,7 +66,7 @@ end
 local altSpawnerHotkey
 menu.register_callback('ToggleAltSpawnerHotkey', function()
     if not altSpawnerHotkey then
-        altSpawnerHotkey = menu.register_hotkey(33, toggleAlternativeSpawner)
+        altSpawnerHotkey = menu.register_hotkey(keycodes.PAGE_UP_KEY, toggleAlternativeSpawner)
     else
         menu.remove_hotkey(altSpawnerHotkey)
         altSpawnerHotkey = nil

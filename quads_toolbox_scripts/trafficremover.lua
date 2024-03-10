@@ -1,4 +1,3 @@
-require("scripts/quads_toolbox_scripts/toolbox_data/globals_and_utils")
 --------------------------------
 --remove traffic loop
 --------------------------------

@@ -1,5 +1,3 @@
-require("scripts/quads_toolbox_scripts/toolbox_data/globals_and_utils")
-
 --Todo: add elements to configSub to enable/disable hotkeys and more settings
 -- Define the hotkeys data
 local success, hotkeysData = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/HOTKEY_CONFIG.json")
@@ -13,7 +11,7 @@ end
 local loseWantedLevelHotkey
 menu.register_callback('ToggleWantedLevelHotkey', function()
     if not loseWantedLevelHotkey then
-        loseWantedLevelHotkey = menu.register_hotkey(46, function()
+        loseWantedLevelHotkey = menu.register_hotkey(keycodes.DEL_KEY, function()
             menu.clear_wanted_level()
             displayHudBanner("LOSE_WANTED", "LEST_NCOPS", "", 109)
         end)
@@ -27,7 +25,7 @@ end)
 local maxHealthArmorHotkey
 menu.register_callback('ToggleHealthAndArmorHotkey', function()
     if not maxHealthArmorHotkey then
-        maxHealthArmorHotkey = menu.register_hotkey(117, function()
+        maxHealthArmorHotkey = menu.register_hotkey(keycodes.F6_KEY, function()
             menu.heal_all()
             menu.max_all_ammo()
             displayHudBanner("CHEAT_HEALTH_ARMOR", "PIM_FULL1", "", 109)
@@ -42,7 +40,7 @@ end)
 local repairVehicleHotkey
 menu.register_callback('ToggleRepairVehicleHotkey', function()
     if not repairVehicleHotkey then
-        repairVehicleHotkey = menu.register_hotkey(118, function()
+        repairVehicleHotkey = menu.register_hotkey(keycodes.F7_KEY, function()
             menu.repair_online_vehicle()
             displayHudBanner("BLIP_402", "", "", 109)
         end)
@@ -56,7 +54,7 @@ end)
 local vehicleGodmodeHotkey
 menu.register_callback('ToggleVehicleGodmodeHotkey', function()
     if not vehicleGodmodeHotkey then
-        vehicleGodmodeHotkey = menu.register_hotkey(119, function()
+        vehicleGodmodeHotkey = menu.register_hotkey(keycodes.F8_KEY, function()
             if localplayer:is_in_vehicle() then
                 localplayer:get_current_vehicle():set_godmode(not localplayer:get_current_vehicle():get_godmode())
 
@@ -77,7 +75,7 @@ end)
 local godmodeRagdollHotkey
 menu.register_callback('ToggleGodmodeRagdollHotkey', function()
     if not godmodeRagdollHotkey then
-        godmodeRagdollHotkey = menu.register_hotkey(120, function()
+        godmodeRagdollHotkey = menu.register_hotkey(keycodes.F9_KEY, function()
             localplayer:set_godmode(not localplayer:get_godmode())
             if localplayer:get_godmode() then
                 localplayer:set_no_ragdoll(true)
@@ -100,7 +98,7 @@ end)
 local suicideHotkey
 menu.register_callback('ToggleSuicideHotkey', function()
     if not suicideHotkey then
-        suicideHotkey = menu.register_hotkey(115, function()
+        suicideHotkey = menu.register_hotkey(keycodes.F4_KEY, function()
             menu.suicide_player()
         end)
     else
@@ -112,7 +110,7 @@ end)
 local enterPVHotkey
 menu.register_callback('ToggleEnterPVHotkey', function()
     if not enterPVHotkey then
-        enterPVHotkey = menu.register_hotkey(114, function()
+        enterPVHotkey = menu.register_hotkey(keycodes.F3_KEY, function()
             menu.enter_personal_vehicle()
         end)
     else
@@ -124,7 +122,7 @@ end)
 local teleportWaypointHotkey
 menu.register_callback('ToggleTeleportToWaypointHotkey', function()
     if not teleportWaypointHotkey then
-        teleportWaypointHotkey = menu.register_hotkey(112, function()
+        teleportWaypointHotkey = menu.register_hotkey(keycodes.F1_KEY, function()
             menu.teleport_to_waypoint()
         end)
     else
@@ -136,7 +134,7 @@ end)
 local teleportObjectiveHotkey
 menu.register_callback('ToggleTeleportToObjectiveHotkey', function()
     if not teleportObjectiveHotkey then
-        teleportObjectiveHotkey = menu.register_hotkey(113, function()
+        teleportObjectiveHotkey = menu.register_hotkey(keycodes.F2_KEY, function()
             menu.teleport_to_objective()
         end)
     else

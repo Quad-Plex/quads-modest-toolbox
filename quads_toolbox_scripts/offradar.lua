@@ -1,4 +1,3 @@
-require("scripts/quads_toolbox_scripts/toolbox_data/globals_and_utils")
 --------------------------------
 --UNDEAD OFFRADAR
 --------------------------------
@@ -23,7 +22,7 @@ end)
 local offradarHotkey
 menu.register_callback('ToggleOffradarHotkey', function()
 	if not offradarHotkey then
-		offradarHotkey = menu.register_hotkey(121, offRadar)
+		offradarHotkey = menu.register_hotkey(keycodes.F10_KEY, offRadar)
 	else
 		menu.remove_hotkey(offradarHotkey)
 		offradarHotkey = nil

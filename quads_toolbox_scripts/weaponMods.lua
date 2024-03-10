@@ -1,4 +1,3 @@
-require("scripts/quads_toolbox_scripts/toolbox_data/globals_and_utils")
 local function OnWeaponChanged(_, newWeapon)
     if newWeapon ~= nil then
         local NAME = localplayer:get_current_weapon():get_name_hash()
@@ -72,7 +71,7 @@ end)
 local atomizerGunHotkey
 menu.register_callback('ToggleAtomizerHotkey', function()
     if not atomizerGunHotkey then
-        atomizerGunHotkey = menu.register_hotkey(161, toggleAtomizerGun)
+        atomizerGunHotkey = menu.register_hotkey(keycodes.RIGHT_SHIFT_KEY, toggleAtomizerGun)
     else
         menu.remove_hotkey(atomizerGunHotkey)
         atomizerGunHotkey = nil
@@ -95,7 +94,7 @@ end)
 local explosionGunHotkey
 menu.register_callback('ToggleExplosionGunHotkey', function()
     if not explosionGunHotkey then
-        explosionGunHotkey = menu.register_hotkey(163, toggleExplosionGun)
+        explosionGunHotkey = menu.register_hotkey(keycodes.RIGHT_CONTROL_KEY, toggleExplosionGun)
     else
         menu.remove_hotkey(explosionGunHotkey)
         explosionGunHotkey = nil

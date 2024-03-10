@@ -5,10 +5,6 @@
 
 --TODO: Check if PICKUP_PORTABLE_FM_CONTENT_MISSION_ENTITY_SMALL can be created this way
 --Could be used to create tr_prop_tr_chest_01a movie prop pickups
-
-require("scripts/quads_toolbox_scripts/toolbox_data/PICKUPS")
-require("scripts/quads_toolbox_scripts/toolbox_data/globals_and_utils")
-
 local pickup_array = {}
 
 local sorted_model_hashes = {}

@@ -2,7 +2,6 @@
 --Original Script by Quad_Plex
 --V2.1 updated for gta 2944
 -----------------------------------#
-require("scripts/quads_toolbox_scripts/toolbox_data/globals_and_utils")
 
 local weapon_data = {}
 local enabled = false
@@ -61,7 +60,7 @@ gunOptionsSub:add_toggle("Enable Car-A-Pult", function() return enabled end, car
 local carapultHotkey
 menu.register_callback('ToggleCarapultHotkey', function()
 	if not carapultHotkey then
-		carapultHotkey = menu.register_hotkey(106, carAPult)
+		carapultHotkey = menu.register_hotkey(keycodes.MULTIPLY_KEY, carAPult)
 	else
 		menu.remove_hotkey(carapultHotkey)
 		carapultHotkey = nil

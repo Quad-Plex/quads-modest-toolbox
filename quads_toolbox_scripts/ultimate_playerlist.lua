@@ -1,6 +1,4 @@
-require("scripts/quads_toolbox_scripts/toolbox_data/VEHICLES_WEAPONS")
-require("scripts/quads_toolbox_scripts/toolbox_data/PED_FLAG_TABLE")
-require("scripts/quads_toolbox_scripts/toolbox_data/globals_and_utils")
+
 
 local savedInteriors = {}
 local success, jsonInteriors = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/SAVED_INTERIORS.json")
@@ -1088,18 +1086,6 @@ function addSubActions(sub, plyName, plyId)
     end, function(_)
         toggleMarkedModder(plyName)
     end)
-    sub:add_array_item("+++ Save Pos as Interior : +++", savePositionType, function()
-        return savePositionSelection
-    end, function(value)
-        savePositionSelection = value
-        if savePositionSelection == 1 then
-            local pos = ply:get_position()
-            local adjustedPos = vector3(pos.x, pos.y, pos.z - 14.9)
-            saveNewInterior(adjustedPos)
-        else
-            saveNewInterior(ply:get_position())
-        end
-    end)
     local nearbyPlayersSub
     nearbyPlayersSub = sub:add_submenu("|Nearby Players", function()
         nearbyPlayersMenu(ply, nearbyPlayersSub, plyId)
@@ -1301,6 +1287,18 @@ function addSubActions(sub, plyName, plyId)
     pedFlagSub = sub:add_submenu("(DEBUG) Show Active Ped Flags", function()
         pedFlags(ply, pedFlagSub)
     end)
+    sub:add_array_item("+++ Save Pos as Interior : +++", savePositionType, function()
+        return savePositionSelection
+    end, function(value)
+        savePositionSelection = value
+        if savePositionSelection == 1 then
+            local pos = ply:get_position()
+            local adjustedPos = vector3(pos.x, pos.y, pos.z - 14.9)
+            saveNewInterior(adjustedPos)
+        else
+            saveNewInterior(ply:get_position())
+        end
+    end)
 end
 
 local function addSessionOptions(sub)
@@ -1428,7 +1426,7 @@ end
 local randomVehicleHotkey
 menu.register_callback('ToggleRandomVehicleHotkey', function()
     if not randomVehicleHotkey then
-        randomVehicleHotkey = menu.register_hotkey(122, function()
+        randomVehicleHotkey = menu.register_hotkey(keycodes.F11_KEY, function()
             giveRandomVehicle(localplayer, nil)
             displayHudBanner("HUD_RANDOM", "FMSTP_PRCL3", "", 109)
         end)
@@ -1450,7 +1448,7 @@ end)
 local emergencyStopHotkey
 menu.register_callback('ToggleLoopStopHotkey', function()
     if not emergencyStopHotkey then
-        emergencyStopHotkey = menu.register_hotkey(110, function()
+        emergencyStopHotkey = menu.register_hotkey(keycodes.DECIMAL_KEY, function()
             auto_teleport = false
             auto_explode = false
             auto_storm = false

@@ -1,5 +1,3 @@
-require("scripts/quads_toolbox_scripts/toolbox_data/globals_and_utils")
-
 --------------------------------
 --functions for carboost
 local _, cars_data = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/KNOWN_BOOSTED_CARS.json")
@@ -139,7 +137,7 @@ end
 local carBoostHotkey
 menu.register_callback('ToggleCarBoostHotkey', function()
     if not carBoostHotkey then
-        carBoostHotkey = menu.register_hotkey(45, carBoost)
+        carBoostHotkey = menu.register_hotkey(keycodes.INS_KEY, carBoost)
     else
         menu.remove_hotkey(carBoostHotkey)
         carBoostHotkey = nil
@@ -193,7 +191,7 @@ end
 local carJumpHotkey
 menu.register_callback('ToggleCarjumpHotkey', function()
     if not carJumpHotkey then
-        carJumpHotkey = menu.register_hotkey(110, carJump)
+        carJumpHotkey = menu.register_hotkey(keycodes.DECIMAL_KEY, carJump)
     else
         menu.remove_hotkey(carJumpHotkey)
         carJumpHotkey = nil
@@ -217,7 +215,7 @@ end
 local massiveCarHotkey
 menu.register_callback('ToggleMassiveCarHotkey', function()
     if not massiveCarHotkey then
-        massiveCarHotkey = menu.register_hotkey(123, makeCarMassive)
+        massiveCarHotkey = menu.register_hotkey(keycodes.F12_KEY, makeCarMassive)
     else
         menu.remove_hotkey(massiveCarHotkey)
         massiveCarHotkey = nil

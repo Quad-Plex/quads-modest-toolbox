@@ -1,5 +1,9 @@
 --Initialize all scripts
 require("scripts/quads_toolbox_scripts/toolbox_data/globals_and_utils")
+require("scripts/quads_toolbox_scripts/toolbox_data/VEHICLES_WEAPONS")
+require("scripts/quads_toolbox_scripts/toolbox_data/PED_FLAG_TABLE")
+require("scripts/quads_toolbox_scripts/toolbox_data/PICKUPS")
+require("scripts/quads_toolbox_scripts/toolbox_data/KEYCODE_CONSTANTS")
 local toolboxSub = menu.add_submenu("--== ☣️ Quad's Modest Toolbox ☣️ ==--")
 
 text(toolboxSub, centeredText("     ☣️ Quad's Modest Toolbox ☣️"))

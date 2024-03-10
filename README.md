@@ -1,8 +1,6 @@
 Todo:
-- ~~Create separate submenu entries for the script categories~~
+
 - Write a global updater.lua that allows changing of base globals and has 'Test' buttons under each base global int range
-- ~~action key for the vehicle jump~~
-- ~~add more gun options like water jet gun/fire gun etc~~
 - add separate Vehicle Spawner Submenu not inside the playerList
 - Look for displaybannerMessages for Water/Smoke/Fire for weaponMods
 - FIX THE PICKUPS/MODEL LIST JFC what have I done there
@@ -14,3 +12,6 @@ Todo:
 - Add Readme and FAQ description for unclear actions
 - More testing with the invisible MOC maybe
 - More testing with the speedometer (find displayboxtype without fade-in maybe?)
+- ~~Create separate submenu entries for the script categories~~
+- ~~action key for the vehicle jump~~
+- ~~add more gun options like water jet gun/fire gun etc~~

@@ -1,5 +1,3 @@
-require("scripts/quads_toolbox_scripts/toolbox_data/VEHICLES_WEAPONS")
-require("scripts/quads_toolbox_scripts/toolbox_data/globals_and_utils")
 --local displayboxtype = 69
 --menu.add_int_range("Display Box Type Tester", 1, -100, 500, function()
 --	return displayboxtype

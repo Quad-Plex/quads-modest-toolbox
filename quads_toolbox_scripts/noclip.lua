@@ -1,4 +1,3 @@
-require("scripts/quads_toolbox_scripts/toolbox_data/globals_and_utils")
 local noclipToggle = false
 local speed = 2
 local hotkeys = {}
@@ -69,7 +68,7 @@ miscOptionsSub:add_toggle("Noclip:", function() return noclipToggle end, functio
 local noclipHotkey
 menu.register_callback('ToggleNoclipHotkey', function()
 	if not noclipHotkey then
-		noclipHotkey = menu.register_hotkey(111, function()
+		noclipHotkey = menu.register_hotkey(keycodes.DIVIDE_KEY, function()
 			noclipToggle = not noclipToggle
 			NoClip(noclipToggle)
 		end)
