@@ -55,19 +55,6 @@ local autoPly = function()
     return activePlayer
 end
 
---Pre-sort this table so we only do it once
-local sorted_vehicles = {}
-for hash, vehicle in pairs(VEHICLE) do
-    table.insert(sorted_vehicles, { hash, vehicle })
-end
---sort by Name if classes are the same, otherwise sort by class
-table.sort(sorted_vehicles, function(a, b)
-    if a[2][2] == b[2][2] then
-        return a[2][1]:upper() < b[2][1]:upper()
-    end
-    return a[2][2] < b[2][2]
-end)
-
 local currentSpeed = 0.0
 local function updateSpeed(ply)
     if not ply or ply == nil then
@@ -663,28 +650,6 @@ local function getModderSymbol(ply, plyName, plyId)
     return marked_modders[plyName] == "detected" and "🄼" or "m"
 end
 
-
---Create Vehicle Spawn Menu
-local function vehSpawnMenu(ply, sub)
-    sub:clear()
-    if ply == nil then
-        return
-    end
-    local vehSubs = {}
-
-    -- vehicle = { hash, { name, class} }
-    for _, vehicle in ipairs(sorted_vehicles) do
-        local current_category = vehicle[2][2]
-        if vehSubs[current_category] == nil then
-            vehSubs[current_category] = sub:add_submenu(current_category)
-        end
-
-        vehSubs[current_category]:add_action(vehicle[2][1], function()
-            createVehicle(vehicle[1], ply:get_position() + ply:get_heading() * 7)
-        end)
-    end
-end
-
 --Get Name Of Players Weapon
 local function getWpn(ply)
     if not ply then
@@ -1275,7 +1240,7 @@ function addSubActions(sub, plyName, plyId)
     greyText(sub, centeredText("--------Vehicle Spawn--------"))
     local vehSpawnSub
     vehSpawnSub = sub:add_submenu("Spawn Vehicle for " .. plyName, function()
-        vehSpawnMenu(ply, vehSpawnSub)
+        addVehicleSpawnMenu(ply, vehSpawnSub)
     end)
     sub:add_action("Give Random Vehicle to " .. plyName, function()
         giveRandomVehicle(ply, nil)

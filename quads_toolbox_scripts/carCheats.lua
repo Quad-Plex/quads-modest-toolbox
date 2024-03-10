@@ -164,6 +164,11 @@ vehicleOptionsSub:add_action("Reset all modified handling data", function()
     end
 end)
 
+greyText(vehicleOptionsSub, centeredText("----- Vehicle Tools -----"))
+
+------------------------ Vehicle Spawner ------------------------
+addVehicleSpawnMenu(localplayer, vehicleOptionsSub)
+
 --------------------------------
 --car jump, numpad comma (Script by Quad_Plex)
 --------------------------------
@@ -226,7 +231,6 @@ vehicleOptionsSub:add_action("Set Car Mass to 26969", makeCarMassive)
 ---------------------------------------------------------------------------
 --Janky Speedometer implementation using HUD messages
 ---------------------------------------------------------------------------
-greyText(vehicleOptionsSub, centeredText("----- Vehicle Tools -----"))
 
 local speedDisplayEnabled = false
 function speedDisplay()

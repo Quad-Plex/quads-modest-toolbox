@@ -1,5 +1,40 @@
 function null()
 end
+
+--Pre-sort this table so we only do it once
+local sorted_vehicles = {}
+for hash, vehicle in pairs(VEHICLE) do
+    table.insert(sorted_vehicles, { hash, vehicle })
+end
+--sort by Name if classes are the same, otherwise sort by class
+table.sort(sorted_vehicles, function(a, b)
+    if a[2][2] == b[2][2] then
+        return a[2][1]:upper() < b[2][1]:upper()
+    end
+    return a[2][2] < b[2][2]
+end)
+
+--Create Vehicle Spawn Menu
+function addVehicleSpawnMenu(ply, sub)
+    sub:clear()
+    if ply == nil then
+        return
+    end
+    local vehSubs = {}
+
+    -- vehicle = { hash, { name, class} }
+    for _, vehicle in ipairs(sorted_vehicles) do
+        local current_category = vehicle[2][2]
+        if vehSubs[current_category] == nil then
+            vehSubs[current_category] = sub:add_submenu(current_category)
+        end
+
+        vehSubs[current_category]:add_action(vehicle[2][1], function()
+            createVehicle(vehicle[1], ply:get_position() + ply:get_heading() * 7)
+        end)
+    end
+end
+
 ------------------Message Display-----------------------
 local base_offset = 2672741 + 2518 + 1
 --Credits to Kiddion for finding this stuff in an older version
