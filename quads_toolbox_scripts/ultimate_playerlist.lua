@@ -1,5 +1,3 @@
-
-
 local savedInteriors = {}
 local success, jsonInteriors = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/SAVED_INTERIORS.json")
 if success then
@@ -1637,11 +1635,9 @@ local function checkObviousModder(ply, plyName, i)
 end
 
 local modders_cache = {}
-local modWatchEnabled = false
 function modWatcher()
     print("Starting ModWatcher...")
-    modWatchEnabled = true
-    while modWatchEnabled do
+    while true do
         for i = 0, 31 do
             local ply = player.get_player_ped(i)
             local plyName = player.get_player_name(i)
@@ -1673,10 +1669,6 @@ end
 menu.register_callback('startModWatcher', modWatcher)
 
 local function playerListInitializer(sub)
-    if not modWatchEnabled then
-        menu.emit_event('startModWatcher')
-        return
-    end
     if updateable then
         SubMenus(sub)
         return

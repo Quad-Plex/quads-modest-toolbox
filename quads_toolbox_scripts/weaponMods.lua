@@ -104,7 +104,7 @@ end)
 local fireToggle = false
 local function toggleFireGun()
     fireToggle = not (localplayer:get_current_weapon():get_explosion_type() == 12)
-    ToggleWeaponStats(fireToggle, 12, 5, 9999, 1, "VEUI_SHAKE_EXPLOSION")
+    ToggleWeaponStats(fireToggle, 12, 5, 9999, 1, "MO_ADB_OFF")
 end
 gunOptionsSub:add_toggle("Fire Gun", function()
     return localplayer:get_current_weapon():get_explosion_type() == 12
@@ -115,7 +115,7 @@ end)
 local waterToggle = false
 local function toggleWaterGun()
     waterToggle = not (localplayer:get_current_weapon():get_explosion_type() == 13)
-    ToggleWeaponStats(waterToggle, 13, 5, 9999, 0, "VEUI_SHAKE_EXPLOSION")
+    ToggleWeaponStats(waterToggle, 13, 5, 9999, 0, "PIM_LGHTCOL6")
 end
 gunOptionsSub:add_toggle("Water Gun", function()
     return localplayer:get_current_weapon():get_explosion_type() == 13
@@ -126,7 +126,7 @@ end)
 local smokeToggle = false
 local function toggleSmokeGun()
     smokeToggle = not (localplayer:get_current_weapon():get_explosion_type() == 20)
-    ToggleWeaponStats(smokeToggle, 20, 5, 9999, 0, "VEUI_SHAKE_EXPLOSION")
+    ToggleWeaponStats(smokeToggle, 20, 5, 9999, 0, "CMOD_SMOKE_N")
 end
 gunOptionsSub:add_toggle("Smoke Gun", function()
     return localplayer:get_current_weapon():get_explosion_type() == 20
