@@ -67,7 +67,17 @@ gunOptionsSub:add_toggle("Constant Atomizer", function()
 end, function(_)
     toggleAtomizerGun()
 end)
-menu.register_hotkey(161, toggleAtomizerGun) --Right Shift
+
+--Right Shift
+local atomizerGunHotkey
+menu.register_callback('ToggleAtomizerHotkey', function()
+    if not atomizerGunHotkey then
+        atomizerGunHotkey = menu.register_hotkey(161, toggleAtomizerGun)
+    else
+        menu.remove_hotkey(atomizerGunHotkey)
+        atomizerGunHotkey = nil
+    end
+end)
 
 local explosionToggle = false
 local function toggleExplosionGun()
@@ -80,7 +90,17 @@ gunOptionsSub:add_toggle("Explosion Gun", function()
 end, function(_)
     toggleExplosionGun()
 end)
-menu.register_hotkey(163, toggleExplosionGun) --Right Ctrl
+
+--Right Ctrl
+local explosionGunHotkey
+menu.register_callback('ToggleExplosionGunHotkey', function()
+    if not explosionGunHotkey then
+        explosionGunHotkey = menu.register_hotkey(163, toggleExplosionGun)
+    else
+        menu.remove_hotkey(explosionGunHotkey)
+        explosionGunHotkey = nil
+    end
+end)
 
 local fireToggle = false
 local function toggleFireGun()

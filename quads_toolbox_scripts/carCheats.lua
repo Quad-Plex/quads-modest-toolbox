@@ -1,75 +1,5 @@
 require("scripts/quads_toolbox_scripts/toolbox_data/globals_and_utils")
 
----------------------------------------------------------------------------
---Janky Speedometer implementation using HUD messages
----------------------------------------------------------------------------
-local speedDisplayEnabled = false
-function speedDisplay()
-    while true do
-        if speedDisplayEnabled then
-            local myPlayer = player.get_player_ped()
-            local current_vehicle = myPlayer:get_current_vehicle()
-            if current_vehicle == nil or not myPlayer:is_in_vehicle() then
-                return
-            end
-            local velocity = current_vehicle:get_velocity()
-            local abs_velocity = math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y + velocity.z * velocity.z)
-            if speedDisplayEnabled then
-                displayHudBanner("FM_AE_SORT_3", "AMCH_KMHN", math.floor(3.6 * abs_velocity), 109, true)
-            end
-        end
-        sleep(0.1)
-    end
-end
-menu.register_callback('speedDisplay', speedDisplay)
-vehicleOptionsSub:add_toggle("Toggle Speed Display", function()
-    return speedDisplayEnabled
-end, function(toggle)
-    speedDisplayEnabled = toggle
-    menu.emit_event("speedDisplay")
-end)
-
---------------------------------
---car jump, numpad comma (Script by Quad_Plex)
---------------------------------
-local blocked = false
-local function carJump()
-    if not blocked then
-        blocked = true
-        if localplayer ~= nil and localplayer:is_in_vehicle() then
-            local vehicle = localplayer:get_current_vehicle()
-            local oldGrav = vehicle:get_gravity()
-            local oldTracMin = vehicle:get_traction_curve_min()
-            local oldTracMax = vehicle:get_traction_curve_max()
-            vehicle:set_traction_curve_min(0)
-            vehicle:set_traction_curve_max(0)
-            vehicle:set_gravity(-60)
-            sleep(0.14)
-            vehicle:set_gravity(oldGrav)
-            vehicle:set_traction_curve_min(oldTracMin)
-            vehicle:set_traction_curve_max(oldTracMax)
-        end
-        blocked = false
-    end
-end
-menu.register_hotkey(110, carJump)
-vehicleOptionsSub:add_action("Quick Vehicle Jump", carJump)
-
---------------------------------
---massive car, F12 key
---------------------------------
-local function makeCarMassive()
-    if localplayer ~= nil and localplayer:is_in_vehicle() then
-        local vehicle = localplayer:get_current_vehicle()
-        if vehicle then
-            vehicle:set_mass(26969)
-            displayHudBanner("FACE_F_FAT", "FMSTP_PRCL3", 69, 109)
-        end
-    end
-end
-menu.register_hotkey(123, makeCarMassive)
-vehicleOptionsSub:add_action("Set Car Mass to 26969", makeCarMassive)
-
 --------------------------------
 --functions for carboost
 local _, cars_data = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/KNOWN_BOOSTED_CARS.json")
@@ -161,7 +91,7 @@ end
 --------------------------------
 --boosted car handling logic, insert key
 --------------------------------
-function carBoost()
+local function carBoost()
     if localplayer ~= nil and localplayer:is_in_vehicle() then
         local current = localplayer:get_current_vehicle()
         if current == nil then
@@ -206,9 +136,19 @@ function carBoost()
     end
 end
 
-menu.register_hotkey(45, carBoost) --Insrt key
+local carBoostHotkey
+menu.register_callback('ToggleCarBoostHotkey', function()
+    if not carBoostHotkey then
+        carBoostHotkey = menu.register_hotkey(45, carBoost)
+    else
+        menu.remove_hotkey(carBoostHotkey)
+        carBoostHotkey = nil
+    end
+end)
+
+greyText(vehicleOptionsSub, centeredText("----- One-Click-Go-Quick Booster -----"))
 vehicleOptionsSub:add_toggle("ULTIMATE BOOST", function()
-    return localplayer:get_current_vehicle():get_gravity() == 21.420
+    return localplayer:is_in_vehicle() and localplayer:get_current_vehicle():get_gravity() == 21.420
 end, carBoost)
 vehicleOptionsSub:add_int_range("Car Boost strength |%", 5, 0, 690, function()
     return multiplier_percent
@@ -225,3 +165,95 @@ vehicleOptionsSub:add_action("Reset all modified handling data", function()
         end
     end
 end)
+
+--------------------------------
+--car jump, numpad comma (Script by Quad_Plex)
+--------------------------------
+local blocked = false
+local function carJump()
+    if not blocked then
+        blocked = true
+        if localplayer ~= nil and localplayer:is_in_vehicle() then
+            local vehicle = localplayer:get_current_vehicle()
+            local oldGrav = vehicle:get_gravity()
+            local oldTracMin = vehicle:get_traction_curve_min()
+            local oldTracMax = vehicle:get_traction_curve_max()
+            vehicle:set_traction_curve_min(0)
+            vehicle:set_traction_curve_max(0)
+            vehicle:set_gravity(-60)
+            sleep(0.1)
+            vehicle:set_gravity(oldGrav)
+            vehicle:set_traction_curve_min(oldTracMin)
+            vehicle:set_traction_curve_max(oldTracMax)
+        end
+        blocked = false
+    end
+end
+
+local carJumpHotkey
+menu.register_callback('ToggleCarjumpHotkey', function()
+    if not carJumpHotkey then
+        carJumpHotkey = menu.register_hotkey(110, carJump)
+    else
+        menu.remove_hotkey(carJumpHotkey)
+        carJumpHotkey = nil
+    end
+end)
+vehicleOptionsSub:add_action("Quick Vehicle Jump", carJump)
+
+--------------------------------
+--massive car, F12 key
+--------------------------------
+local function makeCarMassive()
+    if localplayer ~= nil and localplayer:is_in_vehicle() then
+        local vehicle = localplayer:get_current_vehicle()
+        if vehicle then
+            vehicle:set_mass(26969)
+            displayHudBanner("FACE_F_FAT", "FMSTP_PRCL3", 69, 109)
+        end
+    end
+end
+
+local massiveCarHotkey
+menu.register_callback('ToggleMassiveCarHotkey', function()
+    if not massiveCarHotkey then
+        massiveCarHotkey = menu.register_hotkey(123, makeCarMassive)
+    else
+        menu.remove_hotkey(massiveCarHotkey)
+        massiveCarHotkey = nil
+    end
+end)
+vehicleOptionsSub:add_action("Set Car Mass to 26969", makeCarMassive)
+
+---------------------------------------------------------------------------
+--Janky Speedometer implementation using HUD messages
+---------------------------------------------------------------------------
+greyText(vehicleOptionsSub, centeredText("----- Vehicle Tools -----"))
+
+local speedDisplayEnabled = false
+function speedDisplay()
+    while true do
+        if speedDisplayEnabled then
+            local myPlayer = player.get_player_ped()
+            local current_vehicle = myPlayer:get_current_vehicle()
+            if current_vehicle == nil or not myPlayer:is_in_vehicle() then
+                return
+            end
+            local velocity = current_vehicle:get_velocity()
+            local abs_velocity = math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y + velocity.z * velocity.z)
+            if speedDisplayEnabled then
+                displayHudBanner("FM_AE_SORT_3", "AMCH_KMHN", math.floor(3.6 * abs_velocity), 109, true)
+            end
+        end
+        sleep(0.1)
+    end
+end
+menu.register_callback('speedDisplay', speedDisplay)
+vehicleOptionsSub:add_toggle("Toggle Speed Display", function()
+    return speedDisplayEnabled
+end, function(toggle)
+    speedDisplayEnabled = toggle
+    menu.emit_event("speedDisplay")
+end)
+
+vehicleOptionsSub:add_toggle("Alternative Veh. Spawner", function() return alternative_spawn_toggle end, function(_) toggleAlternativeSpawner() end)

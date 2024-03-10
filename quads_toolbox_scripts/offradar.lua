@@ -20,4 +20,12 @@ end, function(_)
     offRadar()
 end)
 
-menu.register_hotkey(121, offRadar) --F10
+local offradarHotkey
+menu.register_callback('ToggleOffradarHotkey', function()
+	if not offradarHotkey then
+		offradarHotkey = menu.register_hotkey(121, offRadar)
+	else
+		menu.remove_hotkey(offradarHotkey)
+		offradarHotkey = nil
+	end
+end)

@@ -1,0 +1,102 @@
+[
+  {
+    "event": "ToggleAltSpawnerHotkey",
+    "name": "Alternative Veh. Spawn",
+    "toggleVar": true
+  },
+  {
+    "event": "ToggleAtomizerHotkey",
+    "name": "Atomizer Gun",
+    "toggleVar": true
+  },
+  {
+    "event": "ToggleCarapultHotkey",
+    "name": "Car-A-Pult",
+    "toggleVar": true
+  },
+  {
+    "event": "ToggleCarBoostHotkey",
+    "name": "CarBoost",
+    "toggleVar": true
+  },
+  {
+    "event": "ToggleCarjumpHotkey",
+    "name": "Carjump",
+    "toggleVar": true
+  },
+  {
+    "event": "ToggleEnterPVHotkey",
+    "name": "Enter PV",
+    "toggleVar": true
+  },
+  {
+    "event": "ToggleExplosionGunHotkey",
+    "name": "Explosive Gun",
+    "toggleVar": true
+  },
+  {
+    "event": "ToggleGodmodeRagdollHotkey",
+    "name": "Godmode/Ragdoll/Inf Ammo",
+    "toggleVar": true
+  },
+  {
+    "event": "ToggleHealthAndArmorHotkey",
+    "name": "Health/Armor Refill",
+    "toggleVar": true
+  },
+  {
+    "event": "ToggleMassiveCarHotkey",
+    "name": "MassiveCar",
+    "toggleVar": true
+  },
+  {
+    "event": "ToggleNoclipHotkey",
+    "name": "Noclip",
+    "toggleVar": true
+  },
+  {
+    "event": "ToggleRandomVehicleHotkey",
+    "name": "Random Veh. Spawner",
+    "toggleVar": true
+  },
+  {
+    "event": "ToggleWantedLevelHotkey",
+    "name": "Remove Cops",
+    "toggleVar": true
+  },
+  {
+    "event": "ToggleRepairVehicleHotkey",
+    "name": "Repair Vehicle",
+    "toggleVar": true
+  },
+  {
+    "event": "ToggleLoopStopHotkey",
+    "name": "Stop Loop Actions",
+    "toggleVar": true
+  },
+  {
+    "event": "ToggleSuicideHotkey",
+    "name": "Suicide",
+    "toggleVar": true
+  },
+  {
+    "event": "ToggleTeleportToObjectiveHotkey",
+    "name": "TP to Objective",
+    "toggleVar": true
+  },
+  {
+    "event": "ToggleTeleportToWaypointHotkey",
+    "name": "TP to Waypoint",
+    "toggleVar": true
+  },
+  {
+    "event": "ToggleOffradarHotkey",
+    "name": "Undead Offradar",
+    "toggleVar": true
+  },
+  {
+    "event": "ToggleVehicleGodmodeHotkey",
+    "name": "Vehicle Godmode",
+    "toggleVar": true
+  }
+]

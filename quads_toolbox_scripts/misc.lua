@@ -91,6 +91,10 @@ end)
 
 local function podiumChanger(sub)
 	sub:clear()
+	text(sub, "WARNING! This can corrupt garage spots!")
+	text(sub, "Be careful which vehicle you obtain!")
+	text(sub, "I am NOT responsible for your garages!")
+	text(sub, "-----------------------------------------")
 	local vehSubs = {}
 
 	-- vehicle = { hash, { name, class} }
@@ -106,4 +110,4 @@ local function podiumChanger(sub)
 	end
 end
 local podiumSub
-podiumSub = miscOptionsSub:add_submenu("Change Podium vehicle", function() podiumChanger(podiumSub) end)
+podiumSub = miscOptionsSub:add_submenu("\u{26A0} Change Casino Podium vehicle\u{26A0} ", function() podiumChanger(podiumSub) end)

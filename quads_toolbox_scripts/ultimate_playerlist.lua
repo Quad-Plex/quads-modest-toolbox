@@ -1359,27 +1359,6 @@ local function addSessionOptions(sub)
     end)
 end
 
-local function addCredits(sub)
-    text(sub, "Some people I want to thank:")
-    text(sub, "(No particular order)")
-    text(sub, "!!!Major thanks to Kiddion!!!")
-    text(sub, "AppleVegass for lua script support")
-    text(sub, "Alice2333 (spawner/lua stuff)")
-    text(sub, "TeaTimeTea general lua forum stuff")
-    text(sub, "AdventureBox the wise man")
-    text(sub, "Yimura for YIMMenu as documentation")
-    text(sub, "DMKiller's work on the forums")
-    text(sub, "HUGE thanks to book4 for globals")
-    text(sub, "LUKY6464 for activity in Megathread")
-    text(sub, "gfsdjvbsio for PlayerVehicleBlipType")
-    text(sub, "Don Reagan for help debugging globals")
-    text(sub, "---------------------------------------")
-    text(sub, "Surely others I've forgotten, please")
-    text(sub, "contact me if you feel that your")
-    text(sub, "name belongs here <3")
-    text(sub, "        Peace, Quad_Plex")
-end
-
 local function getSortedPlayers()
     local playerTypes = { modder = 1, god = 2, mortal = 3, interior = 4 }
     local sortedPlayers = {}
@@ -1425,12 +1404,10 @@ local function SubMenus(playerList)
         return SortStyle
     end, function(value)
         SortStyle = value
-        if not updateable then
+        if updateable then
+            SubMenus(playerList)
             return
         end
-        updateable = false
-        SubMenus(playerList)
-        return
     end)
 
     sortedPlayers = SortStyles[SortStyle] == "Nearest first" and getPlayersByDistance(localplayer) or getSortedPlayers()
@@ -1442,16 +1419,23 @@ local function SubMenus(playerList)
     greyText(playerList, "---------------------------------------")
 
     addSessionOptions(playerList:add_submenu("\u{26A0}\u{26A0}\u{26A0} Session Options/Info \u{26A0}\u{26A0}\u{26A0}"))
-    addCredits(playerList:add_submenu(centeredText(" \u{00A9} Quad_Plex")))
 
     updateable = true
 end
 
 
---F11
-menu.register_hotkey(122, function()
-    giveRandomVehicle(localplayer, nil)
-    displayHudBanner("HUD_RANDOM", "FMSTP_PRCL3", "", 109)
+--F11 Random Vehicle
+local randomVehicleHotkey
+menu.register_callback('ToggleRandomVehicleHotkey', function()
+    if not randomVehicleHotkey then
+        randomVehicleHotkey = menu.register_hotkey(122, function()
+            giveRandomVehicle(localplayer, nil)
+            displayHudBanner("HUD_RANDOM", "FMSTP_PRCL3", "", 109)
+        end)
+    else
+        menu.remove_hotkey(randomVehicleHotkey)
+        randomVehicleHotkey = nil
+    end
 end)
 
 
@@ -1463,21 +1447,29 @@ end)
 
 
 --emergency stop all auto actions button, numpad comma (decimal) key
-menu.register_hotkey(110, function()
-    auto_teleport = false
-    auto_explode = false
-    auto_storm = false
-    auto_bike = false
-    auto_peds = false
-    auto_cargo_spam = false
-    auto_launch = false
-    auto_lobby_blowup = false
-    auto_fly = false
-    auto_rain = false
-    auto_vehicle_spam = false
-    auto_yeet = false
-    auto_cable_spam = false
-    auto_train_spam = false
+local emergencyStopHotkey
+menu.register_callback('ToggleLoopStopHotkey', function()
+    if not emergencyStopHotkey then
+        emergencyStopHotkey = menu.register_hotkey(110, function()
+            auto_teleport = false
+            auto_explode = false
+            auto_storm = false
+            auto_bike = false
+            auto_peds = false
+            auto_cargo_spam = false
+            auto_launch = false
+            auto_lobby_blowup = false
+            auto_fly = false
+            auto_rain = false
+            auto_vehicle_spam = false
+            auto_yeet = false
+            auto_cable_spam = false
+            auto_train_spam = false
+        end)
+    else
+        menu.remove_hotkey(emergencyStopHotkey)
+        emergencyStopHotkey = nil
+    end
 end)
 
 function vehicleRainThread()
@@ -1717,22 +1709,23 @@ function modWatcher()
 end
 menu.register_callback('startModWatcher', modWatcher)
 
-local function playerListInitializer()
+local function playerListInitializer(sub)
     if not modWatchEnabled then
         menu.emit_event('startModWatcher')
         return
     end
     if updateable then
-        SubMenus(playerMenu)
+        SubMenus(sub)
+        return
     end
 end
 
 local playerMenu
 playerMenu = menu.add_player_submenu(centeredText("====== ULTIMATE Player List ======"), function()
-    playerListInitializer()
+    playerListInitializer(playerMenu)
 end)
 
 local playerMenu2
 playerMenu2 = subMenusSub:add_submenu(centeredText("====== ULTIMATE Player List ======"), function()
-    playerListInitializer()
+    playerListInitializer(playerMenu2)
 end)

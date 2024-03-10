@@ -48,7 +48,7 @@ local function NoClip(toggle)
 				menu.register_hotkey(107, function() adjustSpeed(1) end),
 				menu.register_hotkey(109, function() adjustSpeed(-1) end)
 			}
-			displayHudBanner("PSF_FLYING", "PIM_NCL_PRIV1", "", 109)
+			displayHudBanner("SG_CLIP", "PIM_NCL_PRIV1", "", 109)
 		else
 			localplayer:set_freeze_momentum(false)
 			localplayer:set_no_ragdoll(false)
@@ -57,14 +57,24 @@ local function NoClip(toggle)
 				menu.remove_hotkey(hotkey)
 			end
 			hotkeys = {}
-			displayHudBanner("PSF_FLYING", "PIM_NCL_PRIV0", "", 109)
+			displayHudBanner("SG_CLIP", "PIM_NCL_PRIV0", "", 109)
 		end
 	end
 end
 
 miscOptionsSub:add_toggle("Noclip:", function() return noclipToggle end, function(n) noclipToggle = n NoClip(noclipToggle)  end)
 
-menu.register_hotkey(111, function()
-	noclipToggle = not noclipToggle
-	NoClip(noclipToggle)
+
+--Numpad Divide Key
+local noclipHotkey
+menu.register_callback('ToggleNoclipHotkey', function()
+	if not noclipHotkey then
+		noclipHotkey = menu.register_hotkey(111, function()
+			noclipToggle = not noclipToggle
+			NoClip(noclipToggle)
+		end)
+	else
+		menu.remove_hotkey(noclipHotkey)
+		noclipHotkey = nil
+	end
 end)

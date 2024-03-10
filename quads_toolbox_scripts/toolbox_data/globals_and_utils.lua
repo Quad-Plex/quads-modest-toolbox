@@ -53,13 +53,23 @@ function createVehicle(modelHash, pos, heading)
     end
 end
 
---PgUp alternative spawner toggle
-menu.register_hotkey(33, function()
+function toggleAlternativeSpawner()
     alternative_spawn_toggle = not alternative_spawn_toggle
     if alternative_spawn_toggle then
         displayHudBanner("BLIP_125", "MO_CCONF_2", "", 109)
     else
         displayHudBanner("BLIP_125", "CELL_840", "", 109)
+    end
+end
+
+--PgUp alternative spawner toggle
+local altSpawnerHotkey
+menu.register_callback('ToggleAltSpawnerHotkey', function()
+    if not altSpawnerHotkey then
+        altSpawnerHotkey = menu.register_hotkey(33, toggleAlternativeSpawner)
+    else
+        menu.remove_hotkey(altSpawnerHotkey)
+        altSpawnerHotkey = nil
     end
 end)
 
@@ -119,10 +129,13 @@ function getTopPlayer(getPlayerAttribute, nameOrId)
     local topPlayer
 
     for i = 0, 31 do
-        local attribute = getPlayerAttribute(i)
-        if attribute and attribute > maxAttribute then
-            maxAttribute = attribute
-            topPlayer = i
+        local ply = player.get_player_ped(i)
+        if ply then
+            local attribute = getPlayerAttribute(i)
+            if attribute and attribute > maxAttribute then
+                maxAttribute = attribute
+                topPlayer = i
+            end
         end
     end
     if not topPlayer then 
