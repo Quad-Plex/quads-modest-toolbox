@@ -4,13 +4,12 @@ require("scripts/quads_toolbox_scripts/toolbox_data/VEHICLES_WEAPONS")
 require("scripts/quads_toolbox_scripts/toolbox_data/PED_FLAG_TABLE")
 require("scripts/quads_toolbox_scripts/toolbox_data/PICKUPS")
 require("scripts/quads_toolbox_scripts/toolbox_data/KEYCODE_CONSTANTS")
-local toolboxSub = menu.add_submenu("--== ☣️ Quad's Modest Toolbox ☣️ ==--")
+toolboxSub = menu.add_submenu("--== ☣️ Quad's Modest Toolbox ☣️ ==--")
 
 text(toolboxSub, centeredText("     ☣️ Quad's Modest Toolbox ☣️"))
 greyText(toolboxSub, centeredText("--__--¯¯--__--¯¯--__--¯¯--__--¯¯--__--"))
 
-subMenusSub = toolboxSub:add_submenu(centeredText("  📄 Submenus 📄"))
-greyText(subMenusSub, centeredText(" 📄 Submenus 📄"))
+greyText(toolboxSub, centeredText(" 📄 Submenus 📄"))
 require("scripts/quads_toolbox_scripts/ultimate_playerlist")
 require("scripts/quads_toolbox_scripts/ambientPickupSuite")
 
