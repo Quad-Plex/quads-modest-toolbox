@@ -62,7 +62,7 @@ local function toggleAtomizerGun()
 end
 
 gunOptionsSub:add_toggle("Constant Atomizer", function()
-    return atomizerToggle
+    return localplayer:get_current_weapon():get_explosion_type() == 70
 end, function(_)
     toggleAtomizerGun()
 end)
@@ -85,7 +85,7 @@ local function toggleExplosionGun()
 end
 
 gunOptionsSub:add_toggle("Explosion Gun", function()
-    return explosionToggle
+    return localplayer:get_current_weapon():get_explosion_type() == 31
 end, function(_)
     toggleExplosionGun()
 end)
@@ -107,7 +107,7 @@ local function toggleFireGun()
     ToggleWeaponStats(fireToggle, 12, 5, 9999, 1, "VEUI_SHAKE_EXPLOSION")
 end
 gunOptionsSub:add_toggle("Fire Gun", function()
-    return fireToggle
+    return localplayer:get_current_weapon():get_explosion_type() == 12
 end, function(_)
     toggleFireGun()
 end)
@@ -118,7 +118,7 @@ local function toggleWaterGun()
     ToggleWeaponStats(waterToggle, 13, 5, 9999, 0, "VEUI_SHAKE_EXPLOSION")
 end
 gunOptionsSub:add_toggle("Water Gun", function()
-    return waterToggle
+    return localplayer:get_current_weapon():get_explosion_type() == 13
 end, function(_)
     toggleWaterGun()
 end)
@@ -129,7 +129,7 @@ local function toggleSmokeGun()
     ToggleWeaponStats(smokeToggle, 20, 5, 9999, 0, "VEUI_SHAKE_EXPLOSION")
 end
 gunOptionsSub:add_toggle("Smoke Gun", function()
-    return smokeToggle
+    return localplayer:get_current_weapon():get_explosion_type() == 20
 end, function(_)
     toggleSmokeGun()
 end)
