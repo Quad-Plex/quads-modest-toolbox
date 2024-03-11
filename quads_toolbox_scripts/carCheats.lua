@@ -166,8 +166,10 @@ end)
 
 greyText(vehicleOptionsSub, centeredText("----- Vehicle Tools -----"))
 
------------------------- Vehicle Spawner ------------------------
-addVehicleSpawnMenu(localplayer, vehicleOptionsSub)
+------------------------ Vehicle Spawner -----------------------
+local vehicleSpawnMenu
+vehicleSpawnMenu = vehicleOptionsSub:add_submenu("Vehicle Spawner:")
+addVehicleSpawnMenu(localplayer, vehicleSpawnMenu)
 
 --------------------------------
 --car jump, numpad comma (Script by Quad_Plex)
