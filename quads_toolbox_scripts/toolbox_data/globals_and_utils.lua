@@ -1,6 +1,8 @@
 function null()
 end
 
+baseGlobals = {}
+
 -------------------------------------------------------------
 -------------------- SORTED VEHICLE LIST --------------------
 -------------------------------------------------------------
@@ -75,55 +77,57 @@ function find_keycode(event_name)
     end
     return nil
 end
+
+
 ------------------Message Display-----------------------
-local base_offset = 2672741 + 2518 + 1
+baseGlobals.messageDisplayGlobal = 2672741 + 2518 + 1
 --Credits to Kiddion for finding this stuff in an older version
 --https://www.unknowncheats.me/forum/3523555-post2032.html
 function displayHudBanner(headline, subHeadline, variable_text, box_type, skipTimeout)
     if localplayer == nil then return end
-    globals.set_string(base_offset + 21, headline, 16)
-    globals.set_string(base_offset + 8, subHeadline, 32)
+    globals.set_string(baseGlobals.messageDisplayGlobal + 21, headline, 16)
+    globals.set_string(baseGlobals.messageDisplayGlobal + 8, subHeadline, 32)
     if variable_text ~= "" then
         if type(variable_text) == "number" then
-            globals.set_int(base_offset + 3, variable_text)
+            globals.set_int(baseGlobals.messageDisplayGlobal + 3, variable_text)
         elseif type(variable_text) == "string" then
-            globals.set_string(base_offset + 3, variable_text, 32)
+            globals.set_string(baseGlobals.messageDisplayGlobal + 3, variable_text, 32)
         end
     end
-    globals.set_int(base_offset + 1, box_type)
-    globals.set_int(base_offset + 2, 1)
+    globals.set_int(baseGlobals.messageDisplayGlobal + 1, box_type)
+    globals.set_int(baseGlobals.messageDisplayGlobal + 2, 1)
 
     if skipTimeout then return end
 
     sleep(2)
 
-    globals.set_int(base_offset + 1, 1)
-    globals.set_int(base_offset + 2, 1)
+    globals.set_int(baseGlobals.messageDisplayGlobal + 1, 1)
+    globals.set_int(baseGlobals.messageDisplayGlobal + 2, 1)
 end
 
 ------------------Vehicle Spawners-----------------------------------
-local VehicleSpawnGlobal = 2640095
-local VehicleSpawnGlobal2 = 2695991
+baseGlobals.VehicleSpawnGlobal = 2640095
+baseGlobals.VehicleSpawnGlobal2 = 2695991
 alternative_spawn_toggle = false
 function createVehicle(modelHash, pos, heading)
     if not alternative_spawn_toggle and not player.get_player_ped():is_in_vehicle() then
-        globals.set_int(VehicleSpawnGlobal + 47, modelHash)
-        globals.set_float(VehicleSpawnGlobal + 43, pos.x)
-        globals.set_float(VehicleSpawnGlobal + 44, pos.y)
-        globals.set_float(VehicleSpawnGlobal + 45, pos.z)
+        globals.set_int(baseGlobals.VehicleSpawnGlobal + 47, modelHash)
+        globals.set_float(baseGlobals.VehicleSpawnGlobal + 43, pos.x)
+        globals.set_float(baseGlobals.VehicleSpawnGlobal + 44, pos.y)
+        globals.set_float(baseGlobals.VehicleSpawnGlobal + 45, pos.z)
         if heading then
             globals.set_float(VehicleSpawnGlobal + 46, heading)
         end
         globals.set_boolean(VehicleSpawnGlobal + 42, true)
     else
-        globals.set_boolean(VehicleSpawnGlobal2 + 5, false) -- SpawnVehicles
-        globals.set_boolean(VehicleSpawnGlobal2 + 2, false) -- SpawnVehicles
-        globals.set_float(VehicleSpawnGlobal2 + 7 + 0, pos.x) -- pos.x
-        globals.set_float(VehicleSpawnGlobal2 + 7 + 1, pos.y) -- pos.y
-        globals.set_float(VehicleSpawnGlobal2 + 7 + 2, pos.z) -- pos.z
-        globals.set_int(VehicleSpawnGlobal2 + 27 + 66, modelHash) -- modelHash
-        globals.set_boolean(VehicleSpawnGlobal2 + 5, true) -- SpawnVehicles
-        globals.set_boolean(VehicleSpawnGlobal2 + 2, true) -- SpawnVehicles
+        globals.set_boolean(baseGlobals.VehicleSpawnGlobal2 + 5, false) -- SpawnVehicles
+        globals.set_boolean(baseGlobals.VehicleSpawnGlobal2 + 2, false) -- SpawnVehicles
+        globals.set_float(baseGlobals.VehicleSpawnGlobal2 + 7 + 0, pos.x) -- pos.x
+        globals.set_float(baseGlobals.VehicleSpawnGlobal2 + 7 + 1, pos.y) -- pos.y
+        globals.set_float(baseGlobals.VehicleSpawnGlobal2 + 7 + 2, pos.z) -- pos.z
+        globals.set_int(baseGlobals.VehicleSpawnGlobal2 + 27 + 66, modelHash) -- modelHash
+        globals.set_boolean(baseGlobals.VehicleSpawnGlobal2 + 5, true) -- SpawnVehicles
+        globals.set_boolean(baseGlobals.VehicleSpawnGlobal2 + 2, true) -- SpawnVehicles
         --thanks to @Alice2333 on UKC for showing me the second spawner code
     end
 end
@@ -149,42 +153,43 @@ menu.register_callback('ToggleAltSpawnerHotkey', function()
 end)
 
 ----------------------Pickup Spawner--------------------------
-local ambient_spawn_trigger = 2707022
-local networked_pickup_trigger = 262145 + 31218
-local pickup_data_global = 2707016
-local ambient_variable_check = 4535851
+baseGlobals.ambient_spawn_trigger = 2707022
+baseGlobals.networked_pickup_trigger = 262145 + 31218
+baseGlobals.pickup_data_global = 2707016
+baseGlobals.ambient_variable_check = 4535851
 function createPickup(pos, value)
     local freemode_script = script("freemode")
     if freemode_script:is_active() then
-        globals.set_int(networked_pickup_trigger, 0)
-        globals.set_uint(ambient_spawn_trigger, 1)
-        globals.set_int(pickup_data_global + 1, value) --cash value
-        globals.set_float(pickup_data_global + 3, pos.x)
-        globals.set_float(pickup_data_global + 4, pos.y)
-        globals.set_float(pickup_data_global + 5, pos.z)
-        globals.set_uint(ambient_variable_check + 1 + (globals.get_int(pickup_data_global) * 85) + 66 + 2, 2)
+        globals.set_int(baseGlobals.networked_pickup_trigger, 0)
+        globals.set_uint(baseGlobals.ambient_spawn_trigger, 1)
+        globals.set_int(baseGlobals.pickup_data_global + 1, value) --cash value
+        globals.set_float(baseGlobals.pickup_data_global + 3, pos.x)
+        globals.set_float(baseGlobals.pickup_data_global + 4, pos.y)
+        globals.set_float(baseGlobals.pickup_data_global + 5, pos.z)
+        globals.set_uint(baseGlobals.ambient_variable_check + 1 + (globals.get_int(baseGlobals.pickup_data_global) * 85) + 66 + 2, 2)
     end
 end
 
----------------------Get Player Level-----------------------------
+------------------------------------------------------------------
+---------------------Get Player Stats-----------------------------
 --Global_1845263[PLAYER::PLAYER_ID() /*877*/].f_205.f_6 Level
 --.f_3 Wallet, .f_56 cumulative money, .f_28 kills, .f_29 deaths
-local playerLevelGlobal = 1845263
+baseGlobals.playerLevelGlobal = 1845263
 getPlayerLevel = function(plyId)
-    return globals.get_int(playerLevelGlobal + 1 + (plyId * 877) + 205 + 6)
+    return globals.get_int(baseGlobals.playerLevelGlobal + 1 + (plyId * 877) + 205 + 6)
 end
 
 getPlayerWallet = function(plyId)
-    return globals.get_int(playerLevelGlobal + 1 + (plyId * 877) + 205 + 3)
+    return globals.get_int(baseGlobals.playerLevelGlobal + 1 + (plyId * 877) + 205 + 3)
 end
 
 getPlayerMoney = function(plyId)
-    return globals.get_int(playerLevelGlobal + 1 + (plyId * 877) + 205 + 56)
+    return globals.get_int(baseGlobals.playerLevelGlobal + 1 + (plyId * 877) + 205 + 56)
 end
 
 getPlayerKd = function(plyId)
-    local kills = globals.get_int(playerLevelGlobal + 1 + (plyId * 877) + 205 + 28)
-    local deaths = globals.get_int(playerLevelGlobal + 1 + (plyId * 877) + 205 + 29)
+    local kills = globals.get_int(baseGlobals.playerLevelGlobal + 1 + (plyId * 877) + 205 + 28)
+    local deaths = globals.get_int(baseGlobals.playerLevelGlobal + 1 + (plyId * 877) + 205 + 29)
     if kills == 0 or deaths == 0 then
         return 0
     end
@@ -192,11 +197,11 @@ getPlayerKd = function(plyId)
 end
 
 getPlayerKills = function(plyId)
-    return globals.get_int(playerLevelGlobal + 1 + (plyId * 877) + 205 + 28)
+    return globals.get_int(baseGlobals.playerLevelGlobal + 1 + (plyId * 877) + 205 + 28)
 end
 
 getPlayerDeaths = function(plyId)
-    return globals.get_int(playerLevelGlobal + 1 + (plyId * 877) + 205 + 29)
+    return globals.get_int(baseGlobals.playerLevelGlobal + 1 + (plyId * 877) + 205 + 29)
 end
 
 function getTopPlayer(getPlayerAttribute, nameOrId)
@@ -229,41 +234,43 @@ function getTopPlayer(getPlayerAttribute, nameOrId)
     end
 end
 
----------------------Check Dev DLC -------------------------------
+-------------------------------------------------------------------
+---------------------Check Dev DLC --------------------------------
 --Global_2657921[bParam1 /*463*/].f_269
-local dev_check_global = 2657921
+baseGlobals.dev_check_global = 2657921
 hasDevDLC = function(plyId)
-    return globals.get_int(dev_check_global + 1 + (plyId * 463) + 269)
+    return globals.get_int(baseGlobals.dev_check_global + 1 + (plyId * 463) + 269)
 end
 
-----------------------Respawn State (Interior Check)---------------------------
+-------------------------------------------------------------------
+----------------------Respawn State (Interior Check)----------------
 --Global_2657921[iVar0 /*463*/].f_232
-local interiorIdGlobal = 2657921
+baseGlobals.interiorIdGlobal = 2657921
 -- Order of States when Dying: -1 0 2 9 99
 -- 99 is fully loaded
 
 getPlayerRespawnState = function(plyId)
-    return globals.get_int(interiorIdGlobal + 1 + (plyId * 463) + 232)
+    return globals.get_int(baseGlobals.interiorIdGlobal + 1 + (plyId * 463) + 232)
 end
 
 -- -1/1 repair vehicle, 11 flip vehicle, 2-6 are respawn triggers
 --Only seem to work on oneself
 setPlayerRespawnState = function(plyId, value)
-    globals.set_int(interiorIdGlobal + 1 + (plyId * 463) + 232, value)
+    globals.set_int(baseGlobals.interiorIdGlobal + 1 + (plyId * 463) + 232, value)
 end
 
 ---------------------Player Org---------------------------------
 --HUUUUUUUUUGE thanks to book4 on UKC for sharing a bunch of useful globals
 --Global_1886967[PLAYER::PLAYER_ID() /*609*/].f_10
 --OrgColor is at .f104
-local playerOrgGlobal = 1886967
+baseGlobals.playerOrgGlobal = 1886967
 local org_types = { [0] = "CEO", "MC" }
 getPlayerOrgType = function(plyId)
-    return org_types[globals.get_int(playerOrgGlobal + 1 + (plyId * 609) + 10 + 429)]
+    return org_types[globals.get_int(baseGlobals.playerOrgGlobal + 1 + (plyId * 609) + 10 + 429)]
 end
 
 getPlayerOrgName = function(plyId)
-    local orgName = globals.get_string(playerOrgGlobal + 1 + (plyId * 609) + 10 + 105, 30)
+    local orgName = globals.get_string(baseGlobals.playerOrgGlobal + 1 + (plyId * 609) + 10 + 105, 30)
     if orgName == "" then
         orgName = "Organisation"
     end
@@ -271,23 +278,24 @@ getPlayerOrgName = function(plyId)
 end
 
 getPlayerOrgID = function(plyId)
-    return globals.get_int(playerOrgGlobal + 1 + (plyId * 609) + 10)
+    return globals.get_int(baseGlobals.playerOrgGlobal + 1 + (plyId * 609) + 10)
 end
 
 joinPlayerOrg = function(plyId)
     local plyOrgId = getPlayerOrgId(plyId)
-    globals.set_int(playerOrgGlobal + 1 + (localplayer:get_player_id() * 609) + 10, plyOrgId)
+    globals.set_int(baseGlobals.playerOrgGlobal + 1 + (localplayer:get_player_id() * 609) + 10, plyOrgId)
 end
 
 ------------------------Set Wanted Level Remote----------------------
 --Global_2657921[bVar0 /*463*/].f_214 playerId
 --Global_2657704[bVar0 /*463*/].f_215 num of stars (0-5)
-local wantedLevelGlobal = 2657921
+baseGlobals.wantedLevelGlobal = 2657921
 giveWantedLevel = function(plyId, numStars)
-    globals.set_int(wantedLevelGlobal + 1 + (localplayer:get_player_id() * 463) + 214, plyId)
-    globals.set_int(wantedLevelGlobal + 1 + (localplayer:get_player_id() * 463) + 215, numStars)
+    globals.set_int(baseGlobals.wantedLevelGlobal + 1 + (localplayer:get_player_id() * 463) + 214, plyId)
+    globals.set_int(baseGlobals.wantedLevelGlobal + 1 + (localplayer:get_player_id() * 463) + 215, numStars)
 end
 
+----------------------------------------------------------------
 ---------------------Get PlayerVehicleBlipType------------------
 -- Helper Method for working with a set
 function utils_Set(list)
@@ -329,7 +337,7 @@ shortformBlips = {
     ["JUNK PARACHUTE"] = "PRCH",
     ["CLOTHES"] = "CLOTH"
 }
-local playerBlipTypeGlobal = 2657921
+baseGlobals.playerBlipTypeGlobal = 2657921
 local vehicle_blips = utils_Set({ 262144, 262145, 262148, 262149, 262156, 262208, 262212, 262276, 262277, 262660, 262661, 262724, 262784, 262789, 262788, 786564, 2627888, 2359300 })
 local plane_ghost_blips = utils_Set({ 8388612, 8650884, 8651332, 8651396, 8651397, 8650756, 8650757, 8650820, 8651268, 8651269 })
 local ultralight_ghost_blips = utils_Set({ 262676, 262740 })
@@ -351,7 +359,7 @@ local clothes_store = utils_Set({ 2097282, 2097154 })
 local heist_planning_board = utils_Set({ 704 })
 local loading_blips = utils_Set({ 0, 6 })
 getPlayerBlipType = function(plyId)
-    local plyBlip = globals.get_int(playerBlipTypeGlobal + (plyId * 463) + 73 + 3)
+    local plyBlip = globals.get_int(baseGlobals.playerBlipTypeGlobal + (plyId * 463) + 73 + 3)
 
     if vehicle_blips[plyBlip] then
         return "VEHICLE"
@@ -399,24 +407,28 @@ getPlayerBlipType = function(plyId)
 end
 
 getPlayerBlip = function(plyId)
-    return globals.get_int(playerBlipTypeGlobal + (plyId * 463) + 73 + 3)
+    return globals.get_int(baseGlobals.playerBlipTypeGlobal + (plyId * 463) + 73 + 3)
 end
 
+----------------------------------------------------------------
 ---------------------Podium Vehicle Changer---------------------
+baseGlobals.podiumVehicleBaseGlobal = 4622746
 function setPodiumVehicle(vehicle)
-    globals.set_int(4622746, vehicle)
+    globals.set_int(baseGlobals.podiumVehicleBaseGlobal, vehicle)
 end
 
-------------------Bounty Functions------------------------------
+
+------------------------------------------------------------------
+------------------Bounty Functions--------------------------------
 ---CREDITS GO ENTIRELY TO APPLEVEGASS!!!!
 -- 1.67 globals. Found by: (AppleVegas), updated for 1.69 by Quad_Plex
 --easily updated by looking for TXT_BNTY_NPC1 in freemode.c
 --Global_2359296[func_900() /*5569*/].f_5151.f_14
-local global_bounty_base = 2738587
-local global_overrideBounty = 262145
-local global_selfBounty_value = 2359296 + 1 + (0 * 5569) + 5151 + 14
+baseGlobals.global_bounty_base = 2738587
+baseGlobals.global_overrideBounty = 262145
+baseGlobals.global_selfBounty_value = 2359296 + 1 + (0 * 5569) + 5151 + 14
 --trigger needs to be 0
-local global_selfBounty_trigger = global_bounty_base + 1893 + 57
+baseGlobals.global_selfBounty_trigger = baseGlobals.global_bounty_base + 1893 + 57
 local minPay = 1000
 local function calculateFee(amount)
     return amount > minPay and (amount - minPay) * -1 or minPay - amount
@@ -424,26 +436,26 @@ end
 
 function overrideBounty(amount)
     local fee = calculateFee(amount)
-    globals.set_int(global_overrideBounty + 2348, minPay)
-    globals.set_int(global_overrideBounty + 2349, minPay)
-    globals.set_int(global_overrideBounty + 2350, minPay)
-    globals.set_int(global_overrideBounty + 2351, minPay)
-    globals.set_int(global_overrideBounty + 2352, minPay)
-    globals.set_int(global_overrideBounty + 7178, fee)
+    globals.set_int(baseGlobals.global_overrideBounty + 2348, minPay)
+    globals.set_int(baseGlobals.global_overrideBounty + 2349, minPay)
+    globals.set_int(baseGlobals.global_overrideBounty + 2350, minPay)
+    globals.set_int(baseGlobals.global_overrideBounty + 2351, minPay)
+    globals.set_int(baseGlobals.global_overrideBounty + 2352, minPay)
+    globals.set_int(baseGlobals.global_overrideBounty + 7178, fee)
 end
 
 function resetOverrideBounty()
-    globals.set_int(global_overrideBounty + 2348, 2000)
-    globals.set_int(global_overrideBounty + 2349, 4000)
-    globals.set_int(global_overrideBounty + 2350, 6000)
-    globals.set_int(global_overrideBounty + 2351, 8000)
-    globals.set_int(global_overrideBounty + 2352, 10000)
-    globals.set_int(global_overrideBounty + 7178, 1000)
+    globals.set_int(baseGlobals.global_overrideBounty + 2348, 2000)
+    globals.set_int(baseGlobals.global_overrideBounty + 2349, 4000)
+    globals.set_int(baseGlobals.global_overrideBounty + 2350, 6000)
+    globals.set_int(baseGlobals.global_overrideBounty + 2351, 8000)
+    globals.set_int(baseGlobals.global_overrideBounty + 2352, 10000)
+    globals.set_int(baseGlobals.global_overrideBounty + 7178, 1000)
 end
 
 function sendBountyToYourself(money)
-    globals.set_int(global_selfBounty_value, money)
-    globals.set_int(global_selfBounty_trigger, 0)
+    globals.set_int(baseGlobals.global_selfBounty_value, money)
+    globals.set_int(baseGlobals.global_selfBounty_trigger, 0)
 end
 
 function sendBounty(id, amount, skipOverride)
@@ -455,27 +467,28 @@ function sendBounty(id, amount, skipOverride)
     if not skipOverride then
         overrideBounty(amount)
     end
-    globals.set_int(global_bounty_base + 4571, id)
-    globals.set_int(global_bounty_base + 4571 + 1, 1)
-    globals.set_bool(global_bounty_base + 4571 + 2 + 1, true)
+    globals.set_int(baseGlobals.global_bounty_base + 4571, id)
+    globals.set_int(baseGlobals.global_bounty_base + 4571 + 1, 1)
+    globals.set_bool(baseGlobals.global_bounty_base + 4571 + 2 + 1, true)
     sleep(0.5)
     if not skipOverride then
         resetOverrideBounty()
     end
 end
 
+--------------------------------------------------------------
 --------------------------Host Check--------------------------
 --Global_2650416.f_1
-local hostCheckGlobal = 2650416 + 1
+baseGlobals.hostCheckGlobal = 2650416 + 1
 function getScriptHostPlayerID()
-    return globals.get_int(hostCheckGlobal)
+    return globals.get_int(baseGlobals.hostCheckGlobal)
 end
 
 ---------------------------Host Kick--------------------------
 --Global_1877042[PLAYER::PLAYER_ID()]
-local playerHostKickGlobal = 1877042
+baseGlobals.playerHostKickGlobal = 1877042
 function hostKick(plyId)
-    globals.set_int(playerHostKickGlobal + 1 + (plyId), 1)
+    globals.set_int(baseGlobals.playerHostKickGlobal + 1 + (plyId), 1)
 end
 
 --------------------Spectator Detection--------------------------------
@@ -486,14 +499,14 @@ end
 --Scanned:
 --SpecdPlayerId: 2672741
 
-local specPlayerIDGlobal = 2672741
-local spectatingPlayerBaseGlobal = 2657921
+baseGlobals.specPlayerIDGlobal = 2672741
+baseGlobals.spectatingPlayerBaseGlobal = 2657921
 function getIsTrackedPedVisibleState(plyId)
-    return globals.get_int(spectatingPlayerBaseGlobal + 1 + (plyId * 463) + 33)
+    return globals.get_int(baseGlobals.spectatingPlayerBaseGlobal + 1 + (plyId * 463) + 33)
 end
 
 function getIsVisibleToScriptState(plyId)
-    return globals.get_int(spectatingPlayerBaseGlobal + 1 + (plyId * 463) + 34)
+    return globals.get_int(baseGlobals.spectatingPlayerBaseGlobal + 1 + (plyId * 463) + 34)
 end
 
 function isSpectatingMe(plyId)
@@ -503,12 +516,12 @@ function isSpectatingMe(plyId)
     local localplayerID = localplayer:get_player_id()
     if localplayerID == -1 and globalLocalplayerID ~= -1 then localplayerID = globalLocalplayerID end
     local isWatchingMe = checkBit(visibleState, localplayerID)
-    return isWatchingMe and distanceBetween(player.get_player_ped(), ply) > 200
+    return isWatchingMe and distanceBetween(player.get_player_ped(), ply) > 220
 end
 
 function amISpectating(plyId)
     --Check the scanned Global first, only works in TV spectator mode, not modest's Quick Spectate
-    if globals.get_int(specPlayerIDGlobal) == plyId then return true end
+    if globals.get_int(baseGlobals.specPlayerIDGlobal) == plyId then return true end
     local ply = player.get_player_ped(plyId)
     if not ply then return end
     local ownVisibleState = getIsTrackedPedVisibleState(localplayer:get_player_id())
@@ -516,16 +529,17 @@ function amISpectating(plyId)
     return amIWatching and distanceBetween(player.get_player_ped(), ply) > 200
 end
 
+---------------------------------------------------------------------------
 ----------------------------Player Bounty Info-----------------------------
 ---playerBountyAmount: Global_1835505.f_4[PLAYER::PLAYER_ID() /*3*/].f_1
-local playerBountyAmountGlobal = 1835505
+baseGlobals.playerBountyAmountGlobal = 1835505
 
 hasBounty = function(plyId)
     return getPlayerBountyAmount(plyId) > 0
 end
 
 getPlayerBountyAmount = function(plyId)
-    return globals.get_int(playerBountyAmountGlobal + 4 + 1 + (plyId * 3) + 1)
+    return globals.get_int(baseGlobals.playerBountyAmountGlobal + 4 + 1 + (plyId * 3) + 1)
 end
 
 -------------------Distance function----------------------------
