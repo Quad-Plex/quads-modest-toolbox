@@ -1,18 +1,10 @@
---Todo: add elements to configSub to enable/disable hotkeys and more settings
--- Define the hotkeys data
-local success, hotkeysData = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/HOTKEY_CONFIG.json")
-if success then
-    print("Hotkey Configuration loaded successfully!!")
-else
-    error("Error loading Hotkey Configuration!", 0)
-end
-
 --Del, Lose Wanted level
 local loseWantedLevelHotkey
 menu.register_callback('ToggleWantedLevelHotkey', function()
     if not loseWantedLevelHotkey then
-        loseWantedLevelHotkey = menu.register_hotkey(keycodes.DEL_KEY, function()
+        loseWantedLevelHotkey = menu.register_hotkey(find_keycode("ToggleWantedLevelHotkey"), function()
             menu.clear_wanted_level()
+            menu.set_bribe_authorities(not menu.get_bribe_authorities())
             displayHudBanner("LOSE_WANTED", "LEST_NCOPS", "", 109)
         end)
     else
@@ -25,7 +17,7 @@ end)
 local maxHealthArmorHotkey
 menu.register_callback('ToggleHealthAndArmorHotkey', function()
     if not maxHealthArmorHotkey then
-        maxHealthArmorHotkey = menu.register_hotkey(keycodes.F6_KEY, function()
+        maxHealthArmorHotkey = menu.register_hotkey(find_keycode("ToggleHealthAndArmorHotkey"), function()
             menu.heal_all()
             menu.max_all_ammo()
             displayHudBanner("CHEAT_HEALTH_ARMOR", "PIM_FULL1", "", 109)
@@ -40,7 +32,7 @@ end)
 local repairVehicleHotkey
 menu.register_callback('ToggleRepairVehicleHotkey', function()
     if not repairVehicleHotkey then
-        repairVehicleHotkey = menu.register_hotkey(keycodes.F7_KEY, function()
+        repairVehicleHotkey = menu.register_hotkey(find_keycode("ToggleRepairVehicleHotkey"), function()
             menu.repair_online_vehicle()
             displayHudBanner("BLIP_402", "", "", 109)
         end)
@@ -54,7 +46,7 @@ end)
 local vehicleGodmodeHotkey
 menu.register_callback('ToggleVehicleGodmodeHotkey', function()
     if not vehicleGodmodeHotkey then
-        vehicleGodmodeHotkey = menu.register_hotkey(keycodes.F8_KEY, function()
+        vehicleGodmodeHotkey = menu.register_hotkey(find_keycode("ToggleVehicleGodmodeHotkey"), function()
             if localplayer:is_in_vehicle() then
                 localplayer:get_current_vehicle():set_godmode(not localplayer:get_current_vehicle():get_godmode())
 
@@ -75,7 +67,7 @@ end)
 local godmodeRagdollHotkey
 menu.register_callback('ToggleGodmodeRagdollHotkey', function()
     if not godmodeRagdollHotkey then
-        godmodeRagdollHotkey = menu.register_hotkey(keycodes.F9_KEY, function()
+        godmodeRagdollHotkey = menu.register_hotkey(find_keycode("ToggleGodmodeRagdollHotkey"), function()
             localplayer:set_godmode(not localplayer:get_godmode())
             if localplayer:get_godmode() then
                 localplayer:set_no_ragdoll(true)
@@ -98,7 +90,7 @@ end)
 local suicideHotkey
 menu.register_callback('ToggleSuicideHotkey', function()
     if not suicideHotkey then
-        suicideHotkey = menu.register_hotkey(keycodes.F4_KEY, function()
+        suicideHotkey = menu.register_hotkey(find_keycode("ToggleSuicideHotkey"), function()
             menu.suicide_player()
         end)
     else
@@ -110,7 +102,7 @@ end)
 local enterPVHotkey
 menu.register_callback('ToggleEnterPVHotkey', function()
     if not enterPVHotkey then
-        enterPVHotkey = menu.register_hotkey(keycodes.F3_KEY, function()
+        enterPVHotkey = menu.register_hotkey(find_keycode("ToggleEnterPVHotkey"), function()
             menu.enter_personal_vehicle()
         end)
     else
@@ -122,7 +114,7 @@ end)
 local teleportWaypointHotkey
 menu.register_callback('ToggleTeleportToWaypointHotkey', function()
     if not teleportWaypointHotkey then
-        teleportWaypointHotkey = menu.register_hotkey(keycodes.F1_KEY, function()
+        teleportWaypointHotkey = menu.register_hotkey(find_keycode("ToggleTeleportToWaypointHotkey"), function()
             menu.teleport_to_waypoint()
         end)
     else
@@ -134,7 +126,7 @@ end)
 local teleportObjectiveHotkey
 menu.register_callback('ToggleTeleportToObjectiveHotkey', function()
     if not teleportObjectiveHotkey then
-        teleportObjectiveHotkey = menu.register_hotkey(keycodes.F2_KEY, function()
+        teleportObjectiveHotkey = menu.register_hotkey(find_keycode("ToggleTeleportToObjectiveHotkey"), function()
             menu.teleport_to_objective()
         end)
     else
@@ -143,22 +135,29 @@ menu.register_callback('ToggleTeleportToObjectiveHotkey', function()
     end
 end)
 
-local function sortHotkeysData()
-    table.sort(hotkeysData, function(a, b)
-        return a.name < b.name
-    end)
-end
-
 -- Function to add all the hotkey toggles
 local function addHotkeyToggles()
-    sortHotkeysData()
-    for _, hotkeyData in ipairs(hotkeysData) do
+    for i, hotkeyData in ipairs(hotkeysData) do
         configSub:add_toggle(hotkeyData.name .. " Hotkey", function()
             return hotkeyData.toggleVar
         end, function(toggle)
             hotkeyData.toggleVar = toggle
+            hotkeysData[i]=hotkeyData
             menu.emit_event(hotkeyData.event)
             json.savefile("scripts/quads_toolbox_scripts/toolbox_data/HOTKEY_CONFIG.json", hotkeysData)
+        end)
+        configSub:add_array_item("", indexedKeycodes, function()
+            return hotkeyData.keycode
+        end, function(value)
+            hotkeyData.keycode = value
+            hotkeysData[i]=hotkeyData
+            json.savefile("scripts/quads_toolbox_scripts/toolbox_data/HOTKEY_CONFIG.json", hotkeysData)
+            if hotkeyData.toggleVar then
+                --Hotkey is already enabled, so we need to toggle it twice to un-set it and then set it to the new keycode
+                menu.emit_event(hotkeyData.event)
+                sleep(0.1)
+                menu.emit_event(hotkeyData.event)
+            end
         end)
         if hotkeyData.toggleVar then menu.emit_event(hotkeyData.event) end
     end

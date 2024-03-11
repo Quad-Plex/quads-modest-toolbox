@@ -22,7 +22,7 @@ end)
 local offradarHotkey
 menu.register_callback('ToggleOffradarHotkey', function()
 	if not offradarHotkey then
-		offradarHotkey = menu.register_hotkey(keycodes.F10_KEY, offRadar)
+		offradarHotkey = menu.register_hotkey(find_keycode("ToggleOffradarHotkey"), offRadar)
 	else
 		menu.remove_hotkey(offradarHotkey)
 		offradarHotkey = nil

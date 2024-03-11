@@ -1389,7 +1389,7 @@ end
 local randomVehicleHotkey
 menu.register_callback('ToggleRandomVehicleHotkey', function()
     if not randomVehicleHotkey then
-        randomVehicleHotkey = menu.register_hotkey(keycodes.F11_KEY, function()
+        randomVehicleHotkey = menu.register_hotkey(find_keycode("ToggleRandomVehicleHotkey"), function()
             giveRandomVehicle(localplayer, nil)
             displayHudBanner("HUD_RANDOM", "FMSTP_PRCL3", "", 109)
         end)
@@ -1411,7 +1411,7 @@ end)
 local emergencyStopHotkey
 menu.register_callback('ToggleLoopStopHotkey', function()
     if not emergencyStopHotkey then
-        emergencyStopHotkey = menu.register_hotkey(keycodes.DECIMAL_KEY, function()
+        emergencyStopHotkey = menu.register_hotkey(find_keycode("ToggleLoopStopHotkey"), function()
             auto_teleport = false
             auto_explode = false
             auto_storm = false

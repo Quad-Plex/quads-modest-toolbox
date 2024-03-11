@@ -71,7 +71,7 @@ end)
 local atomizerGunHotkey
 menu.register_callback('ToggleAtomizerHotkey', function()
     if not atomizerGunHotkey then
-        atomizerGunHotkey = menu.register_hotkey(keycodes.RIGHT_SHIFT_KEY, toggleAtomizerGun)
+        atomizerGunHotkey = menu.register_hotkey(find_keycode("ToggleAtomizerHotkey"), toggleAtomizerGun)
     else
         menu.remove_hotkey(atomizerGunHotkey)
         atomizerGunHotkey = nil
@@ -94,7 +94,7 @@ end)
 local explosionGunHotkey
 menu.register_callback('ToggleExplosionGunHotkey', function()
     if not explosionGunHotkey then
-        explosionGunHotkey = menu.register_hotkey(keycodes.RIGHT_CONTROL_KEY, toggleExplosionGun)
+        explosionGunHotkey = menu.register_hotkey(find_keycode("ToggleExplosionGunHotkey"), toggleExplosionGun)
     else
         menu.remove_hotkey(explosionGunHotkey)
         explosionGunHotkey = nil

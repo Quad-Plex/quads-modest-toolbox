@@ -68,7 +68,7 @@ miscOptionsSub:add_toggle("Noclip:", function() return noclipToggle end, functio
 local noclipHotkey
 menu.register_callback('ToggleNoclipHotkey', function()
 	if not noclipHotkey then
-		noclipHotkey = menu.register_hotkey(keycodes.DIVIDE_KEY, function()
+		noclipHotkey = menu.register_hotkey(find_keycode("ToggleNoclipHotkey"), function()
 			noclipToggle = not noclipToggle
 			NoClip(noclipToggle)
 		end)

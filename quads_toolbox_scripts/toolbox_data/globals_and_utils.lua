@@ -1,6 +1,10 @@
 function null()
 end
 
+-------------------------------------------------------------
+-------------------- SORTED VEHICLE LIST --------------------
+-------------------------------------------------------------
+
 --Pre-sort this table so we only do it once
 sorted_vehicles = {}
 for hash, vehicle in pairs(VEHICLE) do
@@ -35,6 +39,42 @@ function addVehicleSpawnMenu(ply, sub)
     end
 end
 
+-------------------------------------------------------------
+------------------JSON HOTKEY/KEYCODE DATA-------------------
+-------------------------------------------------------------
+-- Define the hotkeys data
+success, hotkeysData = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/HOTKEY_CONFIG.json")
+if success then
+    print("Hotkey Configuration loaded successfully!!")
+else
+    error("Error loading Hotkey Configuration!", 0)
+end
+
+table.sort(hotkeysData, function(a, b)
+    return a.name < b.name
+end)
+
+indexedKeycodes = {}
+for key, keyCode in pairs(keycodes) do
+    indexedKeycodes[keyCode]=key
+end
+
+sortedKeycodes = {}
+for k in pairs(keycodes) do
+    table.insert(sortedKeycodes, k)
+end
+table.sort(sortedKeycodes)
+
+
+function find_keycode(event_name)
+    success, hotkeysData = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/HOTKEY_CONFIG.json")
+    for i=1, #hotkeysData do
+        if hotkeysData[i].event == event_name then
+            return hotkeysData[i].keycode
+        end
+    end
+    return nil
+end
 ------------------Message Display-----------------------
 local base_offset = 2672741 + 2518 + 1
 --Credits to Kiddion for finding this stuff in an older version
@@ -101,7 +141,7 @@ end
 local altSpawnerHotkey
 menu.register_callback('ToggleAltSpawnerHotkey', function()
     if not altSpawnerHotkey then
-        altSpawnerHotkey = menu.register_hotkey(keycodes.PAGE_UP_KEY, toggleAlternativeSpawner)
+        altSpawnerHotkey = menu.register_hotkey(find_keycode("ToggleAltSpawnerHotkey"), toggleAlternativeSpawner)
     else
         menu.remove_hotkey(altSpawnerHotkey)
         altSpawnerHotkey = nil

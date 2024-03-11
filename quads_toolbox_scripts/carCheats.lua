@@ -137,7 +137,7 @@ end
 local carBoostHotkey
 menu.register_callback('ToggleCarBoostHotkey', function()
     if not carBoostHotkey then
-        carBoostHotkey = menu.register_hotkey(keycodes.INS_KEY, carBoost)
+        carBoostHotkey = menu.register_hotkey(find_keycode("ToggleCarBoostHotkey"), carBoost)
     else
         menu.remove_hotkey(carBoostHotkey)
         carBoostHotkey = nil
@@ -198,7 +198,7 @@ end
 local carJumpHotkey
 menu.register_callback('ToggleCarjumpHotkey', function()
     if not carJumpHotkey then
-        carJumpHotkey = menu.register_hotkey(keycodes.DECIMAL_KEY, carJump)
+        carJumpHotkey = menu.register_hotkey(find_keycode("ToggleCarjumpHotkey"), carJump)
     else
         menu.remove_hotkey(carJumpHotkey)
         carJumpHotkey = nil
@@ -222,7 +222,7 @@ end
 local massiveCarHotkey
 menu.register_callback('ToggleMassiveCarHotkey', function()
     if not massiveCarHotkey then
-        massiveCarHotkey = menu.register_hotkey(keycodes.F12_KEY, makeCarMassive)
+        massiveCarHotkey = menu.register_hotkey(find_keycode("ToggleMassiveCarHotkey"), makeCarMassive)
     else
         menu.remove_hotkey(massiveCarHotkey)
         massiveCarHotkey = nil

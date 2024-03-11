@@ -60,7 +60,7 @@ gunOptionsSub:add_toggle("Enable Car-A-Pult", function() return enabled end, car
 local carapultHotkey
 menu.register_callback('ToggleCarapultHotkey', function()
 	if not carapultHotkey then
-		carapultHotkey = menu.register_hotkey(keycodes.MULTIPLY_KEY, carAPult)
+		carapultHotkey = menu.register_hotkey(find_keycode("ToggleCarapultHotkey"), carAPult)
 	else
 		menu.remove_hotkey(carapultHotkey)
 		carapultHotkey = nil
