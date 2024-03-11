@@ -1,8 +1,9 @@
 --Load all required constants
 require("scripts/quads_toolbox_scripts/toolbox_data/VEHICLES_WEAPONS")
 require("scripts/quads_toolbox_scripts/toolbox_data/PED_FLAG_TABLE")
-require("scripts/quads_toolbox_scripts/toolbox_data/PICKUPS")
 require("scripts/quads_toolbox_scripts/toolbox_data/KEYCODE_CONSTANTS")
+require("scripts/quads_toolbox_scripts/toolbox_data/MODEL_HASHES")
+require("scripts/quads_toolbox_scripts/toolbox_data/PICKUP_HASHES")
 
 --Initialize scripts one by one
 require("scripts/quads_toolbox_scripts/toolbox_data/globals_and_utils")

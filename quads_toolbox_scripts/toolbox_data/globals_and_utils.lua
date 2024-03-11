@@ -2,7 +2,7 @@ function null()
 end
 
 --Pre-sort this table so we only do it once
-local sorted_vehicles = {}
+sorted_vehicles = {}
 for hash, vehicle in pairs(VEHICLE) do
     table.insert(sorted_vehicles, { hash, vehicle })
 end

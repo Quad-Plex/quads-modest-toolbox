@@ -1,10 +1,10 @@
 VEHICLE = {}
 VEHICLE[-1706603682] = { "Avisa", "Boats" }
-VEHICLE[1033245328] = { "Dinghy", "Boats" }
-VEHICLE[276773164] = { "Dinghy2", "Boats" }
-VEHICLE[509498602] = { "Dinghy3", "Boats" }
-VEHICLE[867467158] = { "Dinghy4", "Boats" }
-VEHICLE[867467158] = { "Dinghy5", "Boats" }
+VEHICLE[0x3D961290] = { "Dinghy", "Boats" }
+VEHICLE[0x107F392C] = { "Dinghy2", "Boats" }
+VEHICLE[0x1E5E54EA] = { "Dinghy3", "Boats" }
+VEHICLE[0x33B47F96] = { "Dinghy4", "Boats" }
+VEHICLE[0xC58DA34A] = { "Dinghy5", "Boats" }
 VEHICLE[861409633] = { "Jetmax", "Boats" }
 VEHICLE[1336872304] = { "Kosatka", "Boats" }
 VEHICLE[-1043459709] = { "Marquis", "Boats" }
