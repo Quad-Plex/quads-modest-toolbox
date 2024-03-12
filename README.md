@@ -1,5 +1,7 @@
 TODO:
 - Write a global updater.lua that allows changing of base globals and has 'Test' buttons under each base global int range
+- See if GPS coordinates can be controlled through globals, then add a 'Track Player with GPS' option
+- Show disabled flags option for pedflags sub
 - Add an Action to Stop All Loop Actions
   - perhaps separate the loop actions into a new "Troll Loops" sub aswell
 - Add Readme and FAQ description for unclear actions

@@ -40,17 +40,23 @@ miscOptionsSub:add_action("Refill Inventory", function()
 end)
 
 ----------------Sessanta shit------------------
-local base_local = 306
-miscOptionsSub:add_action("New Sessanta Vehicle", function()
+baseGlobals.sessantaShit = {}
+baseGlobals.sessantaShit.base_local = 307
+local function newSessantaVehicle()
 	local shop_controller = script("shop_controller")
 	if shop_controller and shop_controller:is_active() then
 		stats.set_int("MP" .. stats.get_int("MPPLY_LAST_MP_CHAR") .. "_TUNER_CLIENT_VEHICLE_POSSIX", 1)
-		shop_controller:set_int(base_local + 1, 0)
-		shop_controller:set_int(base_local + 2, 0)
-		shop_controller:set_int(base_local + 3, 1)
-		shop_controller:set_int(base_local, 3)
+		shop_controller:set_int(baseGlobals.sessantaShit.base_local + 1, 0)
+		shop_controller:set_int(baseGlobals.sessantaShit.base_local + 2, 0)
+		shop_controller:set_int(baseGlobals.sessantaShit.base_local + 3, 1)
+		shop_controller:set_int(baseGlobals.sessantaShit.base_local, 3)
 	end
-end, function()
+end
+baseGlobals.sessantaShit.testFunction = function()
+	newSessantaVehicle()
+end
+baseGlobals.sessantaShit.testFunctionExplanation = "Trigger new Sessanta Vehicle"
+miscOptionsSub:add_action("New Sessanta Vehicle", function() newSessantaVehicle() end , function()
 	return script("shop_controller"):is_active()
 end)
 
