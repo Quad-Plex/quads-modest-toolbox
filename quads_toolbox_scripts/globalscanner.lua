@@ -137,4 +137,5 @@ local function updateGlobalScanner(sub)
     ::finish::
 end
 
+local scannerMenu
 scannerMenu = debugToolsSub:add_submenu("(((( Global Scanner ))))", function() updateGlobalScanner(scannerMenu) end)

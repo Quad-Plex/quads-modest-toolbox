@@ -1,10 +1,15 @@
 TODO:
-- Write a global updater.lua that allows changing of base globals and has 'Test' buttons under each base global int range#
+- Write a global updater.lua that allows changing of base globals and has 'Test' buttons under each base global int range
+- Add an Action to Stop All Loop Actions
+  - perhaps separate the loop actions into a new "Troll Loops" sub aswell
 - Add Readme and FAQ description for unclear actions
 - More testing with the invisible MOC maybe
 - More testing with the speedometer (find displayboxtype without fade-in maybe?)
 - Vehicle Spawner with godmode spawner option
   - maybe make each spawner option have three buttons - Spawner #1, Spawner #2 and Godmode Toggle
+  - also save car to favorites list
+    - if favorites list exists, add a 'favorites' list on top separated by a row of ------
+    - add 'remove car from favorites' for cars in the list
 - improve globalscanner
   - search for value lower than x or greater than x
   - Make found globals be their own submenu with more options
@@ -27,3 +32,4 @@ DONE:
 - ~~Look for displaybannerMessages for Water/Smoke/Fire for weaponMods~~
 - ~~FIX THE PICKUPS/MODEL LIST JFC what have I done there~~
 - ~~make hotkeys customizable with array actions containing the hotkeys~~
+- ~~refactor base globals into indexable table~~

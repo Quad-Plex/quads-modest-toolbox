@@ -39,23 +39,6 @@ miscOptionsSub:add_action("Refill Inventory", function()
 	refillInventory()
 end)
 
---------------------------------
---Open all car doors
---------------------------------
-local openTypes = { [0]="Unlock All", "Lock All"}
-local openType = 0
-miscOptionsSub:add_array_item("Car Hotwire Kit:", openTypes, function() return openType end, function(value)
-	openType = value
-	for veh in replayinterface.get_vehicles() do
-		if openTypes[openType] == "Unlock All" then
-			veh:set_door_lock_state(1)
-		else
-			veh:set_door_lock_state(2)
-		end
-	end
-end)
-
-
 ----------------Sessanta shit------------------
 local base_local = 306
 miscOptionsSub:add_action("New Sessanta Vehicle", function()

@@ -6,7 +6,8 @@ require("scripts/quads_toolbox_scripts/toolbox_data/MODEL_HASHES")
 require("scripts/quads_toolbox_scripts/toolbox_data/PICKUP_HASHES")
 
 --Initialize scripts one by one
-require("scripts/quads_toolbox_scripts/toolbox_data/globals_and_utils")
+require("scripts/quads_toolbox_scripts/toolbox_data/global_functions")
+require("scripts/quads_toolbox_scripts/toolbox_data/util_functions")
 toolboxSub = menu.add_submenu("--== ☣️ Quad's Modest Toolbox ☣️ ==--")
 
 text(toolboxSub, centeredText("     ☣️ Quad's Modest Toolbox ☣️"))
@@ -16,7 +17,7 @@ require("scripts/quads_toolbox_scripts/ultimate_playerlist")
 require("scripts/quads_toolbox_scripts/ambientPickupSuite")
 
 vehicleOptionsSub = toolboxSub:add_submenu(centeredText(" 🚗 Vehicle Scripts 🚗"))
-greyText(vehicleOptionsSub, centeredText(" 🚗 Vehicle Options 🚗"))
+greyText(vehicleOptionsSub, centeredText(" ----- 🚗 Vehicle Options 🚗 -----"))
 require("scripts/quads_toolbox_scripts/trafficremover")
 require("scripts/quads_toolbox_scripts/carCheats")
 require("scripts/quads_toolbox_scripts/rainbow_vehicle")
@@ -34,12 +35,13 @@ require("scripts/quads_toolbox_scripts/stats")
 require("scripts/quads_toolbox_scripts/misc")
 
 configSub = toolboxSub:add_submenu(centeredText("    ⚙️ Hotkey Configuration ⚙️"))
-greyText(configSub, centeredText(" ⚙️ Hotkey Config ⚙️"))
+text(configSub, centeredText("    ⚙️ Hotkey Config ⚙️"))
 require("scripts/quads_toolbox_scripts/hotkeys")
 
 debugToolsSub = toolboxSub:add_submenu(centeredText(" 📟 Debug Tools 📟"))
 greyText(debugToolsSub, centeredText(" 📟 Debug Tools "))
 require("scripts/quads_toolbox_scripts/globalscanner")
+require("scripts/quads_toolbox_scripts/globalupdater")
 
 greyText(toolboxSub, "--------------------------------------")
 
@@ -62,5 +64,8 @@ text(creditsSub, "Surely others I've forgotten, please")
 text(creditsSub, "contact me if you feel that your")
 text(creditsSub, "name belongs here <3")
 text(creditsSub, "        Peace, Quad_Plex")
+local secretMenu
+secretMenu = creditsSub:add_submenu("Secret Menu...")
+secretMenu:add_action("Don't press this button!", function() displayHudBanner("FGTXT_F_F3", "RESPAWN_W", "", 109) end)
 
 menu.register_callback("OnScriptsLoaded", function() menu.emit_event("startModWatcher")  end)

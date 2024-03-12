@@ -104,7 +104,7 @@ local function collectAllPickups()
 	collectPickups()
 end
 
-function createCustomPickupWithCustomModel(pickup_hash, model, value, ply)
+local function createCustomPickupWithCustomModel(pickup_hash, model, value, ply)
 	local pos = ply and ply:get_position() or localplayer:get_position()
 	local tries = 0
 	if not value then value = 69 end

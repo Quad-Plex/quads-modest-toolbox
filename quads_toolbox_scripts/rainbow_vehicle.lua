@@ -10,9 +10,6 @@ local mul = 5
 local affect_traffic = false
 local isRunning = false
 
-local function null()
-end
-
 function randomColor(_, _, _)
     return math.random(0, 255), math.random(0, 255), math.random(0, 255)
 end
@@ -97,9 +94,7 @@ end
 
 local colorStyle = 1
 local colorStyles = { "Rainbow", "Strobelight", "Random" }
-vehicleOptionsSub:add_bare_item("", function()
-    return "------- 🌈 Color Changer -------"
-end, null, null, null)
+greyText(vehicleOptionsSub, "------- 🌈 Color Changer -------")
 vehicleOptionsSub:add_array_item("Car Color Changer:", colorStyles, function()
     return colorStyle
 end, function(value)

@@ -1433,7 +1433,7 @@ menu.register_callback('ToggleLoopStopHotkey', function()
     end
 end)
 
-function vehicleRainThread()
+local function vehicleRainThread()
     while auto_action_player_id and auto_rain do
         if player.get_player_name(auto_action_player_id) ~= auto_action_player_name then
             auto_rain = false
@@ -1446,7 +1446,7 @@ end
 
 menu.register_callback('startRainThread', vehicleRainThread)
 
-function flyThread()
+local function flyThread()
     sleep(0.15)
     while auto_fly and auto_yeet do
         if player.get_player_name(auto_action_player_id) ~= auto_action_player_name then
@@ -1462,7 +1462,7 @@ menu.register_callback('startFlyThread', flyThread)
 
 local original_pos
 local teleported = false
-function autoTeleportThread()
+local function autoTeleportThread()
     local myPlayer = player.get_player_ped()
 
     if not myPlayer or not auto_teleport then
@@ -1498,7 +1498,7 @@ function autoTeleportThread()
 end
 menu.register_callback('startAutoTeleport', autoTeleportThread)
 
-function autoExplodeThread()
+local function autoExplodeThread()
     while auto_action_player_id and auto_explode do
         if player.get_player_name(auto_action_player_id) ~= auto_action_player_name then
             auto_explode = false
@@ -1510,7 +1510,7 @@ function autoExplodeThread()
 end
 menu.register_callback('startAutoExplode', autoExplodeThread)
 
-function autoVehicleStormThread()
+local function autoVehicleStormThread()
     while auto_action_player_id and auto_storm do
         if player.get_player_name(auto_action_player_id) ~= auto_action_player_name then
             auto_storm = false
@@ -1522,7 +1522,7 @@ function autoVehicleStormThread()
 end
 menu.register_callback('autoVehicleStorm', autoVehicleStormThread)
 
-function autoBikeSpamThread()
+local function autoBikeSpamThread()
     while auto_action_player_id and auto_bike do
         if player.get_player_name(auto_action_player_id) ~= auto_action_player_name then
             auto_bike = false
@@ -1534,7 +1534,7 @@ function autoBikeSpamThread()
 end
 menu.register_callback('autoBikeSpam', autoBikeSpamThread)
 
-function autoRandomCarSpamThread()
+local function autoRandomCarSpamThread()
     while auto_action_player_id and auto_vehicle_spam do
         if player.get_player_name(auto_action_player_id) ~= auto_action_player_name then
             auto_vehicle_spam = false
@@ -1548,7 +1548,7 @@ function autoRandomCarSpamThread()
 end
 menu.register_callback('autoVehicleSpam', autoRandomCarSpamThread)
 
-function autoCableCarSpamThread()
+local function autoCableCarSpamThread()
     while auto_action_player_id and auto_cable_spam do
         if player.get_player_name(auto_action_player_id) ~= auto_action_player_name then
             auto_cable_spam = false
@@ -1562,7 +1562,7 @@ function autoCableCarSpamThread()
 end
 menu.register_callback('autoCableCarSpam', autoCableCarSpamThread)
 
-function trainSpam()
+local function trainSpam()
     local i = 1
     while auto_action_player_id and auto_train_spam do
         if player.get_player_name(auto_action_player_id) ~= auto_action_player_name then
@@ -1576,7 +1576,7 @@ function trainSpam()
 end
 menu.register_callback('trainSpam', trainSpam)
 
-function autoPedSpamThread()
+local function autoPedSpamThread()
     while auto_action_player_id and auto_peds do
         if player.get_player_name(auto_action_player_id) ~= auto_action_player_name then
             auto_peds = false
@@ -1588,7 +1588,7 @@ function autoPedSpamThread()
 end
 menu.register_callback('autoPedSpam', autoPedSpamThread)
 
-function cargoSpamThread()
+local function cargoSpamThread()
     local vehicles = { "Cargoplane", "Jet", "Kosatka", "CableCar" } -- add your vehicle types here
 
     while auto_action_player_id and auto_cargo_spam do
@@ -1611,7 +1611,7 @@ function cargoSpamThread()
 end
 menu.register_callback('autoCargoSpam', cargoSpamThread)
 
-function autoLaunchThread()
+local function autoLaunchThread()
     while auto_action_player_id and auto_launch do
         if player.get_player_name(auto_action_player_id) ~= auto_action_player_name then
             auto_launch = false
@@ -1635,7 +1635,7 @@ local function checkObviousModder(ply, plyName, i)
 end
 
 local modders_cache = {}
-function modWatcher()
+local function modWatcher()
     print("Starting ModWatcher...")
     while true do
         for i = 0, 31 do

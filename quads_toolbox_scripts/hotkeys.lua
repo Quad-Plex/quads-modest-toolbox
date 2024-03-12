@@ -164,6 +164,6 @@ local function addHotkeyToggles()
 end
 
 greyText(configSub, "Changes are saved automatically!!")
-greyText(configSub, "---------------------------------")
+greyText(configSub, "----------------------------------")
 
 addHotkeyToggles()

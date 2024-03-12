@@ -1,3 +1,51 @@
+---------------------------------------------------------------------------
+--Janky Speedometer implementation using HUD messages
+---------------------------------------------------------------------------
+
+local speedDisplayEnabled = false
+function speedDisplay()
+    while true do
+        if speedDisplayEnabled then
+            local myPlayer = player.get_player_ped()
+            local current_vehicle = myPlayer:get_current_vehicle()
+            if current_vehicle == nil or not myPlayer:is_in_vehicle() then
+                return
+            end
+            local velocity = current_vehicle:get_velocity()
+            local abs_velocity = math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y + velocity.z * velocity.z)
+            if speedDisplayEnabled then
+                displayHudBanner("FM_AE_SORT_3", "AMCH_KMHN", math.floor(3.6 * abs_velocity), 109, true)
+            end
+        end
+        sleep(0.1)
+    end
+end
+menu.register_callback('speedDisplay', speedDisplay)
+vehicleOptionsSub:add_toggle("Toggle Speed Display", function()
+    return speedDisplayEnabled
+end, function(toggle)
+    speedDisplayEnabled = toggle
+    menu.emit_event("speedDisplay")
+end)
+
+--------------------------------
+--Open all car doors
+--------------------------------
+local openTypes = { [0]="Unlock All", "Lock All"}
+local openType = 0
+vehicleOptionsSub:add_array_item("Car Doors State:", openTypes, function() return openType end, function(value)
+    openType = value
+    for veh in replayinterface.get_vehicles() do
+        if openTypes[openType] == "Unlock All" then
+            veh:set_door_lock_state(1)
+        else
+            veh:set_door_lock_state(2)
+        end
+    end
+end)
+
+vehicleOptionsSub:add_toggle("Alternative Veh. Spawner", function() return alternative_spawn_toggle end, function(_) toggleAlternativeSpawner() end)
+
 --------------------------------
 --functions for carboost
 local _, cars_data = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/KNOWN_BOOSTED_CARS.json")
@@ -229,35 +277,3 @@ menu.register_callback('ToggleMassiveCarHotkey', function()
     end
 end)
 vehicleOptionsSub:add_action("Set Car Mass to 26969", makeCarMassive)
-
----------------------------------------------------------------------------
---Janky Speedometer implementation using HUD messages
----------------------------------------------------------------------------
-
-local speedDisplayEnabled = false
-function speedDisplay()
-    while true do
-        if speedDisplayEnabled then
-            local myPlayer = player.get_player_ped()
-            local current_vehicle = myPlayer:get_current_vehicle()
-            if current_vehicle == nil or not myPlayer:is_in_vehicle() then
-                return
-            end
-            local velocity = current_vehicle:get_velocity()
-            local abs_velocity = math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y + velocity.z * velocity.z)
-            if speedDisplayEnabled then
-                displayHudBanner("FM_AE_SORT_3", "AMCH_KMHN", math.floor(3.6 * abs_velocity), 109, true)
-            end
-        end
-        sleep(0.1)
-    end
-end
-menu.register_callback('speedDisplay', speedDisplay)
-vehicleOptionsSub:add_toggle("Toggle Speed Display", function()
-    return speedDisplayEnabled
-end, function(toggle)
-    speedDisplayEnabled = toggle
-    menu.emit_event("speedDisplay")
-end)
-
-vehicleOptionsSub:add_toggle("Alternative Veh. Spawner", function() return alternative_spawn_toggle end, function(_) toggleAlternativeSpawner() end)
