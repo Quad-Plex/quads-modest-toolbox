@@ -1,16 +1,16 @@
 TODO:
 - See if GPS coordinates can be controlled through globals, then add a 'Track Player with GPS' option
-  - Hmmm... Can't find it in globals or the scripts I've implemented so far, might not be possible
-- Check if bool    vehicle:get_boost()
-  bool    vehicle:get_boost_active()        nil     vehicle:set_boost(bool value)
-  bool    vehicle:get_boost_enabled()       nil     vehicle:set_boost_enabled(bool value)
-  - can be used to create homing cars that launch towards a player with rocket boost
+  - Hmmm... Can't find it in globals or the scripts I've implemented in my scanner so far, might not be possible
 - Add Readme and FAQ description for unclear actions
 - More testing with the invisible MOC maybe
 - More testing with the speedometer (find displayboxtype without fade-in maybe?)
 - more testing with the displayboxtype that shows a playername, is it configurable?
 
 DONE:
+- ~~Check if bool    vehicle:get_boost()~~
+  ~~bool    vehicle:get_boost_active()        nil     vehicle:set_boost(bool value)~~
+  ~~bool    vehicle:get_boost_enabled()       nil     vehicle:set_boost_enabled(bool value)~~
+  ~~- can be used to create homing cars that launch towards a player with rocket boost~~   Well that was a bust...
 - ~~improve globalscanner~~
   - ~~Search through script locals or globals~~
   - ~~Search for floats and ints~~
