@@ -1,7 +1,5 @@
 TODO:
 - See if GPS coordinates can be controlled through globals, then add a 'Track Player with GPS' option
-- Add an Action to Stop All Loop Actions
-  - perhaps separate the loop actions into a new "Troll Loops" sub aswell
 - Add Readme and FAQ description for unclear actions
 - More testing with the invisible MOC maybe
 - More testing with the speedometer (find displayboxtype without fade-in maybe?)
@@ -23,6 +21,8 @@ TODO:
     - Print global to console
 
 DONE:
+- ~~Add an Action to Stop All Loop Actions~~
+  - ~~perhaps separate the loop actions into a new "Troll Loops" sub aswell~~
 - ~~Show disabled flags option for pedflags sub~~
 - ~~Write a global updater.lua that allows changing of base globals and has 'Test' buttons under each base global int range~~
 - ~~Create separate submenu entries for the script categories~~
