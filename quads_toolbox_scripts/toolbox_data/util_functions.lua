@@ -225,8 +225,6 @@ function printPlayerPos(ply)
     return string.format("%.1fx, %.1fy, %.1fz", pos.x, pos.y, pos.z)
 end
 
-
-
 function getNonPlayerVehicles()
     local playerVehicles = {}
     for i = 0, 31 do
@@ -246,6 +244,35 @@ function getNonPlayerVehicles()
     end
 
     return nonPlayerVehicles
+end
+
+-------------------------Table Helper Functions-------------------------
+function table.contains(table, element)
+    for _, value in pairs(table) do
+        if value == element then
+            return true
+        elseif value[1] == element then
+            return true
+        end
+    end
+    return false
+end
+
+function table.copy(t)
+    local copy = {}
+    for k, v in pairs(t) do
+        copy[k] = v
+    end
+    return copy
+end
+
+--We need this counter for working with non-contingent tables
+function tableCount(table)
+    local count = 0
+    for _ in pairs(table) do
+        count = count + 1
+    end
+    return count
 end
 
 -----------------------Text functions------------------------------
