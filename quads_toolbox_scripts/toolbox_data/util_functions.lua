@@ -58,7 +58,7 @@ local function addVehicleEntry(vehMenu, vehicle, ply)
         createVehicle(vehicle[1], spawnPos)
         if godmodeEnabledSpawn then
             sleep(0.08)
-            findAndEnableGodmodeForVehicle(vehicle[1], ply, spawnPos)
+            findAndEnableGodmodeForVehicle(vehicle[1], spawnPos)
         end
     end)
     vehMenu:add_action("Spawn using Method #2", function()
@@ -69,7 +69,7 @@ local function addVehicleEntry(vehMenu, vehicle, ply)
         alternative_spawn_toggle = oldToggle
         if godmodeEnabledSpawn then
             sleep(0.08)
-            findAndEnableGodmodeForVehicle(vehicle[1], ply, spawnPos)
+            findAndEnableGodmodeForVehicle(vehicle[1], spawnPos)
         end
     end)
     vehMenu:add_toggle("Spawn with Godmode enabled", function() return godmodeEnabledSpawn end, function(n) godmodeEnabledSpawn = n end)
