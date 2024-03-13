@@ -3,11 +3,7 @@ TODO:
 - Add Readme and FAQ description for unclear actions
 - More testing with the invisible MOC maybe
 - More testing with the speedometer (find displayboxtype without fade-in maybe?)
-- Vehicle Spawner with godmode spawner option
-  - maybe make each spawner option have three buttons - Spawner #1, Spawner #2 and Godmode Toggle
-  - also save car to favorites list
-    - if favorites list exists, add a 'favorites' list on top separated by a row of ------
-    - add 'remove car from favorites' for cars in the list
+- more testing with the displayboxtype that shows a playername, is it configurable?
 - improve globalscanner
   - search for value lower than x or greater than x
   - Make found globals be their own submenu with more options
@@ -21,6 +17,11 @@ TODO:
     - Print global to console
 
 DONE:
+- ~~Vehicle Spawner with godmode spawner option~~
+  - ~~maybe make each spawner option have three buttons - Spawner #1, Spawner #2 and Godmode Toggle~~
+  - ~~also save car to favorites list~~
+    - ~~if favorites list exists, add a 'favorites' list on top separated by a row of ------~~
+    - ~~add 'remove car from favorites' for cars in the list~~
 - ~~Add an Action to Stop All Loop Actions~~
   - ~~perhaps separate the loop actions into a new "Troll Loops" sub aswell~~
 - ~~Show disabled flags option for pedflags sub~~

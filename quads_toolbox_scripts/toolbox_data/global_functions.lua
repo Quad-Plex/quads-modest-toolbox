@@ -31,6 +31,7 @@ function displayHudBanner(headline, subHeadline, variable_text, box_type, skipTi
 end
 
 ------------------Vehicle Spawners-----------------------------------
+alternative_spawn_toggle = false
 baseGlobals.vehicleSpawner = {}
 baseGlobals.vehicleSpawner.baseGlobal = 2640095
 baseGlobals.vehicleSpawner.testFunction = function()
@@ -41,13 +42,12 @@ baseGlobals.vehicleSpawner.testFunctionExplanation = "Spawn Youga4 with spawner#
 baseGlobals.vehicleSpawner2 = {}
 baseGlobals.vehicleSpawner2.baseGlobal2 = 2695991
 baseGlobals.vehicleSpawner2.testFunction = function()
+    local oldToggle = alternative_spawn_toggle
     alternative_spawn_toggle = true
     createVehicle(joaat("PoliceOld2"), localplayer:get_position() + localplayer:get_heading() * 5)
-    alternative_spawn_toggle = false
+    alternative_spawn_toggle = oldToggle
 end
 baseGlobals.vehicleSpawner2.testFunctionExplanation = "Spawn PoliceOld2 with spawner#2"
-
-alternative_spawn_toggle = false
 function createVehicle(modelHash, pos, heading)
     if not alternative_spawn_toggle and not player.get_player_ped():is_in_vehicle() then
         globals.set_int(baseGlobals.vehicleSpawner.baseGlobal + 47, modelHash)

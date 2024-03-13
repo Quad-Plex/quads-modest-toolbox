@@ -5,9 +5,28 @@
 function null() end
 
 MAX_INT = 2147483647
+
+local function findAndEnableGodmodeForVehicle(vehicle_hash, checkPos)
+    for veh in replayinterface.get_vehicles() do
+        if veh:get_model_hash() == vehicle_hash and distanceBetween(veh, checkPos, true) < 2 then
+            veh:set_godmode(true)
+        end
+    end
+end
+
 -------------------------------------------------------------
 -------------------- SORTED VEHICLE LIST --------------------
 -------------------------------------------------------------
+
+local success, favoritedCars = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/FAVORITED_CARS.json")
+if success then
+    print("Favorite Cars loaded successfully!!")
+end
+
+-- vehicle = { hash, { name, class} }
+table.sort(favoritedCars, function(a, b)
+    return a[2][1]:upper() < b[2][1]:upper()
+end)
 
 --Pre-sort this table so we only do it once
 sorted_vehicles = {}
@@ -22,24 +41,82 @@ table.sort(sorted_vehicles, function(a, b)
     return a[2][2] < b[2][2]
 end)
 
+local function isInFavorites(veh_hash)
+    for i, favVehicle in ipairs(favoritedCars) do
+        if favVehicle[1] == veh_hash then
+            return i
+        end
+    end
+    return false
+end
+
+local godmodeEnabledSpawn = false
+local function addVehicleEntry(vehMenu, vehicle, ply)
+    greyText(vehMenu, "Spawn " .. vehicle[2][1])
+    vehMenu:add_action("Spawn using Method #1", function()
+        local spawnPos = ply:get_position() + ply:get_heading() * 7
+        createVehicle(vehicle[1], spawnPos)
+        if godmodeEnabledSpawn then
+            sleep(0.08)
+            findAndEnableGodmodeForVehicle(vehicle[1], ply, spawnPos)
+        end
+    end)
+    vehMenu:add_action("Spawn using Method #2", function()
+        local spawnPos = ply:get_position() + ply:get_heading() * 7
+        local oldToggle = alternative_spawn_toggle
+        alternative_spawn_toggle = true
+        createVehicle(vehicle[1], spawnPos)
+        alternative_spawn_toggle = oldToggle
+        if godmodeEnabledSpawn then
+            sleep(0.08)
+            findAndEnableGodmodeForVehicle(vehicle[1], ply, spawnPos)
+        end
+    end)
+    vehMenu:add_toggle("Spawn with Godmode enabled", function() return godmodeEnabledSpawn end, function(n) godmodeEnabledSpawn = n end)
+    vehMenu:add_toggle("Add " .. vehicle[2][1] .. " to favorites", function() return isInFavorites(vehicle[1]) ~= false end, function(add)
+        if add then
+            table.insert(favoritedCars, vehicle)
+            json.savefile("scripts/quads_toolbox_scripts/toolbox_data/FAVORITED_CARS.json", favoritedCars)
+        else
+            local isFavorite = isInFavorites(vehicle[1])
+            if isFavorite then
+                table.remove(favoritedCars, isFavorite)
+                json.savefile("scripts/quads_toolbox_scripts/toolbox_data/FAVORITED_CARS.json", favoritedCars)
+            end
+        end
+    end)
+end
+
+local function buildFavoriteVehiclesSub(ply, categorySub)
+    success, favoritedCars = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/FAVORITED_CARS.json")
+    categorySub:clear()
+    for _, favoriteVehicle in ipairs(favoritedCars) do
+        local vehSub
+        vehSub = categorySub:add_submenu(favoriteVehicle[2][1], function() addVehicleEntry(vehSub, favoriteVehicle, ply) end)
+    end
+end
+
 --Create Vehicle Spawn Menu
 function addVehicleSpawnMenu(ply, sub)
     sub:clear()
+    success, favoritedCars = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/FAVORITED_CARS.json")
     if ply == nil then
         return
     end
     local vehSubs = {}
 
+    if #favoritedCars > 0 then
+        vehSubs["Favorites"] = sub:add_submenu("Favorites", function() buildFavoriteVehiclesSub(ply, vehSubs["Favorites"]) end)
+        greyText(sub, "---------------------------")
+    end
+
     -- vehicle = { hash, { name, class} }
     for _, vehicle in ipairs(sorted_vehicles) do
-        local current_category = vehicle[2][2]
-        if vehSubs[current_category] == nil then
-            vehSubs[current_category] = sub:add_submenu(current_category)
+        if not vehSubs[vehicle[2][2]] then
+            vehSubs[vehicle[2][2]] = sub:add_submenu(vehicle[2][2])
         end
-
-        vehSubs[current_category]:add_action(vehicle[2][1], function()
-            createVehicle(vehicle[1], ply:get_position() + ply:get_heading() * 7)
-        end)
+        local vehSub
+        vehSub = vehSubs[vehicle[2][2]]:add_submenu(vehicle[2][1], function() addVehicleEntry(vehSub, vehicle, ply) end)
     end
 end
 
