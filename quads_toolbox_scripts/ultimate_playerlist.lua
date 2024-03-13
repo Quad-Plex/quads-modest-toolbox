@@ -17,13 +17,28 @@ local auto_launch = false
 local auto_fly = false
 local auto_rain = false
 local auto_cargo_spam = false
-local auto_lobby_blowup = false
 local auto_vehicle_spam = false
 local auto_yeet = false
 local auto_cable_spam = false
 local auto_train_spam = false
 local auto_action_player_id
 local auto_action_player_name
+
+local function emergencyStop()
+    auto_teleport = false
+    auto_explode = false
+    auto_storm = false
+    auto_bike = false
+    auto_peds = false
+    auto_cargo_spam = false
+    auto_launch = false
+    auto_fly = false
+    auto_rain = false
+    auto_vehicle_spam = false
+    auto_yeet = false
+    auto_cable_spam = false
+    auto_train_spam = false
+end
 
 local bounty_numbers = { [0] = 1, 42, 69, 420, 4200, 6969, 9999 }
 local current_bounty_number = 0
@@ -1090,8 +1105,16 @@ function addSubActions(sub, plyName, plyId)
             menu.emit_event('startAutoTeleport')
         end)
     end
+    greyText(sub, centeredText("--------Vehicle Spawn--------"))
+    local vehSpawnSub
+    vehSpawnSub = sub:add_submenu("Spawn Vehicle for " .. plyName, function()
+        addVehicleSpawnMenu(ply, vehSpawnSub)
+    end)
+    sub:add_action("Give Random Vehicle to " .. plyName, function()
+        giveRandomVehicle(ply, nil)
+    end)
     greyText(sub, centeredText("--------Trolling--------"))
-    local trollSub = sub:add_submenu("|Trolling Options:")
+    local trollSub = sub:add_submenu("\u{1F480} Trolling Options:")
     if ply == localplayer then
         text(trollSub, centeredText("Troll yourself"))
     else
@@ -1192,64 +1215,72 @@ function addSubActions(sub, plyName, plyId)
     end, function(n)
         TeleportVehiclesToPlayer(ply, n, true, nil)
     end)
-    greyText(trollSub, centeredText("--------Loop Actions--------"))
-    trollSub:add_toggle("|CONSTANT PEDS", function()
+
+    local trollLoopsSub = sub:add_submenu("| \u{1F480} Troll Loops:")
+    if ply == localplayer then
+        text(trollLoopsSub, centeredText("Troll yourself"))
+    else
+        trollLoopsSub:add_bare_item("Trolling " .. plyName .. "...", function()
+            refreshPlayer(plyName, plyId)
+        end, null, null, null)
+    end
+    trollLoopsSub:add_action("\u{26A0} EMERGENCY STOP ALL LOOPS \u{26A0}", emergencyStop)
+    greyText(trollLoopsSub, centeredText("--------Loop Actions--------"))
+    trollLoopsSub:add_toggle("|CONSTANT PEDS", function()
         return auto_peds
     end, function(value)
         auto_peds = value
         menu.emit_event('autoPedSpam')
     end)
-    trollSub:add_toggle("|BIKE BLOCK", function()
+    trollLoopsSub:add_toggle("|BIKE BLOCK", function()
         return auto_bike
     end, function(value)
         auto_bike = value
         menu.emit_event('autoBikeSpam')
     end)
-    trollSub:add_toggle("|KEEP LAUNCHING", function()
+    trollLoopsSub:add_toggle("|KEEP LAUNCHING", function()
         return auto_launch
     end, function(value)
         auto_launch = value
         menu.emit_event('autoLaunch')
     end)
-    trollSub:add_toggle("|RANDOM VEHICLE SPAM", function()
+    trollLoopsSub:add_toggle("|RANDOM VEHICLE SPAM", function()
         return auto_vehicle_spam
     end, function(value)
         auto_vehicle_spam = value
         menu.emit_event('autoVehicleSpam')
     end)
-    trollSub:add_toggle("|CABLECAR SPAM", function()
+    trollLoopsSub:add_toggle("|CABLECAR SPAM", function()
         return auto_cable_spam
     end, function(value)
         auto_cable_spam = value
         menu.emit_event('autoCableCarSpam')
     end)
-    trollSub:add_toggle("|TRAIN SPAM", function()
+    trollLoopsSub:add_toggle("|TRAIN SPAM", function()
         return auto_train_spam
     end, function(value)
         auto_train_spam = value
         menu.emit_event('trainSpam')
     end)
-    trollSub:add_toggle("|RANDOM VEHICLE RAIN", function()
+    trollLoopsSub:add_toggle("|RANDOM VEHICLE RAIN", function()
         return auto_rain
     end, function(value)
         auto_rain = value
         menu.emit_event('startRainThread')
     end)
-    trollSub:add_toggle("|VEHICLE STORM", function()
+    trollLoopsSub:add_toggle("|VEHICLE STORM", function()
         return auto_storm
     end, function(value)
         auto_storm = value
         menu.emit_event('autoVehicleStorm')
     end)
-    trollSub:add_toggle("|CONSTANT EXPLOSION", function()
+    trollLoopsSub:add_toggle("|CONSTANT EXPLOSION", function()
         return auto_explode
     end, function(value)
         auto_explode = value
         menu.emit_event('startAutoExplode')
     end)
-    local dangerous
-    dangerous = trollSub:add_submenu("\u{26A0}\u{26A0}\u{26A0}\u{26A0}\u{26A0} DANGEROUS \u{26A0}\u{26A0}\u{26A0}\u{26A0}\u{26A0}")
-    dangerous:add_toggle("ITS RAINING PLANES", function()
+    trollLoopsSub:add_toggle("    \u{26A0} ITS RAINING PLANES \u{26A0}", function()
         return auto_cargo_spam
     end, function(value)
         auto_cargo_spam = value
@@ -1257,16 +1288,7 @@ function addSubActions(sub, plyName, plyId)
     end)
 
     playerInfo(plyId, trollSub, plyName)
-
-    greyText(sub, centeredText("--------Vehicle Spawn--------"))
-    local vehSpawnSub
-    vehSpawnSub = sub:add_submenu("Spawn Vehicle for " .. plyName, function()
-        addVehicleSpawnMenu(ply, vehSpawnSub)
-    end)
-    sub:add_action("Give Random Vehicle to " .. plyName, function()
-        giveRandomVehicle(ply, nil)
-    end)
-
+    playerInfo(plyId, trollLoopsSub, plyName)
     playerInfo(plyId, sub, plyName)
 
     local pedFlagSub
@@ -1429,27 +1451,11 @@ end)
 ------------------------------------------------------
 ------------------------------------------------------
 
-
 --emergency stop all auto actions button, numpad comma (decimal) key
 local emergencyStopHotkey
 menu.register_callback('ToggleLoopStopHotkey', function()
     if not emergencyStopHotkey then
-        emergencyStopHotkey = menu.register_hotkey(find_keycode("ToggleLoopStopHotkey"), function()
-            auto_teleport = false
-            auto_explode = false
-            auto_storm = false
-            auto_bike = false
-            auto_peds = false
-            auto_cargo_spam = false
-            auto_launch = false
-            auto_lobby_blowup = false
-            auto_fly = false
-            auto_rain = false
-            auto_vehicle_spam = false
-            auto_yeet = false
-            auto_cable_spam = false
-            auto_train_spam = false
-        end)
+        emergencyStopHotkey = menu.register_hotkey(find_keycode("ToggleLoopStopHotkey"), emergencyStop)
     else
         menu.remove_hotkey(emergencyStopHotkey)
         emergencyStopHotkey = nil
