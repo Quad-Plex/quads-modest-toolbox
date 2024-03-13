@@ -34,7 +34,7 @@ require("scripts/quads_toolbox_scripts/offradar")
 require("scripts/quads_toolbox_scripts/stats")
 require("scripts/quads_toolbox_scripts/misc")
 
-configSub = toolboxSub:add_submenu(centeredText("    ⚙️ Hotkey Configuration ⚙️"))
+configSub = toolboxSub:add_submenu(centeredText("     ⚙️ Hotkey Configuration ⚙️"))
 text(configSub, centeredText("    ⚙️ Hotkey Config ⚙️"))
 require("scripts/quads_toolbox_scripts/hotkeys")
 

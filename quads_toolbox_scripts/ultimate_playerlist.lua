@@ -989,8 +989,14 @@ local function playerInfo(plyId, sub, plyName)
     end, null, null, null)
 end
 
+local showDisabledFlags = false
+local showUnknownFlags = true
 local function pedFlags(ply, sub)
     sub:clear()
+    sub:add_toggle("Show ALL Flags \u{26A0} Large List! \u{26A0}", function() return showDisabledFlags end, function(n) showDisabledFlags = n if showDisabledFlags then showUnknownFlags = false end pedFlags(ply, sub) end)
+    sub:add_toggle("Show Unknown Flags", function() return showUnknownFlags end, function(n) showUnknownFlags = n if showUnknownFlags then showDisabledFlags = false end pedFlags(ply, sub) end)
+    greyText(sub, "============================")
+
     local min_index = math.huge
     local max_index = 0
     for i in pairs(PED_FLAG_TABLE) do
@@ -998,26 +1004,43 @@ local function pedFlags(ply, sub)
         max_index = math.max(max_index, i)
     end
 
+    -- Create a list of all flags
+    local allFlags = {}
     for i = min_index, max_index do
-        local v = PED_FLAG_TABLE[i]
-        if ply:get_config_flag(i) == true then
-            if v then
-                sub:add_toggle(v, function()
-                    return ply:get_config_flag(i)
-                end, function()
-                    ply:set_config_flag(i, not ply:get_config_flag(i))
-                end)
-            else
-                sub:add_toggle("unknown #" .. i, function()
-                    return ply:get_config_flag(i)
-                end, function()
-                    ply:set_config_flag(i, not ply:get_config_flag(i))
-                end)
-            end
+        local pedFlagString = PED_FLAG_TABLE[i]
+        if pedFlagString then
+            table.insert(allFlags, {index = i, name = pedFlagString})
+        elseif showUnknownFlags then
+            table.insert(allFlags, {index = i, name = "unknown #" .. i})
+        end
+    end
+
+    -- Sort the flags
+    table.sort(allFlags, function(a, b)
+        if a.name:find("unknown") and b.name:find("unknown") then
+            return a.index < b.index
+        elseif a.name:find("unknown") then
+            return false
+        elseif b.name:find("unknown") then
+            return true
+        else
+            return a.name < b.name
+        end
+    end)
+
+    -- Add the flags to the sub
+    for _, flag in ipairs(allFlags) do
+        local i = flag.index
+        local pedFlagString = flag.name
+        if showDisabledFlags or ply:get_config_flag(i) == true then
+            sub:add_toggle(pedFlagString, function()
+                return ply:get_config_flag(i)
+            end, function()
+                ply:set_config_flag(i, not ply:get_config_flag(i))
+            end)
         end
     end
 end
-
 -- auto-close submenu in case a player leaves while their info is open
 local function refreshPlayer(plyName, plyId)
     if player.get_player_name(plyId) ~= plyName then
