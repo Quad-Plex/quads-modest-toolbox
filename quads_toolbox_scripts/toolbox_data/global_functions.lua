@@ -14,7 +14,11 @@ function displayHudBanner(headline, subHeadline, variable_text, box_type, skipTi
     globals.set_string(baseGlobals.messageDisplay.baseGlobal + 8, subHeadline, 32)
     if variable_text ~= "" then
         if type(variable_text) == "number" then
-            globals.set_int(baseGlobals.messageDisplay.baseGlobal + 3, variable_text)
+            if checkType(variable_text) == "Int" then
+                globals.set_int(baseGlobals.messageDisplay.baseGlobal + 3, variable_text)
+            else
+                globals.set_float(baseGlobals.messageDisplay.baseGlobal + 3, variable_text)
+            end
         elseif type(variable_text) == "string" then
             globals.set_string(baseGlobals.messageDisplay.baseGlobal + 3, variable_text, 32)
         end

@@ -1,9 +1,9 @@
---local displayboxtype = 69
+--displayboxtype = 39
 --menu.add_int_range("Display Box Type Tester", 1, -100, 500, function()
 --	return displayboxtype
 --end, function(n)
 --	displayboxtype = n
---	displayHudBanner("EPS_CASH", "~s~", 1, 109)
+--	displayHudBanner("EPS_CASH", "~s~", 0, n, true)
 --end)
 
 --------------------------------

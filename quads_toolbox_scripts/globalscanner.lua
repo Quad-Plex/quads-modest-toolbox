@@ -1,13 +1,18 @@
 local keepSearching = false
 local lower_bound = 100000
-local upper_bound = 110000
+local upper_bound = 1000000
 local old_count = 0
 
 local isFreezerRunning = false
 local frozenGlobals = {}
 
+local ScannerTypes = {[0]="Int", "Float", "String"}
+local scannerSelection = 0
+local ScriptTypes = {[0]="Global", "freemode", "taxiservice", "pm_delivery", "shop_controller"}
+local scriptSelection = 0
+
 --Change here to easily set the exact value for search
-local exact_search_value = -1233767450
+local exact_search_value = "EnterInScript"
 local smaller_than_search_value = 100
 local bigger_than_search_value = 50
 
@@ -24,6 +29,8 @@ local function getGlobalForTypeAndScript(global, type, selectedScript)
         return scriptToUse and scriptToUse:get_int(global) or globals.get_int(global)
     elseif type == "Float" then
         return scriptToUse and scriptToUse:get_float(global) or globals.get_float(global)
+    elseif type == "String" then
+        return scriptToUse and scriptToUse:get_string(global, 30) or globals.get_string(global, 30)
     else
         error("Wrong type ya dingus")
     end
@@ -33,11 +40,11 @@ local success, watchlistGlobals = pcall(json.loadfile, "scripts/quads_toolbox_sc
 if success then
     print("Watchlist Globals loaded successfully!!")
 end
-table.sort(watchlistGlobals)
+table.sort(watchlistGlobals, function(a, b) return a[1] < b[1] end)
 
 local function getGlobalWatchlistPosition(global)
-    for i, watchedGlobal in ipairs(watchlistGlobals) do
-        if watchedGlobal == global then
+    for i, watchedGlobalData in ipairs(watchlistGlobals) do
+        if watchedGlobalData[1] == global then
             return i
         end
     end
@@ -57,7 +64,7 @@ local function getIsSavedString(global)
     return getGlobalWatchlistPosition(global) ~= false and "Saved" or ""
 end
 
-local function initialScan(sub, typeSelection, scriptSelection)
+local function initialScan(sub, typeSelection, selectedScript)
     local counter = 0
     local counter2 = 1
     local step = (upper_bound - lower_bound) / 10
@@ -68,15 +75,15 @@ local function initialScan(sub, typeSelection, scriptSelection)
             counter = 0
             counter2 = counter2 + 1
         end
-        local value = getGlobalForTypeAndScript(global, typeSelection, scriptSelection)
-        if value and not (typeSelection == "Float") or not (tostring(value) == "-nan" or tostring(value) == "nan") then
+        local value = getGlobalForTypeAndScript(global, typeSelection, selectedScript)
+        if value and checkType(value) == typeSelection then
             found_globals[global] = value
         end
     end
     greyText(sub, "DONE PROCESSING GLOBALS!")
 end
 
-local function search(sub, search_type, current_count, typeSelection, scriptSelection)
+local function search(sub, search_type, current_count, typeSelection, selectedScript)
     sub:clear()
     old_count = current_count
     greyText(sub, "UPDATING GLOBALS.....")
@@ -94,9 +101,11 @@ local function search(sub, search_type, current_count, typeSelection, scriptSele
             counter = 0
             counter2 = counter2 + 1
         end
-        local value = getGlobalForTypeAndScript(global, typeSelection, scriptSelection)
-        if value and not (typeSelection == "Float") or not (tostring(value) == "-nan" or tostring(value) == "nan") then
+        local value = getGlobalForTypeAndScript(global, typeSelection, selectedScript)
+        if value and checkType(value) == typeSelection then
             temp_globals[global] = value
+        else
+            --print("Bad Type! Expected: " .. typeSelection .. ", got " .. checkType(value))
         end
     end
 
@@ -125,7 +134,7 @@ local function search(sub, search_type, current_count, typeSelection, scriptSele
         then
             temp_new_found_globals[global] = new_value
         else
-        --    Ignore, global didn't fit the search criteria
+           --Do nothing
         end
     end
 
@@ -138,13 +147,18 @@ local function search(sub, search_type, current_count, typeSelection, scriptSele
     found_globals = table.copy(temp_new_found_globals)
 end
 
-local function showNearbyGlobals(sub, global, min_search, max_search, scriptSelection)
+local function showNearbyGlobals(sub, global, min_search, max_search, selectedScript)
     sub:clear()
+    sub:add_array_item("Show as Type:", ScannerTypes, function()
+        return scannerSelection
+    end, function(value)
+        scannerSelection = value
+    end)
     if min_search > 50 then
         sub:add_action("Show previous 50", function()
             min_search = min_search - 50
             max_search = max_search - 50
-            showNearbyGlobals(sub, global, min_search, max_search, scriptSelection)
+            showNearbyGlobals(sub, global, min_search, max_search, ScannerTypes[scannerSelection], selectedScript)
         end)
     end
     for i = min_search, max_search do
@@ -152,10 +166,10 @@ local function showNearbyGlobals(sub, global, min_search, max_search, scriptSele
         if i == global then
             prefix = "|"
         end
-        sub:add_bare_item("", function() return prefix .. scriptSelection .. "[" .. i .. "] = " .. globals.get_int(i) .. " " .. getIsSavedString(i) end, function()
+        sub:add_bare_item("", function() return prefix .. selectedScript .. "[" .. i .. "] = " .. tostring(getGlobalForTypeAndScript(i, ScannerTypes[scannerSelection], selectedScript)) .. " " .. getIsSavedString(i) end, function()
             local watchlistPosition = getGlobalWatchlistPosition(i)
             if not watchlistPosition then
-                table.insert(watchlistGlobals, i)
+                table.insert(watchlistGlobals, {i, checkType(getGlobalForTypeAndScript(i, ScannerTypes[scannerSelection], selectedScript))})
                 json.savefile("scripts/quads_toolbox_scripts/toolbox_data/WATCHLIST_GLOBALS.json", watchlistGlobals)
             else
                 table.remove(watchlistGlobals, watchlistPosition)
@@ -166,11 +180,11 @@ local function showNearbyGlobals(sub, global, min_search, max_search, scriptSele
     sub:add_action("Show next 50", function()
         min_search = min_search + 50
         max_search = max_search + 50
-        showNearbyGlobals(sub, global, min_search, max_search, scriptSelection)
+        showNearbyGlobals(sub, global, min_search, max_search, ScannerTypes[scannerSelection], selectedScript)
     end)
 end
 
-local function toggleFreezeGlobal(global, value, typeSelection)
+local function toggleFreezeGlobal(global, value)
     if not value then
         value = globals.get_int(global)
     end
@@ -178,44 +192,46 @@ local function toggleFreezeGlobal(global, value, typeSelection)
     if frozenPosition then
         table.remove(frozenGlobals, frozenPosition)
     else
-        table.insert(frozenGlobals, {global, value, typeSelection})
+        table.insert(frozenGlobals, {global, value, checkType(global)})
     end
 end
 
-local function advancedGlobalEditor(sub, global, origValue, typeSelection, scriptSelection)
+local function advancedGlobalEditor(sub, global, origValue, typeSelection, selectedScript)
     sub:clear()
-    sub:add_bare_item("",function() return scriptSelection .. "[" .. global .. "] = " .. getGlobalForTypeAndScript(global, typeSelection, scriptSelection) end, null, null, null)
-    greyText(sub, scriptSelection .. "[" .. global .. "] = ".. origValue .. " (Orig. Value)")
+    sub:add_bare_item("",function() return selectedScript .. "[" .. global .. "] = " .. tostring(getGlobalForTypeAndScript(global, typeSelection, selectedScript)) end, null, null, null)
+    greyText(sub, selectedScript .. "[" .. global .. "] = ".. origValue .. " (Orig. Value)")
     text(sub, "---------------------------")
     sub:add_int_range("As Int:", 1, -MAX_INT, MAX_INT, function() return globals.get_int(global) end, function(n) globals.set_int(global, n) end)
-    sub:add_int_range("As Float:", 1, -MAX_INT, MAX_INT, function() return globals.get_float(global) end, function(n) globals.set_float(global, n) end)
+    sub:add_float_range("As Float:", 1, -MAX_INT, MAX_INT, function() return globals.get_float(global) end, function(n) globals.set_float(global, n) end)
     sub:add_bare_item("", function() return "As String:|" .. globals.get_string(global, 30)  end, null, null, null)
     sub:add_toggle("Freeze Current Value", function() return getGlobalFrozenPosition(global) ~= false end, function(_)
-        toggleFreezeGlobal(global, nil, typeSelection)
+        toggleFreezeGlobal(global, nil)
         if not isFreezerRunning then
             menu.emit_event('startFreezer')
         end
     end)
-    if typeSelection == "Int" then
+    if checkType(global) == "Int" then
         sub:add_int_range("Set and Freeze (Int):", 1, -MAX_INT, MAX_INT, function() return getGlobalFrozenPosition(global) and frozenGlobals[getGlobalFrozenPosition(global)][2] or origValue end, function(n)
-            toggleFreezeGlobal(global, n, typeSelection)
+            toggleFreezeGlobal(global, n)
             if not isFreezerRunning then
                 menu.emit_event('startFreezer')
             end
         end)
-    elseif typeSelection == "Float" then
+    elseif checkType(global) == "Float" then
         sub:add_float_range("Set and Freeze (Float):", 1, -MAX_INT, MAX_INT, function() return getGlobalFrozenPosition(global) and frozenGlobals[getGlobalFrozenPosition(global)][2] or origValue end, function(n)
-            toggleFreezeGlobal(global, n, typeSelection)
+            toggleFreezeGlobal(global, n)
             if not isFreezerRunning then
                 menu.emit_event('startFreezer')
             end
         end)
+    elseif checkType(global) == "String" then
+    --    TODO: Can't change strings easily from menu items YET
     end
     greyText(sub, "---------------------------")
-    sub:add_action("Set Exact Search to Global Value", function() exact_search_value = getGlobalForTypeAndScript(global, typeSelection, scriptSelection) end)
-    sub:add_toggle("Add " ..scriptSelection .. "[".. global .. "] to watchlist", function() return getGlobalWatchlistPosition(global) ~= false end, function(add)
+    sub:add_action("Set Exact Search to Global Value", function() exact_search_value = getGlobalForTypeAndScript(global, typeSelection, selectedScript) end)
+    sub:add_toggle("Add " .. selectedScript .. "[".. global .. "] to watchlist", function() return getGlobalWatchlistPosition(global) ~= false end, function(add)
         if add then
-            table.insert(watchlistGlobals, global)
+            table.insert(watchlistGlobals, {global, checkType(getGlobalForTypeAndScript(global, typeSelection, selectedScript))})
             json.savefile("scripts/quads_toolbox_scripts/toolbox_data/WATCHLIST_GLOBALS.json", watchlistGlobals)
         else
             local watchlistPosition = getGlobalWatchlistPosition(global)
@@ -231,13 +247,13 @@ local function advancedGlobalEditor(sub, global, origValue, typeSelection, scrip
         local min_search = global - 25
         if min_search < 0 then min_search = 0 end
         local max_search = global + 24
-        showNearbyGlobals(nearbyGlobalsSub, global, min_search, max_search, scriptSelection)
+        showNearbyGlobals(nearbyGlobalsSub, global, min_search, max_search, selectedScript)
     end)
     greyText(sub, "Click on any Global in the list")
     greyText(sub, "to add/remove it from watchlist")
 end
 
-local function printFoundGlobals(sub, numToPrint, typeSelection, scriptSelection)
+local function printFoundGlobals(sub, numToPrint, typeSelection, selectedScript)
     --Prepare a sorted table for all found globals
     local keys = {}
     for key, _ in pairs(found_globals) do
@@ -251,9 +267,9 @@ local function printFoundGlobals(sub, numToPrint, typeSelection, scriptSelection
         if counter == numToPrint then
             return
         end
-        sub:add_bare_item("",function() return scriptSelection .. "[" .. global .. "] = " .. tostring(getGlobalForTypeAndScript(global, typeSelection, scriptSelection)) .. "|(Print)" end, function() print(scriptSelection .. "[" .. global .. "] = " .. getGlobalForTypeAndScript(global, typeSelection, scriptSelection)) end, null, null)
+        sub:add_bare_item("",function() return selectedScript .. "[" .. global .. "] = " .. tostring(getGlobalForTypeAndScript(global, typeSelection, selectedScript)) .. "|(Print)" end, function() print(selectedScript .. "[" .. global .. "] = " .. getGlobalForTypeAndScript(global, typeSelection, selectedScript)) end, null, null)
         local globalSub
-        globalSub = sub:add_submenu("|More Options:", function() advancedGlobalEditor(globalSub, global, getGlobalForTypeAndScript(global, typeSelection, scriptSelection), typeSelection, scriptSelection) end)
+        globalSub = sub:add_submenu("|More Options:", function() advancedGlobalEditor(globalSub, global, getGlobalForTypeAndScript(global, typeSelection, selectedScript), typeSelection, selectedScript) end)
     end
     sub:add_action("Print all found variables to console", function()
         counter = 0
@@ -269,21 +285,23 @@ local function printFoundGlobals(sub, numToPrint, typeSelection, scriptSelection
     end)
 end
 
-local function addWatchListGlobals(sub, typeSelection, scriptSelection)
+local function addWatchListGlobals(sub, selectedScript)
     if #watchlistGlobals > 0 then
         greyText(sub, "======= WATCHLISTED VALUES =======")
-        for _, global in ipairs(watchlistGlobals) do
-            sub:add_bare_item("",function() return scriptSelection .. "[" .. global .. "] = " .. getGlobalForTypeAndScript(global, typeSelection, scriptSelection) .. "|(Print)" end, function() print(scriptSelection .. "[" .. global .. "] = " .. getGlobalForTypeAndScript(global, typeSelection, scriptSelection)) end, null, null)
+        for _, globalData in ipairs(watchlistGlobals) do
+            sub:add_bare_item("", function()
+                return selectedScript .. "[" .. globalData[1] .. "] = " .. getGlobalForTypeAndScript(globalData[1], globalData[2], selectedScript) .. "|(" .. globalData[2] .. ")"
+            end, function()
+                print(selectedScript .. "[" .. globalData[1] .. "] = " .. getGlobalForTypeAndScript(globalData[1], globalData[2], selectedScript))
+            end, null, null)
             local globalSub
-            globalSub = sub:add_submenu("|More Options:", function() advancedGlobalEditor(globalSub, global, getGlobalForTypeAndScript(global, typeSelection, scriptSelection), typeSelection, scriptSelection) end)
+            globalSub = sub:add_submenu("|More Options:", function()
+                advancedGlobalEditor(globalSub, globalData[1], getGlobalForTypeAndScript(globalData[1], globalData[2], selectedScript), globalData[2], selectedScript)
+            end)
         end
     end
 end
 
-local ScannerTypes = {[0]="Int", "Float"}
-local scannerSelection = 0
-local ScriptTypes = {[0]="Global", "freemode", "taxiservice", "pm_delivery", "shop_controller"}
-local scriptSelection = 0
 local function updateGlobalScanner(sub)
     success, watchlistGlobals = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/WATCHLIST_GLOBALS.json")
     sub:clear()
@@ -333,7 +351,7 @@ local function updateGlobalScanner(sub)
                 end
             end)
         end
-        addWatchListGlobals(sub, ScannerTypes[scannerSelection], ScriptTypes[scriptSelection])
+        addWatchListGlobals(sub, ScriptTypes[scriptSelection])
     else
         greyText(sub, "Searching through " .. ScriptTypes[scriptSelection] .. "...")
         sub:add_array_item("Search for Type:", ScannerTypes, function()
@@ -355,11 +373,21 @@ local function updateGlobalScanner(sub)
                 function(value) bigger_than_search_value = value
                     search(sub, "biggerthanx", current_num_of_results, ScannerTypes[scannerSelection], ScriptTypes[scriptSelection])
                     updateGlobalScanner(sub) end)
-        sub:add_int_range(":  SEARCH: exact", 1, -MAX_INT, MAX_INT, function() return exact_search_value end,
-                function(value) exact_search_value = value
-                    search(sub, "exact", current_num_of_results, ScannerTypes[scannerSelection], ScriptTypes[scriptSelection])
-                    updateGlobalScanner(sub) end)
-
+        if checkType(exact_search_value) == "Int" then
+            sub:add_int_range(":  SEARCH: exact", 1, -MAX_INT, MAX_INT, function() return exact_search_value end,
+                    function(value) exact_search_value = value
+                        search(sub, "exact", current_num_of_results, ScannerTypes[scannerSelection], ScriptTypes[scriptSelection])
+                        updateGlobalScanner(sub) end)
+        elseif checkType(exact_search_value) == "Float" then
+            sub:add_float_range(":  SEARCH: exact", 1, -MAX_INT, MAX_INT, function() return exact_search_value end,
+                    function(value) exact_search_value = value
+                        search(sub, "exact", current_num_of_results, ScannerTypes[scannerSelection], ScriptTypes[scriptSelection])
+                        updateGlobalScanner(sub) end)
+        elseif checkType(exact_search_value) == "String" then
+            sub:add_bare_item("", function() return ":  SEARCH: exact |" .. exact_search_value  end, function()
+                search(sub, "exact", current_num_of_results, ScannerTypes[scannerSelection], ScriptTypes[scriptSelection])
+                updateGlobalScanner(sub) end, null, null)
+        end
         if #oldResultsHistory > 0 then
             sub:add_action("!!! UNDO LAST SEARCH OPERATION", function()
                 if #oldResultsHistory > 0 then
@@ -379,7 +407,7 @@ local function updateGlobalScanner(sub)
         local resultChange = current_num_of_results - old_count
         resultChange = resultChange > 0 and "+" .. tostring(resultChange) or tostring(resultChange)
 
-        addWatchListGlobals(sub, ScannerTypes[scannerSelection], ScriptTypes[scriptSelection])
+        addWatchListGlobals(sub, ScriptTypes[scriptSelection])
 
         greyText(sub,"------Results: " .. current_num_of_results .. " (" .. resultChange .. ") -------")
 

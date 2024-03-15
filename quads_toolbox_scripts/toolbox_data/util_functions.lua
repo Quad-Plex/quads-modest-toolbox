@@ -6,6 +6,8 @@ function null() end
 
 MAX_INT = 2147483647
 
+--------------------Spawned Vehicle Godmode toggler-----------------------------------
+
 local function findAndEnableGodmodeForVehicle(vehicle_hash, checkPos)
     for veh in replayinterface.get_vehicles() do
         if veh:get_model_hash() == vehicle_hash and distanceBetween(veh, checkPos, true) < 2 then
@@ -318,4 +320,21 @@ function checkBit(value, pos)
     end
     -- get rightmost ("first") bit
     return value % 2 == 1
+end
+
+---------------------------Type Checker-------------------------------
+function checkType(var)
+    if type(var) == "number" then
+        if var ~= var then
+            return 'NaN'
+        elseif var % 1 == 0 then
+            return 'Int'
+        else
+            return 'Float'
+        end
+    elseif type(var) == "string" then
+        return 'String'
+    else
+        return 'Other'
+    end
 end

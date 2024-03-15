@@ -1,12 +1,15 @@
 TODO:
+- A-Z String-entering submenu for globalscanner
 - See if GPS coordinates can be controlled through globals, then add a 'Track Player with GPS' option
   - Hmmm... Can't find it in globals or the scripts I've implemented in my scanner so far, might not be possible
 - Add Readme and FAQ description for unclear actions
 - More testing with the invisible MOC maybe
-- More testing with the speedometer (find displayboxtype without fade-in maybe?)
 - more testing with the displayboxtype that shows a playername, is it configurable?
+  - only displayBoxType 39 showed a weird string on the bottom sometimes, which seemed to contain a playername
+  - after session switch that string disappeared - has to be configurable somehow
 
 DONE:
+- ~~More testing with the speedometer (find displayboxtype without fade-in maybe?)~~ Nope.
 - ~~Check if bool    vehicle:get_boost()~~
   ~~bool    vehicle:get_boost_active()        nil     vehicle:set_boost(bool value)~~
   ~~bool    vehicle:get_boost_enabled()       nil     vehicle:set_boost_enabled(bool value)~~
@@ -14,6 +17,7 @@ DONE:
 - ~~improve globalscanner~~
   - ~~Search through script locals or globals~~
   - ~~Search for floats and ints~~
+  - ~~Search for strings~~
   - ~~Make found globals be their own submenu with more options~~
     - ~~text: add original value of global on top~~
     - ~~add global to watched globals~~
