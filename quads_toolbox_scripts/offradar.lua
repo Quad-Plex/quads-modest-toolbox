@@ -14,7 +14,7 @@ local function offRadar()
 end
 
 miscOptionsSub:add_toggle("Undead Offradar:", function()
-    return localplayer:get_max_health() == 0.0
+    return localplayer and localplayer:get_max_health() == 0.0
 end, function(_)
     offRadar()
 end)

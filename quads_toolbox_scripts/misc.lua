@@ -76,6 +76,7 @@ table.sort(sorted_vehicles, function(a, b)
 	return a[2][2] < b[2][2]
 end)
 
+local oldPodiumVehicle
 local function podiumChanger(sub)
 	sub:clear()
 	text(sub, "WARNING! This can corrupt garage spots!")
@@ -92,7 +93,21 @@ local function podiumChanger(sub)
 		end
 
 		vehSubs[current_category]:add_action(vehicle[2][1], function()
+			if not oldPodiumVehicle then
+				oldPodiumVehicle = getPodiumVehicle()
+				greyText(sub, "------------------------")
+				sub:add_action("Reset Podium Vehicle to " .. VEHICLE[oldPodiumVehicle][1], function()
+					setPodiumVehicle(oldPodiumVehicle)
+				end)
+			end
 			setPodiumVehicle(vehicle[1])
+		end)
+	end
+
+	if oldPodiumVehicle and getPodiumVehicle() ~= oldPodiumVehicle then
+		greyText(sub, "------------------------")
+		sub:add_action("Reset Podium Vehicle to " .. VEHICLE[oldPodiumVehicle][1], function()
+			setPodiumVehicle(oldPodiumVehicle)
 		end)
 	end
 end

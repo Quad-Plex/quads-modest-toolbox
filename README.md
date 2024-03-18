@@ -1,5 +1,4 @@
 TODO:
-- A-Z String-entering submenu for globalscanner
 - See if GPS coordinates can be controlled through globals, then add a 'Track Player with GPS' option
   - Hmmm... Can't find it in globals or the scripts I've implemented in my scanner so far, might not be possible
 - Add Readme and FAQ description for unclear actions
@@ -15,6 +14,7 @@ DONE:
   ~~bool    vehicle:get_boost_enabled()       nil     vehicle:set_boost_enabled(bool value)~~
   ~~- can be used to create homing cars that launch towards a player with rocket boost~~   Well that was a bust...
 - ~~improve globalscanner~~
+  - ~~A-Z String-entering submenu for globalscanner~~
   - ~~Search through script locals or globals~~
   - ~~Search for floats and ints~~
   - ~~Search for strings~~

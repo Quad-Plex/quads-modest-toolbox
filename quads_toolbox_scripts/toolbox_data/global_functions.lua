@@ -397,6 +397,11 @@ function setPodiumVehicle(vehicleHash)
     globals.set_int(baseGlobals.podiumVehicle.baseGlobal, vehicleHash)
 end
 
+function getPodiumVehicle()
+    return globals.get_int(baseGlobals.podiumVehicle.baseGlobal)
+end
+
+
 
 ------------------------------------------------------------------
 ------------------Bounty Functions--------------------------------

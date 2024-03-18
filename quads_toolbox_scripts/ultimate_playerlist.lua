@@ -1215,72 +1215,71 @@ function addSubActions(sub, plyName, plyId)
     end, function(n)
         TeleportVehiclesToPlayer(ply, n, true, nil)
     end)
-
-    local trollLoopsSub = sub:add_submenu("| \u{1F480} Troll Loops:")
+    
     if ply == localplayer then
-        text(trollLoopsSub, centeredText("Troll yourself"))
+        text(trollSub, centeredText("Troll yourself"))
     else
-        trollLoopsSub:add_bare_item("Trolling " .. plyName .. "...", function()
+        trollSub:add_bare_item("Trolling " .. plyName .. "...", function()
             refreshPlayer(plyName, plyId)
         end, null, null, null)
     end
-    trollLoopsSub:add_action("\u{26A0} EMERGENCY STOP ALL LOOPS \u{26A0}", emergencyStop)
-    greyText(trollLoopsSub, centeredText("--------Loop Actions--------"))
-    trollLoopsSub:add_toggle("|CONSTANT PEDS", function()
+    trollSub:add_action("\u{26A0} EMERGENCY STOP ALL LOOPS \u{26A0}", emergencyStop)
+    greyText(trollSub, centeredText("--------Loop Actions--------"))
+    trollSub:add_toggle("|CONSTANT PEDS", function()
         return auto_peds
     end, function(value)
         auto_peds = value
         menu.emit_event('autoPedSpam')
     end)
-    trollLoopsSub:add_toggle("|BIKE BLOCK", function()
+    trollSub:add_toggle("|BIKE BLOCK", function()
         return auto_bike
     end, function(value)
         auto_bike = value
         menu.emit_event('autoBikeSpam')
     end)
-    trollLoopsSub:add_toggle("|KEEP LAUNCHING", function()
+    trollSub:add_toggle("|KEEP LAUNCHING", function()
         return auto_launch
     end, function(value)
         auto_launch = value
         menu.emit_event('autoLaunch')
     end)
-    trollLoopsSub:add_toggle("|RANDOM VEHICLE SPAM", function()
+    trollSub:add_toggle("|RANDOM VEHICLE SPAM", function()
         return auto_vehicle_spam
     end, function(value)
         auto_vehicle_spam = value
         menu.emit_event('autoVehicleSpam')
     end)
-    trollLoopsSub:add_toggle("|CABLECAR SPAM", function()
+    trollSub:add_toggle("|CABLECAR SPAM", function()
         return auto_cable_spam
     end, function(value)
         auto_cable_spam = value
         menu.emit_event('autoCableCarSpam')
     end)
-    trollLoopsSub:add_toggle("|TRAIN SPAM", function()
+    trollSub:add_toggle("|TRAIN SPAM", function()
         return auto_train_spam
     end, function(value)
         auto_train_spam = value
         menu.emit_event('trainSpam')
     end)
-    trollLoopsSub:add_toggle("|RANDOM VEHICLE RAIN", function()
+    trollSub:add_toggle("|RANDOM VEHICLE RAIN", function()
         return auto_rain
     end, function(value)
         auto_rain = value
         menu.emit_event('startRainThread')
     end)
-    trollLoopsSub:add_toggle("|VEHICLE STORM", function()
+    trollSub:add_toggle("|VEHICLE STORM", function()
         return auto_storm
     end, function(value)
         auto_storm = value
         menu.emit_event('autoVehicleStorm')
     end)
-    trollLoopsSub:add_toggle("|CONSTANT EXPLOSION", function()
+    trollSub:add_toggle("|CONSTANT EXPLOSION", function()
         return auto_explode
     end, function(value)
         auto_explode = value
         menu.emit_event('startAutoExplode')
     end)
-    trollLoopsSub:add_toggle("    \u{26A0} ITS RAINING PLANES \u{26A0}", function()
+    trollSub:add_toggle("    \u{26A0} ITS RAINING PLANES \u{26A0}", function()
         return auto_cargo_spam
     end, function(value)
         auto_cargo_spam = value
@@ -1288,7 +1287,7 @@ function addSubActions(sub, plyName, plyId)
     end)
 
     playerInfo(plyId, trollSub, plyName)
-    playerInfo(plyId, trollLoopsSub, plyName)
+    playerInfo(plyId, trollSub, plyName)
     playerInfo(plyId, sub, plyName)
 
     local pedFlagSub
