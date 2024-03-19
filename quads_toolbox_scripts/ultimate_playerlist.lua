@@ -1710,5 +1710,7 @@ end)
 
 local playerMenu2
 playerMenu2 = toolboxSub:add_submenu(centeredText("====== ULTIMATE Player List ======"), function()
-    playerListInitializer(playerMenu2)
+    if finishedLoading then
+        playerListInitializer(playerMenu2)
+    end
 end)

@@ -273,7 +273,11 @@ local function initializePickups(sub)
 	updateable = true
 end
 local pickupMenu
-pickupMenu = toolboxSub:add_submenu("     ///// Pickup-Suite \\\\\\\\\\", function() initializePickups(pickupMenu) end)
+pickupMenu = toolboxSub:add_submenu("     ///// Pickup-Suite \\\\\\\\\\", function()
+	if finishedLoading then
+		initializePickups(pickupMenu)
+	end
+end)
 
 --Debug function to test pickups syncing (spoiler: they never do.)
 --menu.add_player_action("Give Railgun", function(player_index)

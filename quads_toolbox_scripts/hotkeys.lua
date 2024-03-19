@@ -136,9 +136,10 @@ menu.register_callback('ToggleTeleportToObjectiveHotkey', function()
 end)
 
 -- Function to add all the hotkey toggles
-local function addHotkeyToggles()
+local function addHotkeyToggles(hotkeyMenu)
+    text(hotkeyMenu, centeredText("    ⚙️ Hotkey Config ⚙️"))
     for i, hotkeyData in ipairs(hotkeysData) do
-        configSub:add_toggle(hotkeyData.name .. " Hotkey", function()
+        hotkeyMenu:add_toggle(hotkeyData.name .. " Hotkey", function()
             return hotkeyData.toggleVar
         end, function(toggle)
             hotkeyData.toggleVar = toggle
@@ -146,7 +147,7 @@ local function addHotkeyToggles()
             menu.emit_event(hotkeyData.event)
             json.savefile("scripts/quads_toolbox_scripts/toolbox_data/HOTKEY_CONFIG.json", hotkeysData)
         end)
-        configSub:add_array_item("", indexedKeycodes, function()
+        hotkeyMenu:add_array_item("", indexedKeycodes, function()
             return hotkeyData.keycode
         end, function(value)
             hotkeyData.keycode = value
@@ -159,11 +160,19 @@ local function addHotkeyToggles()
                 menu.emit_event(hotkeyData.event)
             end
         end)
-        if hotkeyData.toggleVar then menu.emit_event(hotkeyData.event) end
     end
+    greyText(hotkeyMenu, "Changes are saved automatically!!")
+    greyText(hotkeyMenu, "----------------------------------")
 end
 
-greyText(configSub, "Changes are saved automatically!!")
-greyText(configSub, "----------------------------------")
+local hotkeyMenu
+hotkeyMenu = toolboxSub:add_submenu(centeredText("     ⚙️ Hotkey Configuration ⚙️"), function()
+    if finishedLoading then
+        addHotkeyToggles(hotkeyMenu)
+    end
+end)
 
-addHotkeyToggles()
+--Enable all Hotkeys once when this script is required
+for _, hotkeyData in ipairs(hotkeysData) do
+    if hotkeyData.toggleVar then menu.emit_event(hotkeyData.event) end
+end

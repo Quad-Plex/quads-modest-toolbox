@@ -526,7 +526,7 @@ function isSpectatingMe(plyId)
     local localplayerID = localplayer:get_player_id()
     if localplayerID == -1 and globalLocalplayerID ~= -1 then localplayerID = globalLocalplayerID end
     local isWatchingMe = checkBit(visibleState, localplayerID)
-    return isWatchingMe and distanceBetween(player.get_player_ped(), ply) > 200
+    return isWatchingMe and distanceBetween(player.get_player_ped(), ply) > 225
 end
 
 function amISpectating(plyId)
@@ -538,7 +538,7 @@ function amISpectating(plyId)
     if localplayerID == -1 and globalLocalplayerID ~= -1 then localplayerID = globalLocalplayerID end
     local ownVisibleState = getIsTrackedPedVisibleState(localplayerID)
     local amIWatching = checkBit(ownVisibleState, plyId)
-    return amIWatching and distanceBetween(player.get_player_ped(), ply) > 200
+    return amIWatching and distanceBetween(player.get_player_ped(), ply) > 225
 end
 
 ---------------------------------------------------------------------------

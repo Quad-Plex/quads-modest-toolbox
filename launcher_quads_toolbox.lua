@@ -1,3 +1,5 @@
+finishedLoading = false
+
 --Load all required constants
 require("scripts/quads_toolbox_scripts/toolbox_data/VEHICLES_WEAPONS")
 require("scripts/quads_toolbox_scripts/toolbox_data/PED_FLAG_TABLE")
@@ -11,7 +13,7 @@ require("scripts/quads_toolbox_scripts/toolbox_data/util_functions")
 toolboxSub = menu.add_submenu("--== ☣️ Quad's Modest Toolbox ☣️ ==--")
 
 text(toolboxSub, centeredText("     ☣️ Quad's Modest Toolbox ☣️"))
-greyText(toolboxSub, centeredText("--__--¯¯--__--¯¯--__--¯¯--__--¯¯--__--"))
+toolboxSub:add_bare_item(centeredText("--__--¯¯-- Loading 100% --¯¯--__--"), function() return not finishedLoading and centeredText("--__--¯¯-- Loading .... --¯¯--__--") or "" end, null, null, null)
 
 require("scripts/quads_toolbox_scripts/ultimate_playerlist")
 require("scripts/quads_toolbox_scripts/ambientPickupSuite")
@@ -34,8 +36,7 @@ require("scripts/quads_toolbox_scripts/offradar")
 require("scripts/quads_toolbox_scripts/misc")
 require("scripts/quads_toolbox_scripts/stats")
 
-configSub = toolboxSub:add_submenu(centeredText("     ⚙️ Hotkey Configuration ⚙️"))
-text(configSub, centeredText("    ⚙️ Hotkey Config ⚙️"))
+
 require("scripts/quads_toolbox_scripts/hotkeys")
 
 debugToolsSub = toolboxSub:add_submenu(centeredText(" 📟 Debug Tools 📟"))
@@ -67,5 +68,7 @@ text(creditsSub, "        Peace, Quad_Plex")
 local secretMenu
 secretMenu = creditsSub:add_submenu("Secret Menu...")
 secretMenu:add_action("Don't press this button!", function() displayHudBanner("FGTXT_F_F3", "RESPAWN_W", "", 109) end)
+
+finishedLoading = true
 
 menu.register_callback("OnScriptsLoaded", function() menu.emit_event("startModWatcher")  end)
