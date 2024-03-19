@@ -210,7 +210,7 @@ vehicleOptionsSub:add_action("Reset all modified handling data", function()
             end
         end
     end
-end)
+end, function() return #cars_data > 0 end)
 
 greyText(vehicleOptionsSub, centeredText("----- Vehicle Tools -----"))
 
@@ -251,7 +251,7 @@ menu.register_callback('ToggleCarjumpHotkey', function()
         carJumpHotkey = nil
     end
 end)
-vehicleOptionsSub:add_action("Quick Vehicle Jump", carJump)
+vehicleOptionsSub:add_action("Quick Vehicle Jump", carJump, function() return localplayer:is_in_vehicle() end)
 
 --------------------------------
 --massive car, F12 key
@@ -275,4 +275,4 @@ menu.register_callback('ToggleMassiveCarHotkey', function()
         massiveCarHotkey = nil
     end
 end)
-vehicleOptionsSub:add_action("Set Car Mass to 26969", makeCarMassive)
+vehicleOptionsSub:add_action("Set Car Mass to 26969", makeCarMassive, function() return localplayer:is_in_vehicle() end)
