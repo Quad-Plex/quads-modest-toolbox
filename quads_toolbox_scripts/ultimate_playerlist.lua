@@ -1583,7 +1583,7 @@ local function autoCableCarSpamThread()
             return
         end
         local rot = autoPly():get_rotation()
-        local angle = math.deg(math.atan(rot.y, rot.x + math.pi / 2))
+        local angle = math.deg(math.atan(rot.y, rot.x + math.pi >> 1))
         createVehicle(joaat("CableCar"), autoPly():get_position(), angle)
         sleep(0.2)
     end

@@ -225,7 +225,7 @@ end
 
 local updateable = true
 local ambientSubs = {}
-local SortStyles = { [0] = "Pickup Names", "Model Names" }
+local SortStyles = { [0] = "Model Names", "Pickup Names" }
 local SortStyle = 0
 local function initializePickups(sub)
 	updateable = false

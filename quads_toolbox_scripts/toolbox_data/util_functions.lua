@@ -289,7 +289,7 @@ function greyText(sub, string)
 end
 
 function centeredText(str)
-    len = 18 - math.floor(string.len(str) / 2 + 0.5)
+    len = 18 - (math.floor(string.len(str) >> 1) + 0.5)
     local centeredText = ""
 
     for _ = 0, len do
