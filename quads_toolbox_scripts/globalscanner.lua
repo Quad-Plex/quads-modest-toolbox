@@ -76,6 +76,71 @@ local function addLetterToString(letter, string)
     end
 end
 
+local function numberChanger(sub, float)
+    sub:clear()
+    local tempNumberStorage
+    if float then
+        tempNumberStorage = tostring(exact_search_value_float)
+        if string.find(tempNumberStorage, "[eE]") then
+            tempNumberStorage = string.format("%.f", exact_search_value_float)
+        end
+    else
+        tempNumberStorage = tostring(exact_search_value_int)
+    end
+    sub:add_bare_item("", function()
+        return "Number: " .. tempNumberStorage
+    end, null, null, null)
+    greyText(sub, "----------------------------")
+    sub:add_action("|⌫ Backspace ⌫|", function() tempNumberStorage = string.sub(tempNumberStorage, 1, -2) end)
+    if float then
+        sub:add_bare_item("", function() return string.find(tempNumberStorage, "%.") and "Remove decimal point" or "Add decimal point" end, function()
+            local decimalIndex = string.find(tempNumberStorage, "%.")
+            if not decimalIndex then
+                tempNumberStorage = addLetterToString(".", tempNumberStorage)
+            else
+                if decimalIndex then
+                    tempNumberStorage = string.sub(tempNumberStorage, 1, decimalIndex - 1)
+                end
+            end
+        end, null, null)
+    end
+    sub:add_bare_item("",
+            function()
+                return "Add Number: ◀ " .. showLettersForPosition(selectedNumberPos, numbers) .. " ▶"
+            end,
+            function()
+                local attemptedNewNumber = addLetterToString(numbers[selectedNumberPos], tempNumberStorage)
+                local attemptedNewNumberAsNumber = tonumber(attemptedNewNumber)
+                if float and (#attemptedNewNumber > tostring(math.maxinteger):len() + 1 + 15
+                        or attemptedNewNumberAsNumber == nil
+                        or attemptedNewNumberAsNumber == math.huge
+                        or attemptedNewNumberAsNumber == -math.huge) then
+                    print("Nope to float.")
+                    return
+                elseif not float and (#attemptedNewNumber > tostring(math.maxinteger):len()
+                        or attemptedNewNumberAsNumber == nil
+                        or attemptedNewNumberAsNumber < math.mininteger
+                        or attemptedNewNumberAsNumber > math.maxinteger) then
+                    print("Shit for int.")
+                    return
+                end
+                tempNumberStorage = attemptedNewNumber
+                if float then
+                    exact_search_value_float = attemptedNewNumberAsNumber
+                else
+                    exact_search_value_int = attemptedNewNumberAsNumber
+                end
+            end,
+            function()
+                if selectedNumberPos > 1 then selectedNumberPos = selectedNumberPos - 1 end
+                return "Add Number: ◀ " .. showLettersForPosition(selectedNumberPos, numbers) .. " ▶"
+            end,
+            function()
+                if selectedNumberPos < #numbers then selectedNumberPos = selectedNumberPos + 1 end
+                return "Add Number: ◀ " .. showLettersForPosition(selectedNumberPos, numbers) .. " ▶"
+            end)
+end
+
 local function stringChanger(sub)
     sub:clear()
     sub:add_bare_item("", function()
@@ -456,12 +521,16 @@ local function updateGlobalScanner(sub)
                 exact_search_value_int = value
                 initialScan(sub, ScannerTypes[scannerSelection], ScriptTypes[scriptSelection], exact_search_value_int)
                 updateGlobalScanner(sub) end)
+            local intChangerSub
+            intChangerSub = sub:add_submenu("Enter custom (long) int", function() numberChanger(intChangerSub, false) end)
         elseif ScannerTypes[scannerSelection] == "Float" then
             sub:add_float_range("| 🔎 Scan for Float 🔍", 1, -MAX_INT, MAX_INT, function() return exact_search_value_float
             end, function(value)
                 exact_search_value_float = value
                 initialScan(sub, ScannerTypes[scannerSelection], ScriptTypes[scriptSelection], exact_search_value_float)
                 updateGlobalScanner(sub) end)
+            local floatChangerSub
+            floatChangerSub = sub:add_submenu("Enter custom (long) float", function() numberChanger(floatChangerSub, true) end)
         elseif ScannerTypes[scannerSelection] == "String" then
             sub:add_bare_item("", function() return "| 🔎 Scan for String 🔍 '" .. exact_search_value_string .. "'"
             end, function()
@@ -518,12 +587,16 @@ local function updateGlobalScanner(sub)
                         exact_search_value_int = value
                         search(sub, "exact", current_num_of_results, ScannerTypes[scannerSelection], ScriptTypes[scriptSelection], exact_search_value_int)
                         updateGlobalScanner(sub) end)
+            local intChangerSub
+            intChangerSub = sub:add_submenu("Enter custom (long) int", function() numberChanger(intChangerSub, false) end)
         elseif ScannerTypes[scannerSelection] == "Float" then
             sub:add_float_range(":  SEARCH: exact float", 1, -MAX_INT, MAX_INT, function() return exact_search_value_float
             end, function(value)
                         exact_search_value_float = value
                         search(sub, "exact", current_num_of_results, ScannerTypes[scannerSelection], ScriptTypes[scriptSelection], exact_search_value_float)
                         updateGlobalScanner(sub) end)
+            local floatChangerSub
+            floatChangerSub = sub:add_submenu("Enter custom (long) float", function() numberChanger(floatChangerSub, true) end)
         elseif ScannerTypes[scannerSelection] == "String" then
             sub:add_bare_item("", function() return ":  SEARCH: exact String |" .. exact_search_value_string
             end, function()
