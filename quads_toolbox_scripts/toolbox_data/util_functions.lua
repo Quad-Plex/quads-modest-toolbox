@@ -313,13 +313,7 @@ end
 function checkBit(value, pos)
     --Sometimes localplayer:get_player_id() will fail and return -1, which trips up this function
     if pos == -1 then return false end
-    -- shift right by pos
-    while pos > 0 and value ~= 0 do
-        value = math.floor(value / 2)
-        pos = pos - 1
-    end
-    -- get rightmost ("first") bit
-    return value % 2 == 1
+    return (value >> pos) % 2 == 1
 end
 
 ---------------------------Type Checker-------------------------------
