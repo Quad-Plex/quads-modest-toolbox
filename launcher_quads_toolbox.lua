@@ -13,7 +13,7 @@ require("scripts/quads_toolbox_scripts/toolbox_data/util_functions")
 toolboxSub = menu.add_submenu("--== ☣️ Quad's Modest Toolbox ☣️ ==--")
 
 text(toolboxSub, centeredText("     ☣️ Quad's Modest Toolbox ☣️"))
-toolboxSub:add_bare_item(centeredText("--__--¯¯-- Loading 100% --¯¯--__--"), function() return not finishedLoading and centeredText("--__--¯¯-- Loading .... --¯¯--__--") or "" end, null, null, null)
+toolboxSub:add_bare_item(centeredText("--__--¯¯-- 100% loaded --¯¯--__--"), function() return not finishedLoading and centeredText("--__--¯¯- Loading Scripts -¯¯--__--") or nil end, null, null, null)
 
 require("scripts/quads_toolbox_scripts/ultimate_playerlist")
 require("scripts/quads_toolbox_scripts/ambientPickupSuite")
