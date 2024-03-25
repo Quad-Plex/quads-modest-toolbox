@@ -173,6 +173,7 @@ local function pickupChanger(pickup, sub)
 end
 
 local function weaponMenu(sub)
+	sub:clear()
 	for _, pickupName in ipairs(sorted_pickup_names) do
 		if string.find(pickupName[1], "PICKUP_WEAPON") then
 			sub:add_action(string.gsub(pickupName[1], "PICKUP_WEAPON_", ""), function() createCustomPickupWithCustomModel(pickupName[1], nil, 6969) end)
@@ -183,6 +184,7 @@ end
 local figurines = { "bkr_prop_coke_boxeddoll", "vw_prop_vw_colle_sasquatch", "vw_prop_vw_colle_beast", "vw_prop_vw_colle_rsrgeneric", "vw_prop_vw_colle_rsrcomm",
 					"vw_prop_vw_colle_pogo", "vw_prop_vw_colle_prbubble", "vw_prop_vw_colle_imporage", "vw_prop_vw_colle_alien", "vw_prop_vw_lux_card_01a" }
 local function collectibleMenu(sub)
+	sub:clear()
 	for _, figurine in pairs(figurines) do
 		sub:add_action("Give " .. figurines[_], function() createCustomPickupWithCustomModel("PICKUP_CUSTOM_SCRIPT", figurine, 0) end)
 	end
