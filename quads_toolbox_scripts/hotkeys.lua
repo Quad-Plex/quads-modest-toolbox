@@ -138,6 +138,8 @@ end)
 -- Function to add all the hotkey toggles
 local function addHotkeyToggles(hotkeyMenu)
     text(hotkeyMenu, centeredText("    ⚙️ Hotkey Config ⚙️"))
+    greyText(hotkeyMenu, "Changes are saved automatically!!")
+    greyText(hotkeyMenu, "----------------------------------")
     for i, hotkeyData in ipairs(hotkeysData) do
         hotkeyMenu:add_toggle(hotkeyData.name .. " Hotkey", function()
             return hotkeyData.toggleVar
@@ -161,8 +163,6 @@ local function addHotkeyToggles(hotkeyMenu)
             end
         end)
     end
-    greyText(hotkeyMenu, "Changes are saved automatically!!")
-    greyText(hotkeyMenu, "----------------------------------")
 end
 
 local hotkeyMenu

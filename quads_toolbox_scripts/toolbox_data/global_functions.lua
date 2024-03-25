@@ -573,3 +573,22 @@ getSpecialExportVehiclesList = function()
     end
     return exportVehiclesList -- Return the list of export vehicle values
 end
+
+-------------------------------------------------------------------------------
+------------------------- Sessanta Shit ---------------------------------------
+baseGlobals.sessantaShit = {}
+baseGlobals.sessantaShit.base_local = 307
+function newSessantaVehicle()
+    local shop_controller = script("shop_controller")
+    if shop_controller and shop_controller:is_active() then
+        stats.set_int("MP" .. stats.get_int("MPPLY_LAST_MP_CHAR") .. "_TUNER_CLIENT_VEHICLE_POSSIX", 1)
+        shop_controller:set_int(baseGlobals.sessantaShit.base_local + 1, 0)
+        shop_controller:set_int(baseGlobals.sessantaShit.base_local + 2, 0)
+        shop_controller:set_int(baseGlobals.sessantaShit.base_local + 3, 1)
+        shop_controller:set_int(baseGlobals.sessantaShit.base_local, 3)
+    end
+end
+baseGlobals.sessantaShit.testFunction = function()
+    newSessantaVehicle()
+end
+baseGlobals.sessantaShit.testFunctionExplanation = "Trigger new Sessanta Vehicle"

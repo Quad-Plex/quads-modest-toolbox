@@ -18,11 +18,14 @@ toolboxSub:add_bare_item(centeredText("--__--¯¯-- 100% loaded --¯¯--__--"), 
 require("scripts/quads_toolbox_scripts/ultimate_playerlist")
 require("scripts/quads_toolbox_scripts/ambientPickupSuite")
 
-vehicleOptionsSub = toolboxSub:add_submenu(centeredText(" 🚗 Vehicle Scripts 🚗"))
+vehicleSpawnMenu = toolboxSub:add_submenu("     ★🚗 Vehicle Spawner: ★🚗", function() addVehicleSpawnMenu(localplayer, vehicleSpawnMenu) end)
+
+vehicleOptionsSub = toolboxSub:add_submenu(centeredText("    🔧 Vehicle Tools 🔧"))
 greyText(vehicleOptionsSub, centeredText(" ----- 🚗 Vehicle Options 🚗 -----"))
 require("scripts/quads_toolbox_scripts/trafficremover")
 require("scripts/quads_toolbox_scripts/carCheats")
 require("scripts/quads_toolbox_scripts/rainbow_vehicle")
+require("scripts/quads_toolbox_scripts/misc_vehicle")
 
 gunOptionsSub = toolboxSub:add_submenu(centeredText(" 🔫 Gun Scripts 🔫"))
 greyText(gunOptionsSub, centeredText(" 🔫 Gun Options 🔫"))

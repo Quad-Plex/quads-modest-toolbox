@@ -211,10 +211,6 @@ end, function() return tableCount(cars_data) > 0 end)
 
 greyText(vehicleOptionsSub, centeredText("----- Vehicle Tools -----"))
 
------------------------- Vehicle Spawner -----------------------
-local vehicleSpawnMenu
-vehicleSpawnMenu = vehicleOptionsSub:add_submenu("Vehicle Spawner:", function() addVehicleSpawnMenu(localplayer, vehicleSpawnMenu) end)
-
 --------------------------------
 --car jump, numpad comma (Script by Quad_Plex)
 --------------------------------
