@@ -130,8 +130,8 @@ local function reloadVehicle(vehicle)
     local restoreData = cars_data[tostring(vehicle:get_model_hash())]
     if restoreData then
         boostVehicle(restoreData, vehicle, false)
-        displayHudBanner("DRONE_BOOST", "PIM_NCL_PRIV0", "", 109)
     end
+    displayHudBanner("DRONE_BOOST", "PIM_NCL_PRIV0", "", 109)
 end
 
 --------------------------------
@@ -202,15 +202,12 @@ end, function(value)
     multiplier_percent = value
 end)
 vehicleOptionsSub:add_action("Reset all modified handling data", function()
-    for model_key, _ in pairs(cars_data) do
-        for veh in replayinterface.get_vehicles() do
-            if tostring(veh:get_model_hash()) == model_key then
-                reloadVehicle(veh)
-                break
-            end
+    for veh in replayinterface.get_vehicles() do
+        if veh:get_gravity() == 21.420 and cars_data[tostring(veh:get_model_hash())] then
+            reloadVehicle(veh)
         end
     end
-end, function() return #cars_data > 0 end)
+end, function() return tableCount(cars_data) > 0 end)
 
 greyText(vehicleOptionsSub, centeredText("----- Vehicle Tools -----"))
 

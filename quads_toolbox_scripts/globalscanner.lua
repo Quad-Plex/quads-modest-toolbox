@@ -104,6 +104,13 @@ local function numberChanger(sub, float)
             end
         end, null, null)
     end
+    sub:add_bare_item("", function() return string.find(tempNumberStorage, "-") and "Remove minus sign" or "Add minus sign" end, function()
+        if string.sub(tempNumberStorage, 1, 1) ~= "-" then
+            tempNumberStorage = "-" .. tempNumberStorage
+        else
+            tempNumberStorage = string.sub(tempNumberStorage, 2)
+        end
+    end, null, null)
     sub:add_bare_item("",
             function()
                 return "Add Number: ◀ " .. showLettersForPosition(selectedNumberPos, numbers) .. " ▶"

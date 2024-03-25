@@ -811,10 +811,10 @@ local function playerInfo(plyId, sub, plyName)
         local blipType = getPlayerBlipType(plyId)
 
         if ply ~= localplayer and amISpectating(plyId) then
-            txt = txt .. "SPECTATED "
+            txt = txt .. "SPEC "
         end
         if ply ~= localplayer and isSpectatingMe(plyId) then
-            txt = txt .. "!SPECTATING U! "
+            txt = txt .. "!WATCHING YOU! "
         end
         if getScriptHostPlayerID() == plyId then
             txt = txt .. "HOST "
@@ -851,14 +851,14 @@ local function playerInfo(plyId, sub, plyName)
         elseif healthPercent >= 0 then
             healthPercent = math.floor(healthPercent + 0.5) .. "\u{2665}"
         else
-            return "MOD"
+            healthPercent = "MOD GHOST"
         end
 
         local armor = (math.floor(ply:get_armour()) * 2) .. "%"
         local wanted = ply:get_wanted_level() > 0 and string.rep(" \u{2605}", ply:get_wanted_level(), "") or "0\u{2605}  "
         local vehicle_health = ply:is_in_vehicle() and math.floor(ply:get_current_vehicle():get_health()) or 0
 
-        return "  " .. healthPercent .. "    " .. armor .. "\u{1F6E1}    " .. wanted .. "|" .. "\u{1F697}" .. vehicle_health .. "\u{2665}"
+        return " " .. healthPercent .. "    " .. armor .. "\u{1F6E1}    " .. wanted .. "|" .. "\u{1F697}" .. vehicle_health .. "\u{2665}"
     end
 
     greyText(sub, centeredText("------ Health/Armor/Wanted Level ------"))
@@ -1215,14 +1215,6 @@ function addSubActions(sub, plyName, plyId)
     end, function(n)
         TeleportVehiclesToPlayer(ply, n, true, nil)
     end)
-    
-    if ply == localplayer then
-        text(trollSub, centeredText("Troll yourself"))
-    else
-        trollSub:add_bare_item("Trolling " .. plyName .. "...", function()
-            refreshPlayer(plyName, plyId)
-        end, null, null, null)
-    end
     trollSub:add_action("\u{26A0} EMERGENCY STOP ALL LOOPS \u{26A0}", emergencyStop)
     greyText(trollSub, centeredText("--------Loop Actions--------"))
     trollSub:add_toggle("|CONSTANT PEDS", function()
@@ -1533,7 +1525,7 @@ local function autoExplodeThread()
             return
         end
         TeleportVehiclesToPlayer(autoPly(), vehicleDistance, true, nil)
-        sleep(0.2)
+        sleep(0.35)
     end
 end
 menu.register_callback('startAutoExplode', autoExplodeThread)
@@ -1545,7 +1537,7 @@ local function autoVehicleStormThread()
             return
         end
         TeleportVehiclesToPlayer(autoPly(), vehicleDistance, false, nil)
-        sleep(0.16)
+        sleep(0.25)
     end
 end
 menu.register_callback('autoVehicleStorm', autoVehicleStormThread)
@@ -1583,7 +1575,7 @@ local function autoCableCarSpamThread()
             return
         end
         local rot = autoPly():get_rotation()
-        local angle = math.deg(math.atan(rot.y, rot.x + math.pi >> 1))
+        local angle = math.deg(math.atan(rot.y, rot.x + math.pi / 2))
         createVehicle(joaat("CableCar"), autoPly():get_position(), angle)
         sleep(0.2)
     end

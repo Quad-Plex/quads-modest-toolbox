@@ -54,7 +54,7 @@ end
 
 local godmodeEnabledSpawn = false
 local function addVehicleEntry(vehMenu, vehicle, ply)
-    greyText(vehMenu, "Spawn " .. vehicle[2][1])
+    greyText(vehMenu, "|Spawning " .. vehicle[2][1] .. "...")
     vehMenu:add_action("Spawn using Method #1", function()
         local spawnPos = ply:get_position() + ply:get_heading() * 7
         createVehicle(vehicle[1], spawnPos)
