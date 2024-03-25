@@ -226,7 +226,6 @@ baseGlobals.playerOrg.baseGlobal = 1886967
 baseGlobals.playerOrg.bareStringCheck = function()
     return getPlayerOrgID(localplayer:get_player_id()) ~= -1 and "Own Org Name: " .. getPlayerOrgName(localplayer:get_player_id()) or "No Organisation found"
 end
-baseGlobals.playerOrg.intRangeExplanation = "-1 if not in Org, else expect a value"
 local org_types = { [0] = "CEO", "MC" }
 getPlayerOrgType = function(plyId)
     return org_types[globals.get_int(baseGlobals.playerOrg.baseGlobal + 1 + (plyId * 609) + 10 + 429)]
@@ -305,7 +304,7 @@ shortformBlips = {
     ["CAR MEET"] = "LSCM",
     ["AUTO SHOP"] = "AUTO",
     ["JUNK PARACHUTE"] = "PRCH",
-    ["CLOTHES"] = "CLOTH"
+    ["SHOP"] = "SHOP"
 }
 baseGlobals.blipType = {}
 baseGlobals.blipType.baseGlobal = 2657921
@@ -313,7 +312,7 @@ baseGlobals.blipType.testIntRange = function()
     return getPlayerBlip(localplayer:get_player_id())
 end
 baseGlobals.blipType.intRangeExplanation = "Should be 4 while idling outside"
-local vehicle_blips = utils_Set({ 262144, 262145, 262148, 262149, 262156, 262208, 262212, 262276, 262277, 262660, 262661, 262724, 262784, 262789, 262788, 786564, 2627888, 2359300 })
+local vehicle_blips = utils_Set({ 262144, 262145, 262148, 262149, 262156, 262164, 262208, 262212, 262276, 262277, 262660, 262661, 262724, 262784, 262789, 262788, 786564, 2627888, 2359300 })
 local plane_ghost_blips = utils_Set({ 8388612, 8650884, 8651332, 8651396, 8651397, 8650756, 8650757, 8650820, 8651268, 8651269 })
 local ultralight_ghost_blips = utils_Set({ 262676, 262740 })
 local ls_customs_blip = utils_Set({ 2097280, 2359330, 2359458, 262178 })
@@ -327,10 +326,10 @@ local kosatka_blip = utils_Set({ 262213, 262341, 262336, 262337, 262340, 262720 
 local ammo_nation_blip = utils_Set({ 2 })
 local junk_parachute_blip = utils_Set({ 2097156, 2097220 })
 local unsure_blips = utils_Set({ 2622788, 262656, 2359299, 524416, 524420 })
-local delivery_mission_blips = utils_Set({ 786432, 786436, 786437, 786500, 786560, 786948, 787076, 524292, 524288 })
+local delivery_mission_blips = utils_Set({ 786432, 786436, 786437, 786500, 786560, 786948, 787076, 524256, 524292, 524288, 524293 })
 local ballistic_armor_blip = utils_Set({ 16777220, 16777216 })
 local hangar_modshop_blip = utils_Set({ 262274 })
-local clothes_store = utils_Set({ 2097282, 2097154 })
+local shop_blips = utils_Set({ 2097282, 2097154 })
 local heist_planning_board = utils_Set({ 704 })
 local loading_blips = utils_Set({ 0, 6 })
 getPlayerBlipType = function(plyId)
@@ -348,8 +347,8 @@ getPlayerBlipType = function(plyId)
         return "BEAST"
     elseif ls_customs_blip[plyBlip] then
         return "LS CUSTOMS"
-    elseif clothes_store[plyBlip] then
-        return "CLOTHES"
+    elseif shop_blips[plyBlip] then
+        return "SHOP"
     elseif normal_blips[plyBlip] then
         return "NORMAL"
     elseif cashier_blip[plyBlip] then
@@ -526,7 +525,7 @@ function isSpectatingMe(plyId)
     local localplayerID = localplayer:get_player_id()
     if localplayerID == -1 and globalLocalplayerID ~= -1 then localplayerID = globalLocalplayerID end
     local isWatchingMe = checkBit(visibleState, localplayerID)
-    return isWatchingMe and distanceBetween(player.get_player_ped(), ply) > 225
+    return isWatchingMe and distanceBetween(player.get_player_ped(), ply) > 230
 end
 
 function amISpectating(plyId)
@@ -538,7 +537,7 @@ function amISpectating(plyId)
     if localplayerID == -1 and globalLocalplayerID ~= -1 then localplayerID = globalLocalplayerID end
     local ownVisibleState = getIsTrackedPedVisibleState(localplayerID)
     local amIWatching = checkBit(ownVisibleState, plyId)
-    return amIWatching and distanceBetween(player.get_player_ped(), ply) > 225
+    return amIWatching and distanceBetween(player.get_player_ped(), ply) > 230
 end
 
 ---------------------------------------------------------------------------
@@ -557,4 +556,20 @@ end
 
 getPlayerBountyAmount = function(plyId)
     return globals.get_int(baseGlobals.bountyInfo.playerBountyInfoGlobal + 4 + 1 + (plyId * 3) + 1)
+end
+
+-----------------------------------------------------------------------------
+-------------------------- Special Export Vehicles --------------------------
+baseGlobals.specialExport = {}
+baseGlobals.specialExport.baseGlobal = 1942456
+baseGlobals.specialExport.bareStringCheck = function()
+    return "1st Vehicle in List: " .. tostring(VEHICLE[getSpecialExportVehiclesList()[1]][1])
+end
+
+getSpecialExportVehiclesList = function()
+    local exportVehiclesList = {}
+    for i = baseGlobals.specialExport.baseGlobal, baseGlobals.specialExport.baseGlobal + 9 do
+        table.insert(exportVehiclesList, globals.get_int(i))
+    end
+    return exportVehiclesList -- Return the list of export vehicle values
 end

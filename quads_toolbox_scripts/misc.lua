@@ -113,3 +113,40 @@ local function podiumChanger(sub)
 end
 local podiumSub
 podiumSub = miscOptionsSub:add_submenu("\u{26A0} Change Casino Podium vehicle \u{26A0} ", function() podiumChanger(podiumSub) end)
+
+--------------------------- Special Export Vehicles Submenu -------------------------
+local function buildSpecialExportSubmenu(sub)
+	sub:clear()
+	local specialExportVehicles = getSpecialExportVehiclesList()
+	if not specialExportVehicles then
+		text(sub, "!!Couldn't get Export Vehicle List!!")
+		text(sub, "You have to be loaded into Online")
+		text(sub, "and own the Auto Shop!")
+		return
+	end
+	text(sub, "--- Special Export Vehicles: ---")
+	greyText(sub, "Wait ~2 min between selling vehicles")
+	greyText(sub, "or the transaction might fail")
+	for _, hash in ipairs(specialExportVehicles) do
+		sub:add_action("Spawn " .. VEHICLE[hash][1], function()
+			local vector = localplayer:get_heading()
+			local angle = math.deg(math.atan(vector.y, vector.x))
+			createVehicle(hash, localplayer:get_position() + localplayer:get_heading() * 7, angle)
+		end)
+	end
+end
+local specialExportSub
+specialExportSub = miscOptionsSub:add_submenu("$ Get Special Export Vehicles $", function() buildSpecialExportSubmenu(specialExportSub) end)
+
+----------------------Respawn State changer----------------------
+local stateToSet = 6
+miscOptionsSub:add_int_range("Respawn State Trigger:", 1, -10, 10, function() return stateToSet end, function(n)
+	stateToSet = n
+	for i = 0, 31 do
+		local ply = player.get_player_ped(i)
+		if ply == localplayer then
+			globalLocalplayerID = i
+		end
+	end
+	setPlayerRespawnState(globalLocalplayerID, n)
+end)
