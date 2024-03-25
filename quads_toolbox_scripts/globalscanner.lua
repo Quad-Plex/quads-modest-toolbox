@@ -1,5 +1,4 @@
 local keepSearching = false
-local initialScanHasRun = false
 local lower_bound = 100000
 local upper_bound = 1000000
 local old_count = 0
@@ -22,14 +21,21 @@ local bigger_than_search_value = 50
 local found_globals = {}
 local oldResultsHistory = {}
 
-local function getGlobalForTypeAndScript(global, type, selectedScript)
+local function getGlobalForTypeAndScript(global, type, selectedScript, translateVehicleHashes)
     local scriptToUse
     if selectedScript and selectedScript ~= "Global" then
         scriptToUse = script(selectedScript)
         if scriptToUse == nil then error("Couldn't load script " .. selectedScript) end
     end
     if type == "Int" then
-        return scriptToUse and scriptToUse:get_int(global) or globals.get_int(global)
+        local value = scriptToUse and scriptToUse:get_int(global) or globals.get_int(global)
+        if translateVehicleHashes then
+            local vehicleData = VEHICLE[value]
+            if vehicleData then
+                return vehicleData[1]
+            end
+        end
+        return value
     elseif type == "Float" then
         return scriptToUse and scriptToUse:get_float(global) or globals.get_float(global)
     elseif type == "String" then
@@ -118,14 +124,12 @@ local function numberChanger(sub, float)
             function()
                 local attemptedNewNumber = addLetterToString(numbers[selectedNumberPos], tempNumberStorage)
                 local attemptedNewNumberAsNumber = tonumber(attemptedNewNumber)
-                if float and (#attemptedNewNumber > tostring(math.maxinteger):len() + 1 + 15
-                        or attemptedNewNumberAsNumber == nil
+                if float and (attemptedNewNumberAsNumber == nil
                         or attemptedNewNumberAsNumber == math.huge
                         or attemptedNewNumberAsNumber == -math.huge) then
                     print("Nope to float.")
                     return
-                elseif not float and (#attemptedNewNumber > tostring(math.maxinteger):len()
-                        or attemptedNewNumberAsNumber == nil
+                elseif not float and (attemptedNewNumberAsNumber == nil
                         or attemptedNewNumberAsNumber < math.mininteger
                         or attemptedNewNumberAsNumber > math.maxinteger) then
                     print("Shit for int.")
@@ -232,7 +236,6 @@ local function getIsSavedString(global)
 end
 
 local function initialScan(sub, typeSelection, selectedScript, initialSearchValue)
-    initialScanHasRun = true
     greyText(sub, "0% processed...")
     local counter = 0
     local counter2 = 1
@@ -240,7 +243,7 @@ local function initialScan(sub, typeSelection, selectedScript, initialSearchValu
     for global = lower_bound, upper_bound do
         counter = counter + 1
         if counter == math.floor(step) then
-            greyText(sub, counter2 * 10 .. "% processed... (" .. counter2 * math.ceil(step) .. " Globals)")
+            greyText(sub, counter2 * 10 .. "% processed... (" .. formatNumberWithDots(counter2 * math.ceil(step)) .. " Variables)")
             counter = 0
             counter2 = counter2 + 1
         end
@@ -254,7 +257,6 @@ local function initialScan(sub, typeSelection, selectedScript, initialSearchValu
 end
 
 local function search(sub, search_type, current_count, typeSelection, selectedScript, exact_search_value)
-    initialScanHasRun = false
     sub:clear()
     old_count = current_count
     greyText(sub, "UPDATING GLOBALS.....")
@@ -269,7 +271,7 @@ local function search(sub, search_type, current_count, typeSelection, selectedSc
     for global, _ in pairs(found_globals) do
         counter = counter + 1
         if counter == math.floor(step) then
-            greyText(sub, counter2 * 10 .. "% searched... (" .. counter2 * math.ceil(step) .. " Globals)")
+            greyText(sub, counter2 * 10 .. "% searched... (" .. formatNumberWithDots(counter2 * math.ceil(step)) .. " Variables)")
             counter = 0
             counter2 = counter2 + 1
         end
@@ -320,6 +322,7 @@ local function search(sub, search_type, current_count, typeSelection, selectedSc
     found_globals = table.copy(temp_new_found_globals)
 end
 
+local translateVehicleHashes = false
 local function showNearbyGlobals(sub, global, min_search, max_search, selectedScript)
     sub:clear()
     sub:add_array_item("Show as Type:", ScannerTypes, function()
@@ -327,11 +330,14 @@ local function showNearbyGlobals(sub, global, min_search, max_search, selectedSc
     end, function(value)
         scannerSelection = value
     end)
+    if ScannerTypes[scannerSelection] == "Int" then
+        sub:add_toggle("Translate Vehicle Hashes", function() return translateVehicleHashes end, function(n) translateVehicleHashes = n end)
+    end
     if min_search > 50 then
         sub:add_action("Show previous 50", function()
             min_search = min_search - 50
             max_search = max_search - 50
-            showNearbyGlobals(sub, global, min_search, max_search, ScannerTypes[scannerSelection], selectedScript)
+            showNearbyGlobals(sub, global, min_search, max_search, selectedScript)
         end)
     end
     for i = min_search, max_search do
@@ -339,7 +345,7 @@ local function showNearbyGlobals(sub, global, min_search, max_search, selectedSc
         if i == global then
             prefix = "|"
         end
-        sub:add_bare_item("", function() return prefix .. selectedScript .. "[" .. i .. "] = " .. tostring(getGlobalForTypeAndScript(i, ScannerTypes[scannerSelection], selectedScript)) .. " " .. getIsSavedString(i) end, function()
+        sub:add_bare_item("", function() return prefix .. selectedScript .. "[" .. i .. "] = " .. tostring(getGlobalForTypeAndScript(i, ScannerTypes[scannerSelection], selectedScript, translateVehicleHashes)) .. " " .. getIsSavedString(i) end, function()
             local watchlistPosition = getGlobalWatchlistPosition(i)
             if not watchlistPosition then
                 table.insert(watchlistGlobals, {i, checkType(getGlobalForTypeAndScript(i, ScannerTypes[scannerSelection], selectedScript))})
@@ -353,7 +359,7 @@ local function showNearbyGlobals(sub, global, min_search, max_search, selectedSc
     sub:add_action("Show next 50", function()
         min_search = min_search + 50
         max_search = max_search + 50
-        showNearbyGlobals(sub, global, min_search, max_search, ScannerTypes[scannerSelection], selectedScript)
+        showNearbyGlobals(sub, global, min_search, max_search, selectedScript)
     end)
 end
 
@@ -551,11 +557,8 @@ local function updateGlobalScanner(sub)
             oldResultsHistory = {}
             initialScan(sub, ScannerTypes[scannerSelection], ScriptTypes[scriptSelection], initialSearchValue)
             updateGlobalScanner(sub) end)
-        if initialScanHasRun then
-            greyText(sub, centeredText("❌ NO RESULTS ❌"))
-        end
+        greyText(sub, centeredText("❌ NO RESULTS ❌"))
         if #oldResultsHistory > 0 then
-            greyText(sub, centeredText("❌ NO RESULTS ❌"))
             sub:add_action("↩️ UNDO LAST SEARCH OPERATION ↩️", function()
                 if #oldResultsHistory > 0 then
                     found_globals = table.remove(oldResultsHistory)
