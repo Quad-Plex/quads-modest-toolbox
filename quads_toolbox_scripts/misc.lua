@@ -14,6 +14,7 @@ function mpx() return "MP" .. stats.get_int("MPPLY_LAST_MP_CHAR") .. "_" end --R
 
 miscOptionsSub:add_action("Make Nightclub Popular", function()
 	stats.set_int(mpx() .. "CLUB_POPULARITY", 1000)
+	displayHudBanner("BB_BM_PC_SUCC_S", "", "", 109)
 end)
 
 --------------------------------
@@ -33,6 +34,7 @@ local function refillInventory()
 	stats.set_int(mpx().."MP_CHAR_ARMOUR_3_COUNT", 10)
 	stats.set_int(mpx().."MP_CHAR_ARMOUR_4_COUNT", 10)
 	stats.set_int(mpx().."MP_CHAR_ARMOUR_5_COUNT", 10)
+	displayHudBanner("PIM_TINVE", "CC_BLUSH_0", "", 109)
 end
 
 miscOptionsSub:add_action("Refill Inventory", function()
@@ -41,7 +43,7 @@ end)
 
 ----------------------Respawn State changer----------------------
 local stateToSet = 6
-miscOptionsSub:add_int_range("Respawn State Trigger:", 1, -10, 10, function() return stateToSet end, function(n)
+miscOptionsSub:add_int_range("Trigger Respawn (Unstuck):", 1, -10, 10, function() return stateToSet end, function(n)
 	stateToSet = n
 	for i = 0, 31 do
 		local ply = player.get_player_ped(i)

@@ -51,3 +51,6 @@
 --HUD_RANDOM            - 'Random'
 --HEIST_WARN_4          - 'Warning'
 --SPEC_HEADER           - 'Spectator'
+--BB_BM_PC_SUCC_S       - 'Nightclub Popularity has increased'
+--PIM_TINVE             - 'Inventory'
+--CC_BLUSH_0            - 'Full'
