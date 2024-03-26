@@ -1,10 +1,22 @@
 local savedInteriors = {}
-local success, jsonInteriors = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/SAVED_INTERIORS.json")
-if success then
+local interiorsLoadingSuccess, jsonInteriors = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/SAVED_INTERIORS.json")
+if interiorsLoadingSuccess then
     --Load the saved interiors from file
     for _, data in pairs(jsonInteriors) do
         savedInteriors[_] = vector3(data[1], data[2], data[3])
     end
+end
+
+local sortStyles = { [0]="Modders first", "Nearest first" }
+formatStyles = { [0]="EU", "US"}
+
+settingsLoadingSuccess, playerlistSettings = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/PLAYERLIST_SETTINGS.json")
+if not settingsLoadingSuccess then
+    playerlistSettings.disableSpectatorWarning = false
+    playerlistSettings.disableModdersWarning = false
+    playerlistSettings.defaultSortingMethod = 0
+    playerlistSettings.stringFormat = 0
+    json.savefile("scripts/quads_toolbox_scripts/toolbox_data/PLAYERLIST_SETTINGS.json", playerlistSettings)
 end
 
 --Define booleans used for interacting with the separate loop action threads
@@ -75,7 +87,12 @@ local function updateSpeed(ply)
     end
     local vel = ply:get_velocity()
     local x, y, z = math.abs(vel.x), math.abs(vel.y), math.abs(vel.z)
-    currentSpeed = math.floor((math.sqrt(x * x + y * y + z * z) * 3.6) * 10) / 10
+
+    if formatStyles[playerlistSettings.stringFormat] == "US" then
+        currentSpeed = math.floor((math.sqrt(x * x + y * y + z * z) * 2.26) * 10) / 10
+    else
+        currentSpeed = math.floor((math.sqrt(x * x + y * y + z * z) * 3.6371084) * 10) / 10
+    end
     return string.format("% 7.1f", currentSpeed)
 end
 
@@ -707,8 +724,13 @@ local function addPlayerOption(playerData, optionSub, distancePly)
     local playerId = playerData[1]
     local playerName = playerData[2]
     local playerDistance = localplayer
-    local isKmDisplay = true
-    local distanceUnit = "㎞"
+    local largeDistanceDisplay = true
+    local distanceUnit
+    if formatStyles[playerlistSettings.stringFormat] == "EU" then
+        distanceUnit = "㎞"
+    else
+        distanceUnit = "㏕"
+    end
     local distanceStr
     local distanceFormat = "%1.1f"
     local player = player.get_player_ped(playerId)
@@ -716,8 +738,12 @@ local function addPlayerOption(playerData, optionSub, distancePly)
     -- If distancePly is provided, use it instead of localplayer and adjust display settings
     if distancePly then
         playerDistance = distancePly
-        isKmDisplay = false
-        distanceUnit = "m"
+        largeDistanceDisplay = false
+        if formatStyles[playerlistSettings.stringFormat] == "EU" then
+            distanceUnit = "m"
+        else
+            distanceUnit = "ft"
+        end
         distanceFormat = "%4d"
     end
 
@@ -746,8 +772,17 @@ local function addPlayerOption(playerData, optionSub, distancePly)
         local modderSymbol = getModderSymbol(player, playerName, playerId)
         local playerStateSymbol = getPlayerStateSymbol(player, playerId)
         local modelIconStr = modelIcon(player, playerId)
-        local distance = distanceBetween(playerDistance, player, false, isKmDisplay)
-        if distanceUnit == "㎞" and distance >= 9.95 then
+        local distance = distanceBetween(playerDistance, player, false, largeDistanceDisplay)
+        if formatStyles[playerlistSettings.stringFormat] == "US" then
+            if distanceUnit == "㏕" then
+                --km to miles
+                distance = distance * 0.621371
+            else
+                --meter to feet
+                distance = distance * 3.28084
+            end
+        end
+        if largeDistanceDisplay and distance >= 9.95 then
             distanceStr = '10+' .. distanceUnit
         else
             distanceStr = string.format(distanceFormat, distance) .. distanceUnit
@@ -931,7 +966,8 @@ local function playerInfo(plyId, sub, plyName)
     --distance/speed
     greyText(sub, centeredText("--- Distance / Speed / Direction ---"))
     sub:add_bare_item("", function()
-        return "    " .. distanceBetween(localplayer, ply) .. " m    " .. updateSpeed(ply) .. " km/h|" .. getDirectionalArrow(getDirectionToThing(ply)) .. "    "
+        local distanceStr = formatStyles[playerlistSettings.stringFormat] == "EU" and " km/h" or " mph"
+        return "    " .. distanceBetween(localplayer, ply) .. " m    " .. updateSpeed(ply) .. distanceStr .. "   " .. getDirectionalArrow(getDirectionToThing(ply)) .. "    "
     end, null, null, null)
     sub:add_bare_item("", function()
         return "Pos: " .. printPlayerPos(ply)
@@ -1301,6 +1337,7 @@ function addSubActions(sub, plyName, plyId)
 end
 
 local function addSessionOptions(sub)
+    sub:clear()
     sub:add_bare_item("", function()
         return "Players in Session: " .. #sortedPlayers
     end, null, null, null)
@@ -1356,6 +1393,33 @@ local function addSessionOptions(sub)
     end)
 end
 
+local function addSettingsMenu(sub)
+    sub:clear()
+    greyText(sub, "-- ⚙️ Configure Playerlist: ⚙️ --")
+    greyText(sub, "Changes are saved automatically!!")
+    sub:add_toggle("Disable Automatic Spectator Warning", function() return playerlistSettings.disableSpectatorWarning end, function(value)
+        playerlistSettings.disableSpectatorWarning =  value
+        json.savefile("scripts/quads_toolbox_scripts/toolbox_data/PLAYERLIST_SETTINGS.json", playerlistSettings)
+    end)
+    sub:add_toggle("Disable Automatic Modder Warning", function() return playerlistSettings.disableModdersWarning end, function(value)
+        playerlistSettings.disableModdersWarning =  value
+        json.savefile("scripts/quads_toolbox_scripts/toolbox_data/PLAYERLIST_SETTINGS.json", playerlistSettings)
+    end)
+    sub:add_array_item("Default Sorting Method: ", sortStyles, function()
+        return playerlistSettings.defaultSortingMethod
+    end, function(value)
+        playerlistSettings.defaultSortingMethod = value
+        json.savefile("scripts/quads_toolbox_scripts/toolbox_data/PLAYERLIST_SETTINGS.json", playerlistSettings)
+    end)
+    sub:add_array_item("Number/Distance Format: ", formatStyles, function()
+        return playerlistSettings.stringFormat
+    end, function(value)
+        playerlistSettings.stringFormat = value
+        json.savefile("scripts/quads_toolbox_scripts/toolbox_data/PLAYERLIST_SETTINGS.json", playerlistSettings)
+    end)
+
+end
+
 local function getSortedPlayers()
     local playerTypes = { modder = 1, god = 2, mortal = 3, interior = 4 }
     local sortedPlayers = {}
@@ -1390,24 +1454,23 @@ local function getSortedPlayers()
     return sortedPlayers
 end
 
-local SortStyles = { [0] = "Modders first", "Nearest first" }
-local SortStyle = 0
 local updateable = true
 local function SubMenus(playerList)
     updateable = false
     playerList:clear()
 
-    playerList:add_array_item("==============  UPDATE: ", SortStyles, function()
-        return SortStyle
+    playerList:add_array_item("==============  UPDATE: ", sortStyles, function()
+        return playerlistSettings.defaultSortingMethod
     end, function(value)
-        SortStyle = value
+        playerlistSettings.defaultSortingMethod = value
+        json.savefile("scripts/quads_toolbox_scripts/toolbox_data/PLAYERLIST_SETTINGS.json", playerlistSettings)
         if updateable then
             SubMenus(playerList)
             return
         end
     end)
 
-    sortedPlayers = SortStyles[SortStyle] == "Nearest first" and getPlayersByDistance(localplayer) or getSortedPlayers()
+    sortedPlayers = sortStyles[playerlistSettings.defaultSortingMethod] == "Nearest first" and getPlayersByDistance(localplayer) or getSortedPlayers()
 
     for _, v in pairs(sortedPlayers) do
         addPlayerOption(v, playerList, nil)
@@ -1415,9 +1478,13 @@ local function SubMenus(playerList)
 
     greyText(playerList, "---------------------------------------")
 
-    addSessionOptions(playerList:add_submenu("\u{26A0}\u{26A0}\u{26A0} Session Options/Info \u{26A0}\u{26A0}\u{26A0}"))
+    local sessionOptionsSub
+    sessionOptionsSub = playerList:add_submenu("\u{26A0}\u{26A0}\u{26A0} Session Options/Info \u{26A0}\u{26A0}\u{26A0}", function() addSessionOptions(sessionOptionsSub) end)
 
     updateable = true
+
+    local settingsMenuSub
+    settingsMenuSub = playerList:add_submenu(" ⚙️ Playerlist Settings ⚙️ ", function() addSettingsMenu(settingsMenuSub) end)
 end
 
 
@@ -1655,17 +1722,29 @@ local function checkObviousModder(ply, plyName, i)
 end
 
 local modders_cache = {}
+local spectators_cache = {}
 local function modWatcher()
     print("Starting ModWatcher...")
     while true do
         for i = 0, 31 do
             local ply = player.get_player_ped(i)
+            if not ply then goto continue end
             local plyName = player.get_player_name(i)
             --Warn about spectating players with a "Warning! Spectator" label
-            if ply and isSpectatingMe(i) then
-                displayHudBanner("HEIST_WARN_4", "SPEC_HEADER", 69, 78)
+            --Save their names to a table, so we don't warn again for the same player
+            --Then delete their name if its been in there 12 (*5sec) times
+            if isSpectatingMe(i) and not spectators_cache[plyName] then
+                if not playerlistSettings.disableSpectatorWarning then
+                    spectators_cache[plyName] = 0
+                    displayHudBanner("HEIST_WARN_4", "SPEC_HEADER", 69, 78)
+                end
+            elseif spectators_cache[plyName] then
+                spectators_cache[plyName] = spectators_cache[plyName] + 1
+                if spectators_cache[plyName] == 12 then
+                    spectators_cache[plyName] = nil
+                end
             end
-            if ply and not (localplayer == ply) and not (marked_modders[plyName] == "detected") then
+            if not (localplayer == ply) and not (marked_modders[plyName] == "detected") then
                 if checkObviousModder(ply, plyName, i) then
                     goto continue
                 end
@@ -1675,7 +1754,9 @@ local function modWatcher()
                     if modders_cache[plyName] >= 10 then
                         modders_cache[plyName] = nil
                         marked_modders[plyName] = "detected"
-                        displayHudBanner("FM_PLY_CHEAT", "GBC_STPASS_CHE", "", 90)
+                        if not playerlistSettings.disableModdersWarning then
+                            displayHudBanner("FM_PLY_CHEAT", "GBC_STPASS_CHE", "", 90)
+                        end
                     end
                 else
                     modders_cache[plyName] = 0

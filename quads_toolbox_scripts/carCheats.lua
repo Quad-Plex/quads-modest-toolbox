@@ -14,7 +14,11 @@ function speedDisplay()
             local velocity = current_vehicle:get_velocity()
             local abs_velocity = math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y + velocity.z * velocity.z)
             if speedDisplayEnabled then
-                displayHudBanner("FM_AE_SORT_3", "AMCH_KMHN", math.floor(3.6 * abs_velocity), 109, true)
+                if formatStyles[playerlistSettings.stringFormat] == "EU" then
+                    displayHudBanner("FM_AE_SORT_3", "AMCH_KMHN", math.floor(3,6371084 * abs_velocity), 109, true)
+                else
+                    displayHudBanner("FM_AE_SORT_3", "AMCH_MPHN", math.floor(2.26 * abs_velocity), 109, true)
+                end
             end
         end
         sleep(0.1)

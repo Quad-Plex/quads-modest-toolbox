@@ -14,6 +14,7 @@
 
 --Useful gfx strings:
 --AMCH_KMHN             - number with 'km/h'
+--AMCH_MPHN             - number with 'mph'
 --FM_AE_SORT_3          - 'Speed'
 --MBA_YES               - 'yes'
 --MBA_NO                - 'no'

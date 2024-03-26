@@ -303,8 +303,14 @@ end
 -----------------------Number Formatter--------------------------
 function formatNumberWithDots(n)
     n = tostring(n):reverse()
-    n = n:gsub("(%d%d%d)", "%1.")
+    if formatStyles[playerlistSettings.stringFormat] == "EU" then
+        n = n:gsub("(%d%d%d)", "%1.")
+    elseif formatStyles[playerlistSettings.stringFormat] == "US" then
+        n = n:gsub("(%d%d%d)", "%1,")
+    end
     if n:sub(-1) == "." then
+        n = n:sub(1, -2)
+    elseif n:sub(-1) == "," then
         n = n:sub(1, -2)
     end
     return n:reverse()

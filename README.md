@@ -1,3 +1,9 @@
+Testers:
+- Don Reagan
+- maybe gaymer?
+- @Viperlinox on disc
+- Kitty @mootx on disc
+
 TODO:
 - add ability to turn on/off modder/spectator notifications (playerlist settings maybe)
 - globalscanner create history of different global values in the background (keep checking when activated and add an entry for every new unknown value, save as specific json)
