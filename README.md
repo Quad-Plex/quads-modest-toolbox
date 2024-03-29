@@ -15,6 +15,7 @@ TODO:
   - after session switch that string disappeared - has to be configurable somehow
 
 DONE:
+- ~~Improve displayMessage timeout for multiple calls to it~~
 - ~~Add displayMessages for hotkey toggles~~
 - ~~add ability to turn on/off modder/spectator notifications (playerlist settings maybe)~~
 - ~~More testing with the speedometer (find displayboxtype without fade-in maybe?)~~ Nope.
