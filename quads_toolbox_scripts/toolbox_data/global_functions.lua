@@ -50,7 +50,6 @@ function OnScriptsLoadedGlobal()
                 globals.set_int(baseGlobals.messageDisplay.baseGlobal + 2, 1)
             end
         end
-        print("Nothing to do,...")
         sleep(0.4)
     end
 end
