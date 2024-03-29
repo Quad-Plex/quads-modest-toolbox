@@ -7,6 +7,7 @@ local function getTrueLocalplayerID()
 end
 
 ------------------Message Display-----------------------
+local timeoutDuration
 baseGlobals.messageDisplay = {}
 baseGlobals.messageDisplay.baseGlobal = 2672741 + 2518 + 1
 baseGlobals.messageDisplay.testFunction = function()
@@ -14,7 +15,7 @@ baseGlobals.messageDisplay.testFunction = function()
 end
 --Credits to Kiddion for finding this stuff in an older version
 --https://www.unknowncheats.me/forum/3523555-post2032.html
-function displayHudBanner(headline, subHeadline, variable_text, box_type, skipTimeout)
+function displayHudBanner(headline, subHeadline, variable_text, box_type)
     if localplayer == nil then return end
     globals.set_string(baseGlobals.messageDisplay.baseGlobal + 21, headline, 16)
     globals.set_string(baseGlobals.messageDisplay.baseGlobal + 8, subHeadline, 32)
@@ -31,15 +32,30 @@ function displayHudBanner(headline, subHeadline, variable_text, box_type, skipTi
     end
     globals.set_int(baseGlobals.messageDisplay.baseGlobal + 1, box_type)
     globals.set_int(baseGlobals.messageDisplay.baseGlobal + 2, 1)
-
-    if skipTimeout then return end
-
-    sleep(2)
-
-    globals.set_int(baseGlobals.messageDisplay.baseGlobal + 1, 1)
-    globals.set_int(baseGlobals.messageDisplay.baseGlobal + 2, 1)
+    timeoutDuration = 2
 end
 
+function OnScriptsLoadedGlobal()
+    while true do
+        while timeoutDuration do
+            if timeoutDuration > 0 then
+                print("Waiting 0.1 for " .. tostring(timeoutDuration))
+                sleep(0.1)
+                timeoutDuration = timeoutDuration - 0.1
+            elseif timeoutDuration <= 0 then
+                print("Gonna stop message now")
+                timeoutDuration = nil
+                --Setting both globals to 1 removes the currently displayed message
+                globals.set_int(baseGlobals.messageDisplay.baseGlobal + 1, 1)
+                globals.set_int(baseGlobals.messageDisplay.baseGlobal + 2, 1)
+            end
+        end
+        print("Nothing to do,...")
+        sleep(0.4)
+    end
+end
+
+menu.register_callback('OnScriptsLoaded', OnScriptsLoadedGlobal)
 ------------------Vehicle Spawners-----------------------------------
 alternative_spawn_toggle = false
 baseGlobals.vehicleSpawner = {}
