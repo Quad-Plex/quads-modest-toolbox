@@ -5,7 +5,6 @@ Testers:
 - Kitty @mootx on disc
 
 TODO:
-- Add displayMessages for hotkey toggles (maybe with FHB_KEY "Key" and activate deactivate?)
 - globalscanner create history of different global values in the background (keep checking when activated and add an entry for every new unknown value, save as specific json)
 - See if GPS coordinates can be controlled through globals, then add a 'Track Player with GPS' option
   - Hmmm... Can't find it in globals or the scripts I've implemented in my scanner so far, might not be possible
@@ -16,6 +15,7 @@ TODO:
   - after session switch that string disappeared - has to be configurable somehow
 
 DONE:
+- ~~Add displayMessages for hotkey toggles~~
 - ~~add ability to turn on/off modder/spectator notifications (playerlist settings maybe)~~
 - ~~More testing with the speedometer (find displayboxtype without fade-in maybe?)~~ Nope.
 - ~~Check if bool    vehicle:get_boost()~~
