@@ -1,5 +1,11 @@
 baseGlobals = {}
 
+local function getTrueLocalplayerID()
+    local localplayerID = localplayer:get_player_id()
+    if localplayerID == -1 and globalLocalplayerID ~= -1 then localplayerID = globalLocalplayerID end
+    return localplayerID
+end
+
 ------------------Message Display-----------------------
 baseGlobals.messageDisplay = {}
 baseGlobals.messageDisplay.baseGlobal = 2672741 + 2518 + 1
@@ -124,7 +130,7 @@ end
 baseGlobals.playerLevel = {}
 baseGlobals.playerLevel.baseGlobal = 1845263
 baseGlobals.playerLevel.testIntRange = function()
-    return getPlayerLevel(localplayer:get_player_id())
+    return getPlayerLevel(getTrueLocalplayerID())
 end
 baseGlobals.playerLevel.intRangeExplanation = "Shows your own LVL:"
 getPlayerLevel = function(plyId)
@@ -201,7 +207,7 @@ end
 baseGlobals.respawnState = {}
 baseGlobals.respawnState.baseGlobal = 2657921
 baseGlobals.respawnState.testIntRange = function()
-    return getPlayerRespawnState(localplayer:get_player_id())
+    return getPlayerRespawnState(getTrueLocalplayerID())
 end
 baseGlobals.respawnState.intRangeExplanation = "Should be 99 while idling outside"
 -- Order of States when Dying: -1 0 2 9 99
@@ -224,7 +230,7 @@ end
 baseGlobals.playerOrg = {}
 baseGlobals.playerOrg.baseGlobal = 1886967
 baseGlobals.playerOrg.bareStringCheck = function()
-    return getPlayerOrgID(localplayer:get_player_id()) ~= -1 and "Own Org Name: " .. getPlayerOrgName(localplayer:get_player_id()) or "No Organisation found"
+    return getPlayerOrgID(getTrueLocalplayerID()) ~= -1 and "Own Org Name: " .. getPlayerOrgName(getTrueLocalplayerID()) or "No Organisation found"
 end
 local org_types = { [0] = "CEO", "MC" }
 getPlayerOrgType = function(plyId)
@@ -245,7 +251,7 @@ end
 
 joinPlayerOrg = function(plyId)
     local plyOrgId = getPlayerOrgId(plyId)
-    globals.set_int(baseGlobals.playerOrg.baseGlobal + 1 + (localplayer:get_player_id() * 609) + 10, plyOrgId)
+    globals.set_int(baseGlobals.playerOrg.baseGlobal + 1 + (getTrueLocalplayerID() * 609) + 10, plyOrgId)
 end
 
 ------------------------Set Wanted Level Remote----------------------
@@ -254,14 +260,14 @@ end
 baseGlobals.wantedLevel = {}
 baseGlobals.wantedLevel.baseGlobal = 2657921
 baseGlobals.wantedLevel.testFunction = function()
-    giveWantedLevel(localplayer:get_player_id(), 5)
+    giveWantedLevel(getTrueLocalplayerID(), 5)
     sleep(0.5)
-    giveWantedLevel(localplayer:get_player_id(), 0)
+    giveWantedLevel(getTrueLocalplayerID(), 0)
 end
 baseGlobals.wantedLevel.testFunctionExplanation = "Give yourself 5 Stars"
 giveWantedLevel = function(plyId, numStars)
-    globals.set_int(baseGlobals.wantedLevel.baseGlobal + 1 + (localplayer:get_player_id() * 463) + 214, plyId)
-    globals.set_int(baseGlobals.wantedLevel.baseGlobal + 1 + (localplayer:get_player_id() * 463) + 215, numStars)
+    globals.set_int(baseGlobals.wantedLevel.baseGlobal + 1 + (getTrueLocalplayerID() * 463) + 214, plyId)
+    globals.set_int(baseGlobals.wantedLevel.baseGlobal + 1 + (getTrueLocalplayerID() * 463) + 215, numStars)
 end
 
 ----------------------------------------------------------------
@@ -309,7 +315,7 @@ shortformBlips = {
 baseGlobals.blipType = {}
 baseGlobals.blipType.baseGlobal = 2657921
 baseGlobals.blipType.testIntRange = function()
-    return getPlayerBlip(localplayer:get_player_id())
+    return getPlayerBlip(getTrueLocalplayerID())
 end
 baseGlobals.blipType.intRangeExplanation = "Should be 4 while idling outside"
 local vehicle_blips = utils_Set({ 262144, 262145, 262148, 262149, 262156, 262164, 262208, 262212, 262276, 262277, 262660, 262661, 262724, 262784, 262789, 262788, 786564, 2627888, 2359300 })
@@ -469,7 +475,7 @@ end
 baseGlobals.hostCheck = {}
 baseGlobals.hostCheck.baseGlobal = 2650416 + 1
 baseGlobals.hostCheck.testCheck = function()
-    return getScriptHostPlayerID() == localplayer:get_player_id()
+    return getScriptHostPlayerID() == getTrueLocalplayerID()
 end
 baseGlobals.hostCheck.checkExplanation = "(Solo Session) Am I Host?:"
 function getScriptHostPlayerID()
@@ -481,7 +487,7 @@ end
 baseGlobals.hostKick = {}
 baseGlobals.hostKick.baseGlobal = 1877042
 baseGlobals.hostKick.testFunction = function()
-    hostKick(localplayer:get_player_id())
+    hostKick(getTrueLocalplayerID())
 end
 baseGlobals.hostKick.testFunctionExplanation = "(Solo session) Kick yourself"
 function hostKick(plyId)
@@ -499,7 +505,7 @@ end
 baseGlobals.spectatorCheck = {}
 baseGlobals.spectatorCheck.specPlayerBaseGlobal = 2657921
 baseGlobals.spectatorCheck.testCheck = function()
-    return amISpectating(localplayer:get_player_id())
+    return amISpectating(getTrueLocalplayerID())
 end
 baseGlobals.spectatorCheck.checkExplanation = "Am I spectating myself?"
 
@@ -522,9 +528,7 @@ function isSpectatingMe(plyId)
     local ply = player.get_player_ped(plyId)
     if not ply then return end
     local visibleState = getIsTrackedPedVisibleState(plyId)
-    local localplayerID = localplayer:get_player_id()
-    if localplayerID == -1 and globalLocalplayerID ~= -1 then localplayerID = globalLocalplayerID end
-    local isWatchingMe = checkBit(visibleState, localplayerID)
+    local isWatchingMe = checkBit(visibleState, getTrueLocalplayerID())
     return isWatchingMe and distanceBetween(player.get_player_ped(), ply) > 230
 end
 
@@ -533,9 +537,7 @@ function amISpectating(plyId)
     if globals.get_int(baseGlobals.spectatorCheck2.tvSpectatePlyIDGlobal) == plyId then return true end
     local ply = player.get_player_ped(plyId)
     if not ply then return end
-    local localplayerID = localplayer:get_player_id()
-    if localplayerID == -1 and globalLocalplayerID ~= -1 then localplayerID = globalLocalplayerID end
-    local ownVisibleState = getIsTrackedPedVisibleState(localplayerID)
+    local ownVisibleState = getIsTrackedPedVisibleState(getTrueLocalplayerID())
     local amIWatching = checkBit(ownVisibleState, plyId)
     return amIWatching and distanceBetween(player.get_player_ped(), ply) > 230
 end
@@ -546,7 +548,7 @@ end
 baseGlobals.bountyInfo = {}
 baseGlobals.bountyInfo.playerBountyInfoGlobal = 1835505
 baseGlobals.bountyInfo.testIntRange = function()
-    return getPlayerBountyAmount(localplayer:get_player_id())
+    return getPlayerBountyAmount(getTrueLocalplayerID())
 end
 baseGlobals.bountyInfo.intRangeExplanation = "Own Bounty Value:"
 

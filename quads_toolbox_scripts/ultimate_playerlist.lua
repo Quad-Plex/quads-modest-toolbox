@@ -1484,7 +1484,7 @@ local function SubMenus(playerList)
     updateable = true
 
     local settingsMenuSub
-    settingsMenuSub = playerList:add_submenu(" ⚙️ Playerlist Settings ⚙️ ", function() addSettingsMenu(settingsMenuSub) end)
+    settingsMenuSub = playerList:add_submenu("    ⚙️ Playerlist Settings ⚙️", function() addSettingsMenu(settingsMenuSub) end)
 end
 
 
