@@ -1,12 +1,12 @@
 finishedLoading = false
 
 --Load all required constants
-require("scripts/quads_toolbox_scripts/toolbox_data/VEHICLES_WEAPONS")
-require("scripts/quads_toolbox_scripts/toolbox_data/PED_FLAG_TABLE")
-require("scripts/quads_toolbox_scripts/toolbox_data/KEYCODE_CONSTANTS")
-require("scripts/quads_toolbox_scripts/toolbox_data/MODEL_HASHES")
-require("scripts/quads_toolbox_scripts/toolbox_data/PICKUP_HASHES")
-require("scripts/quads_toolbox_scripts/toolbox_data/EXPLOSION_TYPES")
+require("scripts/quads_toolbox_scripts/toolbox_data/enums/VEHICLES_WEAPONS")
+require("scripts/quads_toolbox_scripts/toolbox_data/enums/PED_FLAG_TABLE")
+require("scripts/quads_toolbox_scripts/toolbox_data/enums/KEYCODE_CONSTANTS")
+require("scripts/quads_toolbox_scripts/toolbox_data/enums/MODEL_HASHES")
+require("scripts/quads_toolbox_scripts/toolbox_data/enums/PICKUP_HASHES")
+require("scripts/quads_toolbox_scripts/toolbox_data/enums/EXPLOSION_TYPES")
 
 --Initialize scripts one by one
 require("scripts/quads_toolbox_scripts/toolbox_data/global_functions")

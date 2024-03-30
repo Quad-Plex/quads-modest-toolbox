@@ -129,7 +129,7 @@ local function getAllWeapons()
 		if string.find(pickupName[1], "PICKUP_WEAPON") then
 			createCustomPickupWithCustomModel(pickupName[1], nil, startIdentifierAmount)
 			startIdentifierAmount = startIdentifierAmount + 1
-			sleep(0.09)
+			sleep(0.12)
 		end
 	end
 end

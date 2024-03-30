@@ -5,6 +5,7 @@ Testers:
 - Kitty @mootx on disc
 
 TODO:
+- Can I find RID from globals??
 - See if GPS coordinates can be controlled through globals, then add a 'Track Player with GPS' option
   - Hmmm... Can't find it in globals or the scripts I've implemented in my scanner so far, might not be possible
 - Add Readme and FAQ description for unclear actions

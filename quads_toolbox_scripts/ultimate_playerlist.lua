@@ -1,5 +1,5 @@
 local savedInteriors = {}
-local interiorsLoadingSuccess, jsonInteriors = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/SAVED_INTERIORS.json")
+local interiorsLoadingSuccess, jsonInteriors = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/SAVED_INTERIORS.json")
 if interiorsLoadingSuccess then
     --Load the saved interiors from file
     for _, data in pairs(jsonInteriors) do
@@ -10,13 +10,13 @@ end
 local sortStyles = { [0]="Modders first", "Nearest first" }
 formatStyles = { [0]="EU", "US"}
 
-settingsLoadingSuccess, playerlistSettings = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/PLAYERLIST_SETTINGS.json")
+settingsLoadingSuccess, playerlistSettings = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/PLAYERLIST_SETTINGS.json")
 if not settingsLoadingSuccess then
     playerlistSettings.disableSpectatorWarning = false
     playerlistSettings.disableModdersWarning = false
     playerlistSettings.defaultSortingMethod = 0
     playerlistSettings.stringFormat = 0
-    json.savefile("scripts/quads_toolbox_scripts/toolbox_data/PLAYERLIST_SETTINGS.json", playerlistSettings)
+    json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/PLAYERLIST_SETTINGS.json", playerlistSettings)
 end
 
 --Define booleans used for interacting with the separate loop action threads
@@ -63,7 +63,7 @@ local function saveNewInterior(pos)
     for _, interior in pairs(savedInteriors) do
         serializeInteriors[_] = { interior.x, interior.y, interior.z }
     end
-    json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVED_INTERIORS.json", serializeInteriors)
+    json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/SAVED_INTERIORS.json", serializeInteriors)
 end
 
 --Used for loop-actions running on a player
@@ -1399,23 +1399,23 @@ local function addSettingsMenu(sub)
     greyText(sub, "Changes are saved automatically!!")
     sub:add_toggle("Disable Automatic Spectator Warning", function() return playerlistSettings.disableSpectatorWarning end, function(value)
         playerlistSettings.disableSpectatorWarning =  value
-        json.savefile("scripts/quads_toolbox_scripts/toolbox_data/PLAYERLIST_SETTINGS.json", playerlistSettings)
+        json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/PLAYERLIST_SETTINGS.json", playerlistSettings)
     end)
     sub:add_toggle("Disable Automatic Modder Warning", function() return playerlistSettings.disableModdersWarning end, function(value)
         playerlistSettings.disableModdersWarning =  value
-        json.savefile("scripts/quads_toolbox_scripts/toolbox_data/PLAYERLIST_SETTINGS.json", playerlistSettings)
+        json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/PLAYERLIST_SETTINGS.json", playerlistSettings)
     end)
     sub:add_array_item("Default Sorting Method: ", sortStyles, function()
         return playerlistSettings.defaultSortingMethod
     end, function(value)
         playerlistSettings.defaultSortingMethod = value
-        json.savefile("scripts/quads_toolbox_scripts/toolbox_data/PLAYERLIST_SETTINGS.json", playerlistSettings)
+        json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/PLAYERLIST_SETTINGS.json", playerlistSettings)
     end)
     sub:add_array_item("Number/Distance Format: ", formatStyles, function()
         return playerlistSettings.stringFormat
     end, function(value)
         playerlistSettings.stringFormat = value
-        json.savefile("scripts/quads_toolbox_scripts/toolbox_data/PLAYERLIST_SETTINGS.json", playerlistSettings)
+        json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/PLAYERLIST_SETTINGS.json", playerlistSettings)
     end)
 
 end
@@ -1463,7 +1463,7 @@ local function SubMenus(playerList)
         return playerlistSettings.defaultSortingMethod
     end, function(value)
         playerlistSettings.defaultSortingMethod = value
-        json.savefile("scripts/quads_toolbox_scripts/toolbox_data/PLAYERLIST_SETTINGS.json", playerlistSettings)
+        json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/PLAYERLIST_SETTINGS.json", playerlistSettings)
         if updateable then
             SubMenus(playerList)
             return

@@ -20,7 +20,7 @@ end
 -------------------- SORTED VEHICLE LIST --------------------
 -------------------------------------------------------------
 
-local success, favoritedCars = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/FAVORITED_CARS.json")
+local success, favoritedCars = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/FAVORITED_CARS.json")
 if success then
     print("Favorite Cars loaded successfully!!")
 end
@@ -86,7 +86,7 @@ local function addVehicleEntry(vehMenu, vehicle, ply)
             local isFavorite = isInFavorites(vehicle[1])
             if isFavorite then
                 vehicle[3] = n
-                json.savefile("scripts/quads_toolbox_scripts/toolbox_data/FAVORITED_CARS.json", favoritedCars)
+                json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/FAVORITED_CARS.json", favoritedCars)
             end
         else
             godmodeEnabledSpawn = n
@@ -96,19 +96,19 @@ local function addVehicleEntry(vehMenu, vehicle, ply)
         if add then
             vehicle[3]=godmodeEnabledSpawn
             table.insert(favoritedCars, vehicle)
-            json.savefile("scripts/quads_toolbox_scripts/toolbox_data/FAVORITED_CARS.json", favoritedCars)
+            json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/FAVORITED_CARS.json", favoritedCars)
         else
             local isFavorite = isInFavorites(vehicle[1])
             if isFavorite then
                 table.remove(favoritedCars, isFavorite)
-                json.savefile("scripts/quads_toolbox_scripts/toolbox_data/FAVORITED_CARS.json", favoritedCars)
+                json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/FAVORITED_CARS.json", favoritedCars)
             end
         end
     end)
 end
 
 local function buildFavoriteVehiclesSub(ply, categorySub)
-    success, favoritedCars = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/FAVORITED_CARS.json")
+    success, favoritedCars = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/FAVORITED_CARS.json")
     categorySub:clear()
     for _, favoriteVehicle in ipairs(favoritedCars) do
         local vehSub
@@ -119,7 +119,7 @@ end
 --Create Vehicle Spawn Menu
 function addVehicleSpawnMenu(ply, sub)
     sub:clear()
-    success, favoritedCars = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/FAVORITED_CARS.json")
+    success, favoritedCars = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/FAVORITED_CARS.json")
     if ply == nil then
         return
     end
@@ -144,7 +144,7 @@ end
 ------------------JSON HOTKEY/KEYCODE DATA-------------------
 -------------------------------------------------------------
 -- Define the hotkeys data
-success, hotkeysData = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/HOTKEY_CONFIG.json")
+success, hotkeysData = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/HOTKEY_CONFIG.json")
 if success then
     print("Hotkey Configuration loaded successfully!!")
 else
@@ -168,7 +168,7 @@ table.sort(sortedKeycodes)
 
 
 function find_keycode(event_name)
-    success, hotkeysData = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/HOTKEY_CONFIG.json")
+    success, hotkeysData = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/HOTKEY_CONFIG.json")
     for i=1, #hotkeysData do
         if hotkeysData[i].event == event_name then
             return hotkeysData[i].keycode

@@ -207,7 +207,7 @@ local function stringChanger(sub)
             end)
 end
 
-local success, watchlistGlobals = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/WATCHLIST_GLOBALS.json")
+local success, watchlistGlobals = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/WATCHLIST_GLOBALS.json")
 if success then
     print("Watchlist Globals loaded successfully!!")
 end
@@ -349,10 +349,10 @@ local function showNearbyGlobals(sub, global, min_search, max_search, selectedSc
             local watchlistPosition = getGlobalWatchlistPosition(i)
             if not watchlistPosition then
                 table.insert(watchlistGlobals, {i, checkType(getGlobalForTypeAndScript(i, ScannerTypes[scannerSelection], selectedScript))})
-                json.savefile("scripts/quads_toolbox_scripts/toolbox_data/WATCHLIST_GLOBALS.json", watchlistGlobals)
+                json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/WATCHLIST_GLOBALS.json", watchlistGlobals)
             else
                 table.remove(watchlistGlobals, watchlistPosition)
-                json.savefile("scripts/quads_toolbox_scripts/toolbox_data/WATCHLIST_GLOBALS.json", watchlistGlobals)
+                json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/WATCHLIST_GLOBALS.json", watchlistGlobals)
             end
         end, null, null)
     end
@@ -419,12 +419,12 @@ local function advancedGlobalEditor(sub, global, origValue, typeSelection, selec
     sub:add_toggle("Add " .. selectedScript .. "[".. global .. "] to watchlist", function() return getGlobalWatchlistPosition(global) ~= false end, function(add)
         if add then
             table.insert(watchlistGlobals, {global, checkType(getGlobalForTypeAndScript(global, typeSelection, selectedScript))})
-            json.savefile("scripts/quads_toolbox_scripts/toolbox_data/WATCHLIST_GLOBALS.json", watchlistGlobals)
+            json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/WATCHLIST_GLOBALS.json", watchlistGlobals)
         else
             local watchlistPosition = getGlobalWatchlistPosition(global)
             if watchlistPosition then
                 table.remove(watchlistGlobals, watchlistPosition)
-                json.savefile("scripts/quads_toolbox_scripts/toolbox_data/WATCHLIST_GLOBALS.json", watchlistGlobals)
+                json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/WATCHLIST_GLOBALS.json", watchlistGlobals)
             end
         end
     end)
@@ -492,7 +492,7 @@ local function addWatchListGlobals(sub, selectedScript)
 end
 
 local function updateGlobalScanner(sub)
-    success, watchlistGlobals = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/WATCHLIST_GLOBALS.json")
+    success, watchlistGlobals = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/WATCHLIST_GLOBALS.json")
     sub:clear()
     local current_num_of_results = tableCount(found_globals)
     if keepSearching then
