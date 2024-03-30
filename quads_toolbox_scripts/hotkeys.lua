@@ -146,13 +146,13 @@ local function addHotkeyToggles(hotkeyMenu)
         end, function(toggle)
             hotkeyData.toggleVar = toggle
             hotkeysData[i]=hotkeyData
+            json.savefile("scripts/quads_toolbox_scripts/toolbox_data/HOTKEY_CONFIG.json", hotkeysData)
             if hotkeyData.toggleVar then
                 displayHudBanner("PM_PANE_KEYS", "CANNON_CAM_ACTIVE", "", 109)
             else
                 displayHudBanner("PM_PANE_KEYS", "CANNON_CAM_INACTIVE", "", 109)
             end
             menu.emit_event(hotkeyData.event)
-            json.savefile("scripts/quads_toolbox_scripts/toolbox_data/HOTKEY_CONFIG.json", hotkeysData)
         end)
         hotkeyMenu:add_array_item("", indexedKeycodes, function()
             return hotkeyData.keycode
