@@ -15,6 +15,8 @@ TODO:
   - after session switch that string disappeared - has to be configurable somehow
 
 DONE:
+- ~~Save godmode spawner status for favorited cars in vehicle spawner~~
+- ~~Add all ExploionTypes with an array item~~
 - ~~Improve displayMessage timeout for multiple calls to it~~
 - ~~Add displayMessages for hotkey toggles~~
 - ~~add ability to turn on/off modder/spectator notifications (playerlist settings maybe)~~
@@ -22,7 +24,7 @@ DONE:
 - ~~Check if bool    vehicle:get_boost()~~
   ~~bool    vehicle:get_boost_active()        nil     vehicle:set_boost(bool value)~~
   ~~bool    vehicle:get_boost_enabled()       nil     vehicle:set_boost_enabled(bool value)~~
-  ~~- can be used to create homing cars that launch towards a player with rocket boost~~   Well that was a bust...
+  ~~- can be used to create homing cars that launch towards a player with rocket boost~~   Gotta wait for Kiddions update
 - ~~improve globalscanner~~
   - ~~Add ability to show globals in nearby menu as vehicle hashes~~
   - ~~Adapted String-Entering Submenu for use with entering large numbers~~0

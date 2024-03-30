@@ -75,9 +75,26 @@ local function addVehicleEntry(vehMenu, vehicle, ply)
             findAndEnableGodmodeForVehicle(vehicle[1], spawnPos)
         end
     end)
-    vehMenu:add_toggle("Spawn with Godmode enabled", function() return godmodeEnabledSpawn end, function(n) godmodeEnabledSpawn = n end)
+    vehMenu:add_toggle("Spawn with Godmode enabled", function()
+        if vehicle[3] then
+            return vehicle[3]
+        else
+            return godmodeEnabledSpawn
+        end
+    end, function(n)
+        if vehicle[3] ~= nil then
+            local isFavorite = isInFavorites(vehicle[1])
+            if isFavorite then
+                vehicle[3] = n
+                json.savefile("scripts/quads_toolbox_scripts/toolbox_data/FAVORITED_CARS.json", favoritedCars)
+            end
+        else
+            godmodeEnabledSpawn = n
+        end
+    end)
     vehMenu:add_toggle("Add " .. vehicle[2][1] .. " to favorites", function() return isInFavorites(vehicle[1]) ~= false end, function(add)
         if add then
+            vehicle[3]=godmodeEnabledSpawn
             table.insert(favoritedCars, vehicle)
             json.savefile("scripts/quads_toolbox_scripts/toolbox_data/FAVORITED_CARS.json", favoritedCars)
         else
