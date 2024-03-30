@@ -5,7 +5,6 @@ Testers:
 - Kitty @mootx on disc
 
 TODO:
-- globalscanner create history of different global values in the background (keep checking when activated and add an entry for every new unknown value, save as specific json)
 - See if GPS coordinates can be controlled through globals, then add a 'Track Player with GPS' option
   - Hmmm... Can't find it in globals or the scripts I've implemented in my scanner so far, might not be possible
 - Add Readme and FAQ description for unclear actions
@@ -16,7 +15,7 @@ TODO:
 
 DONE:
 - ~~Save godmode spawner status for favorited cars in vehicle spawner~~
-- ~~Add all ExploionTypes with an array item~~
+- ~~Add all ExplosionTypes with an array item~~
 - ~~Improve displayMessage timeout for multiple calls to it~~
 - ~~Add displayMessages for hotkey toggles~~
 - ~~add ability to turn on/off modder/spectator notifications (playerlist settings maybe)~~
