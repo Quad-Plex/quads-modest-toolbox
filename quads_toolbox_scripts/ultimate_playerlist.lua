@@ -642,11 +642,12 @@ local function isExcludedVehicle(vehicle_model)
 end
 
 local function modCheck(ply, plyName, plyId)
-    if ply == nil or getPlayerRespawnState(plyId) ~= 99 or ply:is_in_cutscene() then
-        return false
-    end
+    if not ply then return false end
     if (plyName and marked_modders[plyName] == "detected") or hasDevDLC(plyId) ~= 0 or ply:get_max_health() < 100 then
         return true
+    end
+    if getPlayerRespawnState(plyId) ~= 99 or ply:is_in_cutscene() then
+        return false
     end
     local interior_bool = isInInterior(ply, plyId)
     local vehicle = ply:is_in_vehicle() and ply:get_current_vehicle()
@@ -656,7 +657,7 @@ local function modCheck(ply, plyName, plyId)
             return true
         end
     end
-    if ply:is_in_vehicle() and (ply:get_current_vehicle():get_godmode() or ply:get_seatbelt()) and not interior_bool and not isExcludedVehicle(vehicle_model) then
+    if ply:is_in_vehicle() and (ply:get_current_vehicle():get_godmode() or ply:get_seatbelt()) and not interior_bool then
         return true
     end
     return false
@@ -837,7 +838,6 @@ local function playerInfo(plyId, sub, plyName)
     if not ply then
         return
     end
-    text(sub, "")
     greyText(sub, "============= PLAYER INFO =============")
 
     --Display player state
@@ -1315,7 +1315,6 @@ function addSubActions(sub, plyName, plyId)
     end)
 
     playerInfo(plyId, trollSub, plyName)
-    playerInfo(plyId, trollSub, plyName)
     playerInfo(plyId, sub, plyName)
 
     local pedFlagSub
@@ -1476,7 +1475,7 @@ local function SubMenus(playerList)
         addPlayerOption(v, playerList, nil)
     end
 
-    greyText(playerList, "---------------------------------------")
+    greyText(playerList, "------------ Players: " .. #sortedPlayers .. " ------------")
 
     local sessionOptionsSub
     sessionOptionsSub = playerList:add_submenu("\u{26A0}\u{26A0}\u{26A0} Session Options/Info \u{26A0}\u{26A0}\u{26A0}", function() addSessionOptions(sessionOptionsSub) end)
@@ -1732,7 +1731,7 @@ local function modWatcher()
             local plyName = player.get_player_name(i)
             --Warn about spectating players with a "Warning! Spectator" label
             --Save their names to a table, so we don't warn again for the same player
-            --Then delete their name if its been in there 12 (*5sec) times
+            --Then delete their name if its been in there 12 (*5sec=60sec) times
             if isSpectatingMe(i) and not spectators_cache[plyName] then
                 if not playerlistSettings.disableSpectatorWarning then
                     spectators_cache[plyName] = 0
