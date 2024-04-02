@@ -1,14 +1,32 @@
 [
   [
     232703,
-    "String"
+    "String",
+    "Global"
   ],
   [
     2698495,
-    "String"
+    "String",
+    "Global"
   ],
   [
-    1942456,
-    "Int"
+    5079226,
+    "Int",
+    "freemode"
+  ],
+  [
+    5079249,
+    "Int",
+    "freemode"
+  ],
+  [
+    5089220,
+    "Int",
+    "freemode"
+  ],
+  [
+    5089243,
+    "Int",
+    "freemode"
   ]
 ]

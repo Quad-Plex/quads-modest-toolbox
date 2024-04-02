@@ -1,15 +1,46 @@
 local keepSearching = false
 local lower_bound = 100000
-local upper_bound = 1000000
+local upper_bound = 4200000
 local old_count = 0
 
 local isFreezerRunning = false
 local frozenGlobals = {}
+local freezeNumberInt
+local freezeNumberFloat
 
 local ScannerTypes = {[0]="Int", "Float", "String"}
 local scannerSelection = 0
 local ScriptTypes = {[0]="Global", "freemode", "taxiservice", "pm_delivery", "shop_controller"}
 local scriptSelection = 0
+
+local methodNames = {
+    Int = "set_int",
+    Float = "set_float",
+    String = "set_string"
+}
+
+local function setGlobalOrScriptValue(global, value, type, scriptToUse)
+    scriptToUse = (scriptToUse ~= "Global") and script(scriptToUse) or nil
+    local methodName = methodNames[type]  -- Retrieve the appropriate method name
+
+    -- Select the appropriate method based on the existence of scriptToUse
+    local method = scriptToUse and scriptToUse[methodName] or globals[methodName]
+
+    -- Call the selected method with appropriate arguments
+    if scriptToUse then
+        if type ~= "String" then
+            method(scriptToUse, global, value)
+        else
+            method(scriptToUse, global, value, type == "String" and 30 or nil)
+        end
+    else
+        if type ~= "String" then
+            method(global, value)
+        else
+            method(global, value, type == "String" and 30 or nil)
+        end
+    end
+end
 
 --Change here to easily set the exact value for search
 local exact_search_value_int = 69
@@ -39,7 +70,7 @@ local function getGlobalForTypeAndScript(global, type, selectedScript, translate
     elseif type == "Float" then
         return scriptToUse and scriptToUse:get_float(global) or globals.get_float(global)
     elseif type == "String" then
-        return scriptToUse and scriptToUse:get_string(global, 30) or globals.get_string(global, 30)
+        return scriptToUse and scriptToUse:get_string(global, 30) or tostring(globals.get_string(global, 30))
     else
         error("Wrong type ya dingus")
     end
@@ -82,30 +113,52 @@ local function addLetterToString(letter, string)
     end
 end
 
-local function numberChanger(sub, float)
+local function setNewNumber(float, customNumber, tempNumberStorage)
+    local attemptedNewNumberAsNumber = tonumber(tempNumberStorage)
+    if float then
+        if customNumber then
+            freezeNumberFloat = attemptedNewNumberAsNumber
+        else
+            exact_search_value_float = attemptedNewNumberAsNumber
+        end
+    else
+        if customNumber then
+            freezeNumberInt = attemptedNewNumberAsNumber
+        else
+            exact_search_value_int = attemptedNewNumberAsNumber
+        end
+    end
+end
+
+local function numberChanger(sub, float, customNumber)
     sub:clear()
     local tempNumberStorage
     if float then
-        tempNumberStorage = tostring(exact_search_value_float)
+        tempNumberStorage = tostring(customNumber or exact_search_value_float)
         if string.find(tempNumberStorage, "[eE]") then
-            tempNumberStorage = string.format("%.f", exact_search_value_float)
+            tempNumberStorage = string.format("%.f", customNumber or exact_search_value_float)
         end
     else
-        tempNumberStorage = tostring(exact_search_value_int)
+        tempNumberStorage = tostring(customNumber or exact_search_value_int)
     end
     sub:add_bare_item("", function()
         return "Number: " .. tempNumberStorage
     end, null, null, null)
     greyText(sub, "----------------------------")
-    sub:add_action("|⌫ Backspace ⌫|", function() tempNumberStorage = string.sub(tempNumberStorage, 1, -2) end)
+    sub:add_action("|⌫ Backspace ⌫|", function()
+        tempNumberStorage = string.sub(tempNumberStorage, 1, -2)
+        setNewNumber(float, customNumber, tempNumberStorage)
+    end)
     if float then
         sub:add_bare_item("", function() return string.find(tempNumberStorage, "%.") and "Remove decimal point" or "Add decimal point" end, function()
             local decimalIndex = string.find(tempNumberStorage, "%.")
             if not decimalIndex then
                 tempNumberStorage = addLetterToString(".", tempNumberStorage)
+                setNewNumber(float, customNumber, tempNumberStorage)
             else
                 if decimalIndex then
                     tempNumberStorage = string.sub(tempNumberStorage, 1, decimalIndex - 1)
+                    setNewNumber(float, customNumber, tempNumberStorage)
                 end
             end
         end, null, null)
@@ -113,8 +166,10 @@ local function numberChanger(sub, float)
     sub:add_bare_item("", function() return string.find(tempNumberStorage, "-") and "Remove minus sign" or "Add minus sign" end, function()
         if string.sub(tempNumberStorage, 1, 1) ~= "-" then
             tempNumberStorage = "-" .. tempNumberStorage
+            setNewNumber(float, customNumber, tempNumberStorage)
         else
             tempNumberStorage = string.sub(tempNumberStorage, 2)
+            setNewNumber(float, customNumber, tempNumberStorage)
         end
     end, null, null)
     sub:add_bare_item("",
@@ -136,11 +191,7 @@ local function numberChanger(sub, float)
                     return
                 end
                 tempNumberStorage = attemptedNewNumber
-                if float then
-                    exact_search_value_float = attemptedNewNumberAsNumber
-                else
-                    exact_search_value_int = attemptedNewNumberAsNumber
-                end
+                setNewNumber(float, customNumber, tempNumberStorage)
             end,
             function()
                 if selectedNumberPos > 1 then selectedNumberPos = selectedNumberPos - 1 end
@@ -152,20 +203,38 @@ local function numberChanger(sub, float)
             end)
 end
 
-local function stringChanger(sub)
+local function stringChanger(sub, variable, stringToChange, scriptToUse)
     sub:clear()
     sub:add_bare_item("", function()
-        return "String: " .. exact_search_value_string
+        local string = stringToChange ~= nil and stringToChange or exact_search_value_string
+        return "String: " .. string
     end, null, null, null)
+    if stringToChange then
+        sub:add_bare_item("", function()
+            return "Set " .. getGlobalForTypeAndScript(variable, "String", scriptToUse) .. " to new String"
+        end, function()
+            setGlobalOrScriptValue(variable, stringToChange, "String", scriptToUse)
+        end, null, null)
+    end
     greyText(sub, "----------------------------")
-    sub:add_action("|⌫ Backspace ⌫|", function() exact_search_value_string = string.sub(exact_search_value_string, 1, -2) end)
+    sub:add_action("|⌫ Backspace ⌫|", function()
+        if stringToChange then
+            stringToChange = string.sub(stringToChange, 1, -2)
+        else
+            exact_search_value_string = string.sub(exact_search_value_string, 1, -2)
+        end
+    end)
     sub:add_toggle("Uppercase Letters", function() return uppercaseToggle end, function(toggle) uppercaseToggle = toggle end)
     sub:add_bare_item("",
             function()
                 return "Add Letter: ◀ " .. showLettersForPosition(selectedLetterPos, lowercaseLetters) .. " ▶"
             end,
             function()
-                exact_search_value_string = addLetterToString(lowercaseLetters[selectedLetterPos], exact_search_value_string)
+                if stringToChange then
+                    stringToChange = addLetterToString(lowercaseLetters[selectedLetterPos], stringToChange)
+                else
+                    exact_search_value_string = addLetterToString(lowercaseLetters[selectedLetterPos], exact_search_value_string)
+                end
             end,
             function()
                 if selectedLetterPos > 1 then selectedLetterPos = selectedLetterPos - 1 end
@@ -180,7 +249,11 @@ local function stringChanger(sub)
                 return "Add Number: ◀ " .. showLettersForPosition(selectedNumberPos, numbers) .. " ▶"
             end,
             function()
-                exact_search_value_string = addLetterToString(numbers[selectedNumberPos], exact_search_value_string)
+                if stringToChange then
+                    stringToChange = addLetterToString(numbers[selectedNumberPos], stringToChange)
+                else
+                    exact_search_value_string = addLetterToString(numbers[selectedNumberPos], exact_search_value_string)
+                end
             end,
             function()
                 if selectedNumberPos > 1 then selectedNumberPos = selectedNumberPos - 1 end
@@ -195,7 +268,11 @@ local function stringChanger(sub)
                 return "Add Symbol: ◀ " .. showLettersForPosition(selectedSymbolPos, symbols) .. " ▶"
             end,
             function()
-                exact_search_value_string = addLetterToString(symbols[selectedSymbolPos], exact_search_value_string)
+                if stringToChange then
+                    stringToChange = addLetterToString(symbols[selectedSymbolPos], stringToChange)
+                else
+                    exact_search_value_string = addLetterToString(symbols[selectedSymbolPos], exact_search_value_string)
+                end
             end,
             function()
                 if selectedSymbolPos > 1 then selectedSymbolPos = selectedSymbolPos - 1 end
@@ -348,7 +425,7 @@ local function showNearbyGlobals(sub, global, min_search, max_search, selectedSc
         sub:add_bare_item("", function() return prefix .. selectedScript .. "[" .. i .. "] = " .. tostring(getGlobalForTypeAndScript(i, ScannerTypes[scannerSelection], selectedScript, translateVehicleHashes)) .. " " .. getIsSavedString(i) end, function()
             local watchlistPosition = getGlobalWatchlistPosition(i)
             if not watchlistPosition then
-                table.insert(watchlistGlobals, {i, checkType(getGlobalForTypeAndScript(i, ScannerTypes[scannerSelection], selectedScript))})
+                table.insert(watchlistGlobals, {i, checkType(getGlobalForTypeAndScript(i, ScannerTypes[scannerSelection], selectedScript)), selectedScript})
                 json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/WATCHLIST_GLOBALS.json", watchlistGlobals)
             else
                 table.remove(watchlistGlobals, watchlistPosition)
@@ -371,18 +448,43 @@ local function toggleFreezeGlobal(global, value, typeSelection, selectedScript)
     if frozenPosition then
         table.remove(frozenGlobals, frozenPosition)
     else
-        table.insert(frozenGlobals, {global, value, checkType(value)})
+        table.insert(frozenGlobals, {global, value, checkType(value), selectedScript})
     end
 end
 
 local function advancedGlobalEditor(sub, global, origValue, typeSelection, selectedScript)
     sub:clear()
+    if typeSelection == "Int" then
+        freezeNumberInt = origValue
+    elseif typeSelection == "Float" then
+        freezeNumberFloat = origValue
+    end
     sub:add_bare_item("",function() return selectedScript .. "[" .. global .. "] = " .. tostring(getGlobalForTypeAndScript(global, typeSelection, selectedScript)) end, null, null, null)
     greyText(sub, selectedScript .. "[" .. global .. "] = ".. origValue .. " (Orig. Value)")
     text(sub, "---------------------------")
-    sub:add_int_range("As Int:", 1, -MAX_INT, MAX_INT, function() return globals.get_int(global) end, function(n) globals.set_int(global, n) end)
-    sub:add_float_range("As Float:", 1, -MAX_INT, MAX_INT, function() return globals.get_float(global) end, function(n) globals.set_float(global, n) end)
-    sub:add_bare_item("", function() return "As String:|" .. globals.get_string(global, 30)  end, null, null, null)
+    sub:add_int_range("As Int:", 1, -MAX_INT, MAX_INT, function()
+        if selectedScript and selectedScript ~= "Global"  then
+            local scriptToUse = script(selectedScript)
+            return scriptToUse:get_int(global)
+        else
+            return globals.get_int(global)
+        end
+    end, function(n)
+        setGlobalOrScriptValue(global, n, "Int", selectedScript)
+    end)
+    sub:add_float_range("As Float:", 1, -math.huge, math.huge, function()
+        if selectedScript and selectedScript ~= "Global" then
+            local scriptToUse = script(selectedScript)
+            return scriptToUse:get_float(global)
+        else
+            return globals.get_float(global)
+        end
+    end, function(n)
+        setGlobalOrScriptValue(global, n, "Float", selectedScript)
+    end)
+    sub:add_bare_item("", function() return "As String:|" .. getGlobalForTypeAndScript(global, "String", selectedScript) end, null, null, null)
+    local stringChangerSub
+    stringChangerSub = sub:add_submenu("Set new String", function() stringChanger(stringChangerSub, global, getGlobalForTypeAndScript(global, "String", selectedScript), selectedScript) end)
     greyText(sub, "--- ❄️ Freezing Options ❄️ ---")
     sub:add_toggle("Freeze Current Value", function() return getGlobalFrozenPosition(global) ~= false end, function(_)
         toggleFreezeGlobal(global, nil, typeSelection, selectedScript)
@@ -391,34 +493,48 @@ local function advancedGlobalEditor(sub, global, origValue, typeSelection, selec
         end
     end)
     if checkType(getGlobalForTypeAndScript(global, typeSelection, selectedScript)) == "Int" then
-        sub:add_int_range("Set and Freeze (Int):", 1, -MAX_INT, MAX_INT, function() return getGlobalFrozenPosition(global) and frozenGlobals[getGlobalFrozenPosition(global)][2] or origValue end, function(n)
+        sub:add_int_range("Freeze Custom Value (Int):", 1, -MAX_INT, MAX_INT, function() return getGlobalFrozenPosition(global) and frozenGlobals[getGlobalFrozenPosition(global)][2] or freezeNumberInt
+        end, function(n)
             toggleFreezeGlobal(global, n, typeSelection, selectedScript)
             if not isFreezerRunning then
                 menu.emit_event('startFreezer')
             end
         end)
+        local intChangerSub
+        intChangerSub = sub:add_submenu("Enter custom freeze int", function() numberChanger(intChangerSub, false, freezeNumberInt) end)
     elseif checkType(getGlobalForTypeAndScript(global, typeSelection, selectedScript)) == "Float" then
-        sub:add_float_range("Set and Freeze (Float):", 1, -MAX_INT, MAX_INT, function() return getGlobalFrozenPosition(global) and frozenGlobals[getGlobalFrozenPosition(global)][2] or origValue end, function(n)
+        sub:add_float_range("Freeze Custom Value (Float):", 1, -MAX_INT, MAX_INT, function() return getGlobalFrozenPosition(global) and frozenGlobals[getGlobalFrozenPosition(global)][2] or freezeNumberFloat
+        end, function(n)
             toggleFreezeGlobal(global, n, typeSelection, selectedScript)
             if not isFreezerRunning then
                 menu.emit_event('startFreezer')
             end
         end)
+        local floatChangerSub
+        floatChangerSub = sub:add_submenu("Enter custom freeze float", function() numberChanger(floatChangerSub, true, freezeNumberFloat) end)
     elseif checkType(getGlobalForTypeAndScript(global, typeSelection, selectedScript)) == "String" then
-        sub:add_bare_item("", function() return "Set and Freeze (String): " .. exact_search_value_string end, function()
+        sub:add_bare_item("", function() return "Freeze (String): " .. exact_search_value_string end, function()
             toggleFreezeGlobal(global, exact_search_value_string, typeSelection, selectedScript)
             if not isFreezerRunning then
                 menu.emit_event('startFreezer')
             end
         end, null, null)
-        local stringChangerSub
-        stringChangerSub = sub:add_submenu("Enter new String for String Search", function() stringChanger(stringChangerSub) end)
+        local frozenStringChangerSub
+        frozenStringChangerSub = sub:add_submenu("Enter new String for String Freeze", function() stringChanger(frozenStringChangerSub) end)
     end
     greyText(sub, "---------------------------")
-    sub:add_action("Set Exact Search to Global Value", function() exact_search_value_int = getGlobalForTypeAndScript(global, typeSelection, selectedScript) end)
+    sub:add_action("Set Exact Search to Global Value", function()
+        if typeSelection == "Int" then
+            exact_search_value_int = getGlobalForTypeAndScript(global, typeSelection, selectedScript)
+        elseif typeSelection == "Float" then
+            exact_search_value_float = getGlobalForTypeAndScript(global, typeSelection, selectedScript)
+        elseif typeSelection == "String" then
+            exact_search_value_string = getGlobalForTypeAndScript(global, typeSelection, selectedScript)
+        end
+    end)
     sub:add_toggle("Add " .. selectedScript .. "[".. global .. "] to watchlist", function() return getGlobalWatchlistPosition(global) ~= false end, function(add)
         if add then
-            table.insert(watchlistGlobals, {global, checkType(getGlobalForTypeAndScript(global, typeSelection, selectedScript))})
+            table.insert(watchlistGlobals, {global, checkType(getGlobalForTypeAndScript(global, typeSelection, selectedScript)), selectedScript})
             json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/WATCHLIST_GLOBALS.json", watchlistGlobals)
         else
             local watchlistPosition = getGlobalWatchlistPosition(global)
@@ -472,19 +588,19 @@ local function printFoundGlobals(sub, numToPrint, typeSelection, selectedScript)
     end)
 end
 
-local function addWatchListGlobals(sub, selectedScript)
+local function addWatchListGlobals(sub)
     if #watchlistGlobals > 0 then
         greyText(sub, "======= WATCHLISTED VALUES =======")
         for _, globalData in ipairs(watchlistGlobals) do
-            if getGlobalForTypeAndScript(globalData[1], globalData[2], selectedScript) then
+            if getGlobalForTypeAndScript(globalData[1], globalData[2], globalData[3]) then
                 sub:add_bare_item("", function()
-                    return selectedScript .. "[" .. globalData[1] .. "] = " .. getGlobalForTypeAndScript(globalData[1], globalData[2], selectedScript) .. "|(" .. globalData[2] .. ")"
+                    return globalData[3] .. "[" .. globalData[1] .. "] = " .. tostring(getGlobalForTypeAndScript(globalData[1], globalData[2], globalData[3])) .. "|(" .. globalData[2] .. ")"
                 end, function()
-                    print(selectedScript .. "[" .. globalData[1] .. "] = " .. getGlobalForTypeAndScript(globalData[1], globalData[2], selectedScript))
+                    print(globalData[3] .. "[" .. globalData[1] .. "] = " .. tostring(getGlobalForTypeAndScript(globalData[1], globalData[2], globalData[3])))
                 end, null, null)
                 local globalSub
                 globalSub = sub:add_submenu("|More Options:", function()
-                    advancedGlobalEditor(globalSub, globalData[1], getGlobalForTypeAndScript(globalData[1], globalData[2], selectedScript), globalData[2], selectedScript)
+                    advancedGlobalEditor(globalSub, globalData[1], getGlobalForTypeAndScript(globalData[1], globalData[2], globalData[3]), globalData[2], globalData[3])
                 end)
             end
         end
@@ -567,7 +683,7 @@ local function updateGlobalScanner(sub)
                 end
             end)
         end
-        addWatchListGlobals(sub, ScriptTypes[scriptSelection])
+        addWatchListGlobals(sub)
     else
         --There are results, so print the menu showing them
         greyText(sub, "Searching through " .. ScriptTypes[scriptSelection] .. "...")
@@ -635,7 +751,7 @@ local function updateGlobalScanner(sub)
         local resultChange = current_num_of_results - old_count
         resultChange = resultChange > 0 and "+" .. tostring(resultChange) or tostring(resultChange)
 
-        addWatchListGlobals(sub, ScriptTypes[scriptSelection])
+        addWatchListGlobals(sub)
 
         greyText(sub,"------Results: " .. current_num_of_results .. " (" .. resultChange .. ") -------")
 
@@ -653,21 +769,20 @@ local function updateGlobalScanner(sub)
     end
 end
 
+--{global, value, checkType(value), selectedScript})
 local function startFreezer()
     while #frozenGlobals > 0 do
+        print("Starting freezer")
         isFreezerRunning = true
+        -- Iterate over frozenGlobals
         for _, globalData in ipairs(frozenGlobals) do
-            if globalData[3] == "Int" then
-                globals.set_int(globalData[1], globalData[2])
-            elseif globalData[3] == "Float" then
-                globals.set_float(globalData[1], globalData[2])
-            elseif globalData[3] == "String" then
-                globals.set_string(globalData[1], globalData[2], 30)
-            end
+            setGlobalOrScriptValue(globalData[1], globalData[2], globalData[3], globalData[4])
+
+            sleep(0.05)
         end
-        sleep(0.05)
     end
     isFreezerRunning = false
+    print("Stopping freezer")
 end
 menu.register_callback('startFreezer', startFreezer)
 
