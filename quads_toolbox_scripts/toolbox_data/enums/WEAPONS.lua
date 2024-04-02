@@ -104,6 +104,9 @@ WEAPON[-610080759] = "WEAPON_METALDETECTOR"
 WEAPON[1171102963] = "Stungun MP"
 WEAPON[1161062353] = "Wolf Claws (Animal)"
 WEAPON[-1148198339] = "Poodle Claws (Animal)"
+WEAPON[966099553] = "Object" --I didn't make this one up lol
+WEAPON[2294779575] = "Briefcase"
+WEAPON[28811031] = "Briefcase 02"
 
 --Vehicle Weapons
 WEAPON[-1508194956] = "Nightshark MG"
