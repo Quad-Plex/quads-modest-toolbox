@@ -282,7 +282,7 @@ function getNonPlayerVehicles()
     local bannedModels = { [joaat("TrailerLarge")] = true }
 
     for veh in replayinterface.get_vehicles() do
-        if not playerVehicles[tostring(veh)] and (not bannedModels[veh:get_model_hash()]) then
+        if not playerVehicles[tostring(veh)] and not bannedModels[veh:get_model_hash()] then
             table.insert(nonPlayerVehicles, veh)
         end
     end
