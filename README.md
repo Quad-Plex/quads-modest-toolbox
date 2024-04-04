@@ -17,6 +17,7 @@ DONE:
 - ~~- Can I find RID from globals??~~
   - ~~Yes, through freemode script locals, but THE FUCKING OFFSET CHANGES WITH EVERY LAUNCH OF THE GAME FFS~~
   - ~~Created a huge list of possible offsets through trial and error and made the script choose the right one~~
+  - ~~Added easy updater in case of unknown offset~~
 - ~~Save godmode spawner status for favorited cars in vehicle spawner~~
 - ~~Add all ExplosionTypes with an array item~~
 - ~~Improve displayMessage timeout for multiple calls to it~~
