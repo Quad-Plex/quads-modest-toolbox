@@ -12,8 +12,6 @@ for _, model_name in pairs(MODELS) do
 	if duplicate_models[model_name:upper()] == nil then
 		duplicate_models[model_name:upper()] = "there can be only one"
 		table.insert(sorted_model_names, { model_name })
-	else
-		print("Duplicate Model Found! " .. model_name)
 	end
 end
 table.sort(sorted_model_names, function(a, b)
@@ -26,8 +24,6 @@ for _, pickup_name in pairs(PICKUPS) do
 	if duplicate_pickups[pickup_name:upper()] == nil then
 		duplicate_pickups[pickup_name:upper()] = "there can be only one"
 		table.insert(sorted_pickup_names, { pickup_name })
-	else
-		print("Duplicate Pickup Found! " .. pickup_name)
 	end
 end
 table.sort(sorted_pickup_names, function(a, b)
