@@ -842,6 +842,35 @@ local function ridList(sub)
         text(sub, "restart of the game.")
         text(sub, "Make sure you are fully loaded or")
         text(sub, "Check after a restart if RIDs are found")
+        sub:add_action("⚠️ BRUTE FORCE SEARCH (LONG) ⚠️", function()
+            local min_value = math.min(table.unpack(possible_offsets))
+            local max_value = math.max(table.unpack(possible_offsets))
+            local playerName = player.get_player_name(getLocalplayerID())
+            local current_count = math.ceil((max_value - min_value) / 2)
+            local counter = 0
+            local counter2 = 1
+            local step = current_count / 10
+            local freemode_script = script("freemode")
+            if not freemode_script then return end
+            --Only check every second value because the offset is always uneven
+            for i = min_value, max_value, 2 do
+                counter = counter + 1
+                if counter == math.floor(step) then
+                    greyText(sub, counter2 * 10 .. "% searched... (" .. formatNumberWithDots(counter2 * math.ceil(step)) .. " Variables)")
+                    counter = 0
+                    counter2 = counter2 + 1
+                end
+                local shortenedPlyName = freemode_script:get_string(i + (0 * 526) + 3, 30)
+                if shortenedPlyName == string.sub(playerName, 5) then
+                    text(sub, "FOUND! Correct Offset: " .. i)
+                    baseGlobals.ridLookup.freemode_base_local = i
+                    table.insert(possible_offsets, i)
+                    table.sort(possible_offsets)
+                    json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/RID_DATA_OFFSETS.json", possible_offsets)
+                    return
+                end
+            end
+        end)
     else
         for name, rid in pairs(ridLookupTable) do
             sub:add_bare_item("", function() return "Name: " .. name .. "| Rid: " .. rid end, null, null, null)

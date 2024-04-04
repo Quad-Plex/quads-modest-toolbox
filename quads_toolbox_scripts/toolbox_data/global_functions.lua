@@ -239,7 +239,7 @@ end
 baseGlobals.playerOrg = {}
 baseGlobals.playerOrg.baseGlobal = 1886967
 baseGlobals.playerOrg.bareStringCheck = function()
-    return getPlayerOrgID(getLocalplayerID()) ~= -1 and "Own Org Name: " .. getPlayerOrgName(getLocalplayerID()) or "No Organisation found"
+    return getPlayerOrgID(getLocalplayerID()) ~= -1 and "Own Org Name: " .. tostring(getPlayerOrgName(getLocalplayerID())) or "No Organisation found"
 end
 local org_types = { [0] = "CEO", "MC" }
 getPlayerOrgType = function(plyId)
@@ -574,7 +574,13 @@ end
 baseGlobals.specialExport = {}
 baseGlobals.specialExport.baseGlobal = 1942456
 baseGlobals.specialExport.bareStringCheck = function()
-    return "1st Vehicle in List: " .. tostring(VEHICLE[getSpecialExportVehiclesList()[1]][1])
+    local vehicle = getSpecialExportVehiclesList()[1]
+    local vehicle_data = vehicle and VEHICLE[vehicle]
+    if vehicle_data then
+        return "1st Vehicle in List: " .. tostring(vehicle_data[1])
+    else
+        return "No Vehicle Found..."
+    end
 end
 
 getSpecialExportVehiclesList = function()
@@ -640,59 +646,7 @@ end
 ---------------------------------------------------------------------------------
 ---------------------------- RID Lookup -----------------------------------------
 baseGlobals.ridLookup = {}
-local possible_offsets = {
-    7054197,
-    6089231,
-    5479225,
-    5435199,
-    5429055,
-    5411151,
-    5401441,
-    5396451,
-    5313405,
-    5312011,
-    5311567,
-    5308651,
-    5307915,
-    5306851,
-    5304055,
-    5303659,
-    5302691,
-    5302059,
-    5300643,
-    5299563,
-    5299301,
-    5299053,
-    5298931,
-    5298653,
-    5298147,
-    5296547,
-    5296521,
-    5295641,
-    5295353,
-    5295193,
-    5294051,
-    5293719,
-    5291545,
-    5289049,
-    5287575,
-    5285735,
-    5274493,
-    5272807,
-    5269823,
-    5259409,
-    5233557,
-    5231509,
-    5211367,
-    5173341,
-    5079249,
-    5009215,
-    4589067,
-    4473591,
-    4386689,
-    4385361,
-    4344659
-}
+success, possible_offsets = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/RID_DATA_OFFSETS.json")
 
 baseGlobals.ridLookup.freemode_base_local = -1
 ridLookupTable = {}
