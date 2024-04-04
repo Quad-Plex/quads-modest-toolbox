@@ -1,6 +1,6 @@
 local function OnWeaponChanged(_, newWeapon)
     if newWeapon ~= nil then
-        local NAME = localplayer:get_current_weapon():get_name_hash()
+        local NAME = localplayer and localplayer:get_current_weapon():get_name_hash()
         if NAME == joaat("weapon_stungun_mp") or NAME == joaat("weapon_stungun") then
             newWeapon:set_time_between_shots(1)
             newWeapon:set_range(1000)
@@ -14,7 +14,7 @@ menu.register_callback('OnWeaponChanged', OnWeaponChanged)
 
 local original_weapon_stats = {}
 local function ChangeWeaponStats(new_explosion_type, new_damage_type, new_range, new_damage)
-    local weapon = localplayer:get_current_weapon()
+    local weapon = localplayer and  localplayer:get_current_weapon()
     if weapon then
         if not original_weapon_stats[weapon:get_name_hash()] then
             --save old values
@@ -34,7 +34,7 @@ local function ChangeWeaponStats(new_explosion_type, new_damage_type, new_range,
 end
 
 local function ResetWeaponStats()
-    local weapon = localplayer:get_current_weapon()
+    local weapon = localplayer and localplayer:get_current_weapon()
     if weapon then
         local weapon_hash = weapon:get_name_hash()
         if original_weapon_stats[weapon_hash] then
@@ -58,12 +58,12 @@ end
 
 local atomizerToggle = false
 local function toggleAtomizerGun()
-    atomizerToggle = not (localplayer:get_current_weapon():get_explosion_type() == ExplosionTypes.RAYGUN)
+    atomizerToggle = not (localplayer and localplayer:get_current_weapon() and localplayer:get_current_weapon():get_explosion_type() == ExplosionTypes.RAYGUN)
     ToggleWeaponStats(atomizerToggle, ExplosionTypes.RAYGUN, 5, 9999, 0, "UNLOCK_RAYGUN")
 end
 
 gunOptionsSub:add_toggle("Constant Atomizer", function()
-    return localplayer:get_current_weapon():get_explosion_type() == ExplosionTypes.RAYGUN
+    return localplayer and localplayer:get_current_weapon() and localplayer:get_current_weapon():get_explosion_type() == ExplosionTypes.RAYGUN
 end, function(_)
     toggleAtomizerGun()
 end)
@@ -81,12 +81,12 @@ end)
 
 local explosionToggle = false
 local function toggleExplosionGun()
-    explosionToggle = not (localplayer:get_current_weapon():get_explosion_type() == ExplosionTypes.TANKER)
+    explosionToggle = not (localplayer and localplayer:get_current_weapon() and localplayer:get_current_weapon():get_explosion_type() == ExplosionTypes.TANKER)
     ToggleWeaponStats(explosionToggle, ExplosionTypes.TANKER, 5, 9999, 1000, "VEUI_SHAKE_EXPLOSION")
 end
 
 gunOptionsSub:add_toggle("Explosion Gun", function()
-    return localplayer:get_current_weapon():get_explosion_type() == ExplosionTypes.TANKER
+    return localplayer and localplayer:get_current_weapon() and localplayer:get_current_weapon():get_explosion_type() == ExplosionTypes.TANKER
 end, function(_)
     toggleExplosionGun()
 end)
@@ -104,42 +104,42 @@ end)
 
 local fireToggle = false
 local function toggleFireGun()
-    fireToggle = not (localplayer:get_current_weapon():get_explosion_type() == ExplosionTypes.FLAME)
+    fireToggle = not (localplayer and localplayer:get_current_weapon() and localplayer:get_current_weapon():get_explosion_type() == ExplosionTypes.FLAME)
     ToggleWeaponStats(fireToggle, ExplosionTypes.FLAME, 5, 9999, 1, "MO_ADB_OFF")
 end
 gunOptionsSub:add_toggle("Fire Gun", function()
-    return localplayer:get_current_weapon():get_explosion_type() == ExplosionTypes.FLAME
+    return localplayer and localplayer:get_current_weapon() and localplayer:get_current_weapon():get_explosion_type() == ExplosionTypes.FLAME
 end, function(_)
     toggleFireGun()
 end)
 
 local waterToggle = false
 local function toggleWaterGun()
-    waterToggle = not (localplayer:get_current_weapon():get_explosion_type() == ExplosionTypes.WATER_HYDRANT)
+    waterToggle = not (localplayer and localplayer:get_current_weapon() and localplayer:get_current_weapon():get_explosion_type() == ExplosionTypes.WATER_HYDRANT)
     ToggleWeaponStats(waterToggle, ExplosionTypes.WATER_HYDRANT, 5, 9999, 0, "PIM_LGHTCOL6")
 end
 gunOptionsSub:add_toggle("Water Gun", function()
-    return localplayer:get_current_weapon():get_explosion_type() == ExplosionTypes.WATER_HYDRANT
+    return localplayer and localplayer:get_current_weapon() and localplayer:get_current_weapon():get_explosion_type() == ExplosionTypes.WATER_HYDRANT
 end, function(_)
     toggleWaterGun()
 end)
 
 local smokeToggle = false
 local function toggleSmokeGun()
-    smokeToggle = not (localplayer:get_current_weapon():get_explosion_type() == ExplosionTypes.SMOKEGRENADE)
+    smokeToggle = not (localplayer and localplayer:get_current_weapon() and localplayer:get_current_weapon():get_explosion_type() == ExplosionTypes.SMOKEGRENADE)
     ToggleWeaponStats(smokeToggle, ExplosionTypes.SMOKEGRENADE, 5, 9999, 0, "CMOD_SMOKE_N")
 end
 gunOptionsSub:add_toggle("Smoke Gun", function()
-    return localplayer:get_current_weapon():get_explosion_type() == ExplosionTypes.SMOKEGRENADE
+    return localplayer and localplayer:get_current_weapon() and localplayer:get_current_weapon():get_explosion_type() == ExplosionTypes.SMOKEGRENADE
 end, function(_)
     toggleSmokeGun()
 end)
 
-gunOptionsSub:add_array_item("Change Gun Impact to: ", ExplosionTypesNumbered, function() return localplayer:get_current_weapon():get_explosion_type() end, function(new_expl_type)
+gunOptionsSub:add_array_item("Change Gun Impact to: ", ExplosionTypesNumbered, function() return localplayer and localplayer:get_current_weapon() and localplayer:get_current_weapon():get_explosion_type() end, function(new_expl_type)
     if new_expl_type == -1 then
         ResetWeaponStats()
         return
     end
-    local toggle = not (localplayer:get_current_weapon():get_explosion_type() == new_expl_type)
+    local toggle = not (localplayer and localplayer:get_current_weapon() and localplayer:get_current_weapon():get_explosion_type() == new_expl_type)
     ToggleWeaponStats(toggle, new_expl_type, 5, 9999, 0, "")
 end)

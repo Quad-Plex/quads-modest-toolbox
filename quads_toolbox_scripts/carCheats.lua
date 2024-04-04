@@ -194,7 +194,7 @@ end)
 
 greyText(vehicleOptionsSub, centeredText("----- One-Click-Go-Quick Booster -----"))
 vehicleOptionsSub:add_toggle("ULTIMATE BOOST", function()
-    return localplayer:is_in_vehicle() and localplayer:get_current_vehicle():get_gravity() == 21.420
+    return localplayer and localplayer:is_in_vehicle() and localplayer:get_current_vehicle():get_gravity() == 21.420
 end, carBoost)
 vehicleOptionsSub:add_int_range("Car Boost strength |%", 5, 0, 690, function()
     return multiplier_percent
