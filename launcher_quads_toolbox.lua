@@ -37,7 +37,6 @@ require("scripts/quads_toolbox_scripts/weaponMods")
 miscOptionsSub = toolboxSub:add_submenu(centeredText("❓ Misc Options ❓"))
 greyText(miscOptionsSub, centeredText(" ❓ Misc Options ❓"))
 require("scripts/quads_toolbox_scripts/noclip")
-require("scripts/quads_toolbox_scripts/offradar")
 require("scripts/quads_toolbox_scripts/misc")
 require("scripts/quads_toolbox_scripts/stats")
 
