@@ -10,7 +10,7 @@ local freezeNumberFloat
 
 local ScannerTypes = {[0]="Int", "Float", "String"}
 local scannerSelection = 0
-local ScriptTypes = {[0]="Global", "freemode", "taxiservice", "pm_delivery", "shop_controller"}
+local ScriptTypes = {[0]="Global", "freemode", "shop_controller", "casino_lucky_wheel", "blackjack", "casinoroulette", "casino_slots", "three_card_poker"}
 local scriptSelection = 0
 
 local methodNames = {
@@ -182,12 +182,10 @@ local function numberChanger(sub, float, customNumber)
                 if float and (attemptedNewNumberAsNumber == nil
                         or attemptedNewNumberAsNumber == math.huge
                         or attemptedNewNumberAsNumber == -math.huge) then
-                    print("Nope to float.")
                     return
                 elseif not float and (attemptedNewNumberAsNumber == nil
                         or attemptedNewNumberAsNumber < math.mininteger
                         or attemptedNewNumberAsNumber > math.maxinteger) then
-                    print("Shit for int.")
                     return
                 end
                 tempNumberStorage = attemptedNewNumber
@@ -355,8 +353,6 @@ local function search(sub, search_type, current_count, typeSelection, selectedSc
         local value = getGlobalForTypeAndScript(global, typeSelection, selectedScript)
         if value and checkType(value) == typeSelection then
             temp_globals[global] = value
-        else
-            --print("Bad Type! Expected: " .. typeSelection .. ", got " .. checkType(value))
         end
     end
 
@@ -385,8 +381,6 @@ local function search(sub, search_type, current_count, typeSelection, selectedSc
                 (search_type == "exact" and new_value == exact_search_value))
         then
             temp_new_found_globals[global] = new_value
-        else
-           --Do nothing
         end
     end
 
@@ -460,7 +454,7 @@ local function advancedGlobalEditor(sub, global, origValue, typeSelection, selec
         freezeNumberFloat = origValue
     end
     sub:add_bare_item("",function() return selectedScript .. "[" .. global .. "] = " .. tostring(getGlobalForTypeAndScript(global, typeSelection, selectedScript)) end, null, null, null)
-    greyText(sub, selectedScript .. "[" .. global .. "] = ".. origValue .. " (Orig. Value)")
+    greyText(sub, selectedScript .. "[" .. global .. "] = ".. tostring(origValue) .. " (Orig. Value)")
     text(sub, "---------------------------")
     sub:add_int_range("As Int:", 1, -MAX_INT, MAX_INT, function()
         if selectedScript and selectedScript ~= "Global"  then
@@ -592,17 +586,15 @@ local function addWatchListGlobals(sub)
     if #watchlistGlobals > 0 then
         greyText(sub, "======= WATCHLISTED VALUES =======")
         for _, globalData in ipairs(watchlistGlobals) do
-            if getGlobalForTypeAndScript(globalData[1], globalData[2], globalData[3]) then
-                sub:add_bare_item("", function()
-                    return globalData[3] .. "[" .. globalData[1] .. "] = " .. tostring(getGlobalForTypeAndScript(globalData[1], globalData[2], globalData[3])) .. "|(" .. globalData[2] .. ")"
-                end, function()
-                    print(globalData[3] .. "[" .. globalData[1] .. "] = " .. tostring(getGlobalForTypeAndScript(globalData[1], globalData[2], globalData[3])))
-                end, null, null)
-                local globalSub
-                globalSub = sub:add_submenu("|More Options:", function()
-                    advancedGlobalEditor(globalSub, globalData[1], getGlobalForTypeAndScript(globalData[1], globalData[2], globalData[3]), globalData[2], globalData[3])
-                end)
-            end
+            sub:add_bare_item("", function()
+                return globalData[3] .. "[" .. globalData[1] .. "] = " .. tostring(getGlobalForTypeAndScript(globalData[1], globalData[2], globalData[3])) .. "|(" .. globalData[2] .. ")"
+            end, function()
+                print(globalData[3] .. "[" .. globalData[1] .. "] = " .. tostring(getGlobalForTypeAndScript(globalData[1], globalData[2], globalData[3])))
+            end, null, null)
+            local globalSub
+            globalSub = sub:add_submenu("|More Options:", function()
+                advancedGlobalEditor(globalSub, globalData[1], getGlobalForTypeAndScript(globalData[1], globalData[2], globalData[3]), globalData[2], globalData[3])
+            end)
         end
     end
 end
@@ -772,7 +764,6 @@ end
 --{global, value, checkType(value), selectedScript})
 local function startFreezer()
     while #frozenGlobals > 0 do
-        print("Starting freezer")
         isFreezerRunning = true
         -- Iterate over frozenGlobals
         for _, globalData in ipairs(frozenGlobals) do
@@ -782,7 +773,6 @@ local function startFreezer()
         end
     end
     isFreezerRunning = false
-    print("Stopping freezer")
 end
 menu.register_callback('startFreezer', startFreezer)
 

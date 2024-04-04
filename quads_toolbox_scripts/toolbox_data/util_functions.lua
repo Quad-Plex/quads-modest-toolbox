@@ -6,6 +6,30 @@ function null() end
 
 MAX_INT = 2147483647
 
+------------------------------Localplayer ID getter----------------------------
+
+local globalLocalplayerIDvariable = -1
+function getLocalplayerID(set)
+    if set then
+        globalLocalplayerIDvariable = set
+        return
+    else
+        local localplayerID = localplayer and localplayer:get_player_id()
+        if localplayerID and localplayerID ~= -1 then
+            globalLocalplayerIDvariable = localplayerID
+            return localplayerID
+        elseif globalLocalplayerIDvariable == -1 then
+            for i = 0, 31 do
+                local ply = player.get_player_ped(i)
+                if ply == localplayer then
+                    globalLocalplayerIDvariable = i
+                end
+            end
+        end
+        return globalLocalplayerIDvariable
+    end
+end
+
 --------------------Spawned Vehicle Godmode toggler-----------------------------------
 
 local function findAndEnableGodmodeForVehicle(vehicle_hash, checkPos)
@@ -336,7 +360,7 @@ end
 -----------------------Bit Checker--------------------------------
 function checkBit(value, pos)
     --Sometimes localplayer:get_player_id() will fail and return -1, which trips up this function
-    if pos == -1 then return false end
+    if not pos or pos == -1 then return false end
     return (value >> pos) % 2 == 1
 end
 

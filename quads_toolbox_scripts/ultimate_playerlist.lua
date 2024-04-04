@@ -54,7 +54,6 @@ end
 
 local bounty_numbers = { [0] = 1, 42, 69, 420, 4200, 6969, 9999 }
 local current_bounty_number = 0
-globalLocalplayerID = -1
 
 --------- Function Definitions -----------
 local serializeInteriors = {}
@@ -832,6 +831,24 @@ function nearbyPlayersMenu(ply, nearbySub, plyId)
     end
 end
 
+local function ridList(sub)
+    sub:clear()
+    greyText(sub, "Names have their first 4 letters cut")
+    greyText(sub, "off, ask R* Devs why")
+    if baseGlobals.ridLookup.freemode_base_local == -1 then
+        text(sub, "ERROR Couldn't find RIDs in memory")
+        text(sub, "This can happen sometimes, because")
+        text(sub, "their location changes with every")
+        text(sub, "restart of the game.")
+        text(sub, "Make sure you are fully loaded or")
+        text(sub, "Check after a restart if RIDs are found")
+    else
+        for name, rid in pairs(ridLookupTable) do
+            sub:add_bare_item("", function() return "Name: " .. name .. "| Rid: " .. rid end, null, null, null)
+        end
+    end
+end
+
 --Generates specific info about the player
 local function playerInfo(plyId, sub, plyName)
     local ply = player.get_player_ped(plyId)
@@ -1036,7 +1053,7 @@ local function playerInfo(plyId, sub, plyName)
         return "PlyId: " .. plyId
     end, null, null, null)
     sub:add_bare_item("", function()
-        return "Tracked Visible State: " .. getIsTrackedPedVisibleState(plyId)
+        return "R* ID: " .. tostring(getRidForPlayer(plyName))
     end, null, null, null)
 end
 
@@ -1175,7 +1192,7 @@ function addSubActions(sub, plyName, plyId)
         current_bounty_number = n
         sendBounty(plyId, bounty_numbers[current_bounty_number], false)
     end)
-    if getScriptHostPlayerID() == localplayer:get_player_id() or getScriptHostPlayerID() == globalLocalplayerID then
+    if getScriptHostPlayerID() == getLocalplayerID() then
         trollSub:add_action("\u{26A0} Host Kick " .. plyName .. " \u{26A0}", function()
             hostKick(plyId)
         end)
@@ -1362,6 +1379,11 @@ local function addSessionOptions(sub)
     sub:add_bare_item("               " .. getTopPlayer(getPlayerDeaths, "value") .. " Deaths", null, null, null, null)
 
     greyText(sub, "---------------------------")
+
+    local ridSub
+    ridSub = sub:add_submenu("Show all Found RIDs", function() ridList(ridSub) end)
+
+    greyText(sub, "---------------------------")
     local numStars = 5
     sub:add_int_range("\u{26A0} GIVE ALL PLAYERS COPS \u{26A0} |\u{2605}", 1, 0, 6, function()
         return numStars
@@ -1429,10 +1451,10 @@ local function getSortedPlayers()
             local name = player.get_player_name(i)
             local plyId = ply.get_player_id(ply)
             if plyId == -1 then
-                print("Warn; Player-ID is -1, substituting with i")
+                print("Warn; Player-ID for player #" .. i .. " is -1, substituting with i instead")
                 plyId = i
                 if ply == localplayer then
-                    globalLocalplayerID = i
+                    getLocalplayerID(i)
                 end
             end
             local isModder = modCheck(ply, name, plyId)
@@ -1457,6 +1479,7 @@ local updateable = true
 local function SubMenus(playerList)
     updateable = false
     playerList:clear()
+    triggerRidLookupTableRefresh(player.get_player_name(getLocalplayerID()) or nil)
 
     playerList:add_array_item("==============  UPDATE: ", sortStyles, function()
         return playerlistSettings.defaultSortingMethod

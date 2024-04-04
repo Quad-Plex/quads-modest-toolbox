@@ -38,17 +38,19 @@ local function NoClip(toggle)
 			localplayer:set_no_ragdoll(true)
 			localplayer:set_config_flag(292, true)
 			hotkeys = {
-				menu.register_hotkey(16, function() move(vector3(0,0,speed)) end),
-				menu.register_hotkey(17, function() move(vector3(0,0,speed * -1)) end),
-				menu.register_hotkey(38, function() move(localplayer:get_heading() * speed) end),
-				menu.register_hotkey(40, function() move(localplayer:get_heading() * speed * -1) end),
-				menu.register_hotkey(37, function() rotate(0.25) end),
-				menu.register_hotkey(39, function() rotate(0.25 * -1) end),
-				menu.register_hotkey(107, function() adjustSpeed(1) end),
-				menu.register_hotkey(109, function() adjustSpeed(-1) end)
+				menu.register_hotkey(keycodes.SHIFT_KEY, function() move(vector3(0,0,speed)) end),
+				menu.register_hotkey(keycodes.CTRL_KEY, function() move(vector3(0,0,speed * -1)) end),
+				menu.register_hotkey(keycodes.UP_ARROW_KEY, function() move(localplayer:get_heading() * speed) end),
+				menu.register_hotkey(keycodes.DOWN_ARROW_KEY, function() move(localplayer:get_heading() * speed * -1) end),
+				menu.register_hotkey(keycodes.LEFT_ARROW_KEY, function() rotate(0.25) end),
+				menu.register_hotkey(keycodes.RIGHT_ARROW_KEY, function() rotate(0.25 * -1) end),
+				menu.register_hotkey(keycodes.ADD_KEY, function() adjustSpeed(1) end),
+				menu.register_hotkey(keycodes.SUBTRACT_KEY, function() adjustSpeed(-1) end)
 			}
 			displayHudBanner("SG_CLIP", "PIM_NCL_PRIV1", "", 109)
+			setPhoneDisabled(true)
 		else
+			setPhoneDisabled(false)
 			localplayer:set_freeze_momentum(false)
 			localplayer:set_no_ragdoll(false)
 			localplayer:set_config_flag(292, false)
@@ -61,7 +63,7 @@ local function NoClip(toggle)
 	end
 end
 
-miscOptionsSub:add_toggle("Noclip:", function() return noclipToggle end, function(n) noclipToggle = n NoClip(noclipToggle)  end)
+miscOptionsSub:add_toggle("Noclip:|🚀", function() return noclipToggle end, function(n) noclipToggle = n NoClip(noclipToggle)  end)
 
 
 --Numpad Divide Key

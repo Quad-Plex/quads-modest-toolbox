@@ -1,12 +1,8 @@
 baseGlobals = {}
 
-local function getTrueLocalplayerID()
-    local localplayerID = localplayer:get_player_id()
-    if localplayerID == -1 and globalLocalplayerID ~= -1 then localplayerID = globalLocalplayerID end
-    return localplayerID
-end
-
 ------------------Message Display-----------------------
+--TODO: only displayBoxType 39 showed a weird string on the bottom sometimes, which seemed to contain a playername
+--after session switch that string disappeared - has to be configurable somehow
 local timeoutDuration
 baseGlobals.messageDisplay = {}
 baseGlobals.messageDisplay.baseGlobal = 2672741 + 2518 + 1
@@ -39,11 +35,9 @@ function OnScriptsLoadedGlobal()
     while true do
         while timeoutDuration do
             if timeoutDuration > 0 then
-                print("Waiting 0.1 for " .. tostring(timeoutDuration))
                 sleep(0.1)
                 timeoutDuration = timeoutDuration - 0.1
             elseif timeoutDuration <= 0 then
-                print("Gonna stop message now")
                 timeoutDuration = nil
                 --Setting both globals to 1 removes the currently displayed message
                 globals.set_int(baseGlobals.messageDisplay.baseGlobal + 1, 1)
@@ -145,7 +139,7 @@ end
 baseGlobals.playerLevel = {}
 baseGlobals.playerLevel.baseGlobal = 1845263
 baseGlobals.playerLevel.testIntRange = function()
-    return getPlayerLevel(getTrueLocalplayerID())
+    return getPlayerLevel(getLocalplayerID())
 end
 baseGlobals.playerLevel.intRangeExplanation = "Shows your own LVL:"
 getPlayerLevel = function(plyId)
@@ -222,7 +216,7 @@ end
 baseGlobals.respawnState = {}
 baseGlobals.respawnState.baseGlobal = 2657921
 baseGlobals.respawnState.testIntRange = function()
-    return getPlayerRespawnState(getTrueLocalplayerID())
+    return getPlayerRespawnState(getLocalplayerID())
 end
 baseGlobals.respawnState.intRangeExplanation = "Should be 99 while idling outside"
 -- Order of States when Dying: -1 0 2 9 99
@@ -245,7 +239,7 @@ end
 baseGlobals.playerOrg = {}
 baseGlobals.playerOrg.baseGlobal = 1886967
 baseGlobals.playerOrg.bareStringCheck = function()
-    return getPlayerOrgID(getTrueLocalplayerID()) ~= -1 and "Own Org Name: " .. getPlayerOrgName(getTrueLocalplayerID()) or "No Organisation found"
+    return getPlayerOrgID(getLocalplayerID()) ~= -1 and "Own Org Name: " .. getPlayerOrgName(getLocalplayerID()) or "No Organisation found"
 end
 local org_types = { [0] = "CEO", "MC" }
 getPlayerOrgType = function(plyId)
@@ -266,7 +260,7 @@ end
 
 joinPlayerOrg = function(plyId)
     local plyOrgId = getPlayerOrgId(plyId)
-    globals.set_int(baseGlobals.playerOrg.baseGlobal + 1 + (getTrueLocalplayerID() * 609) + 10, plyOrgId)
+    globals.set_int(baseGlobals.playerOrg.baseGlobal + 1 + (getLocalplayerID() * 609) + 10, plyOrgId)
 end
 
 ------------------------Set Wanted Level Remote----------------------
@@ -275,14 +269,14 @@ end
 baseGlobals.wantedLevel = {}
 baseGlobals.wantedLevel.baseGlobal = 2657921
 baseGlobals.wantedLevel.testFunction = function()
-    giveWantedLevel(getTrueLocalplayerID(), 5)
+    giveWantedLevel(getLocalplayerID(), 5)
     sleep(0.5)
-    giveWantedLevel(getTrueLocalplayerID(), 0)
+    giveWantedLevel(getLocalplayerID(), 0)
 end
 baseGlobals.wantedLevel.testFunctionExplanation = "Give yourself 5 Stars"
 giveWantedLevel = function(plyId, numStars)
-    globals.set_int(baseGlobals.wantedLevel.baseGlobal + 1 + (getTrueLocalplayerID() * 463) + 214, plyId)
-    globals.set_int(baseGlobals.wantedLevel.baseGlobal + 1 + (getTrueLocalplayerID() * 463) + 215, numStars)
+    globals.set_int(baseGlobals.wantedLevel.baseGlobal + 1 + (getLocalplayerID() * 463) + 214, plyId)
+    globals.set_int(baseGlobals.wantedLevel.baseGlobal + 1 + (getLocalplayerID() * 463) + 215, numStars)
 end
 
 ----------------------------------------------------------------
@@ -330,7 +324,7 @@ shortformBlips = {
 baseGlobals.blipType = {}
 baseGlobals.blipType.baseGlobal = 2657921
 baseGlobals.blipType.testIntRange = function()
-    return getPlayerBlip(getTrueLocalplayerID())
+    return getPlayerBlip(getLocalplayerID())
 end
 baseGlobals.blipType.intRangeExplanation = "Should be 4 while idling outside"
 local vehicle_blips = utils_Set({ 262144, 262145, 262148, 262149, 262156, 262164, 262208, 262212, 262276, 262277, 262660, 262661, 262724, 262784, 262789, 262788, 786564, 2627888, 2359300 })
@@ -490,7 +484,7 @@ end
 baseGlobals.hostCheck = {}
 baseGlobals.hostCheck.baseGlobal = 2650416 + 1
 baseGlobals.hostCheck.testCheck = function()
-    return getScriptHostPlayerID() == getTrueLocalplayerID()
+    return getScriptHostPlayerID() == getLocalplayerID()
 end
 baseGlobals.hostCheck.checkExplanation = "(Solo Session) Am I Host?:"
 function getScriptHostPlayerID()
@@ -502,7 +496,7 @@ end
 baseGlobals.hostKick = {}
 baseGlobals.hostKick.baseGlobal = 1877042
 baseGlobals.hostKick.testFunction = function()
-    hostKick(getTrueLocalplayerID())
+    hostKick(getLocalplayerID())
 end
 baseGlobals.hostKick.testFunctionExplanation = "(Solo session) Kick yourself"
 function hostKick(plyId)
@@ -520,7 +514,7 @@ end
 baseGlobals.spectatorCheck = {}
 baseGlobals.spectatorCheck.specPlayerBaseGlobal = 2657921
 baseGlobals.spectatorCheck.testCheck = function()
-    return amISpectating(getTrueLocalplayerID())
+    return amISpectating(getLocalplayerID())
 end
 baseGlobals.spectatorCheck.checkExplanation = "Am I spectating myself?"
 
@@ -543,7 +537,7 @@ function isSpectatingMe(plyId)
     local ply = player.get_player_ped(plyId)
     if not ply then return end
     local visibleState = getIsTrackedPedVisibleState(plyId)
-    local isWatchingMe = checkBit(visibleState, getTrueLocalplayerID())
+    local isWatchingMe = checkBit(visibleState, getLocalplayerID())
     return isWatchingMe and distanceBetween(player.get_player_ped(), ply) > 230
 end
 
@@ -552,7 +546,7 @@ function amISpectating(plyId)
     if globals.get_int(baseGlobals.spectatorCheck2.tvSpectatePlyIDGlobal) == plyId then return true end
     local ply = player.get_player_ped(plyId)
     if not ply then return end
-    local ownVisibleState = getIsTrackedPedVisibleState(getTrueLocalplayerID())
+    local ownVisibleState = getIsTrackedPedVisibleState(getLocalplayerID())
     local amIWatching = checkBit(ownVisibleState, plyId)
     return amIWatching and distanceBetween(player.get_player_ped(), ply) > 230
 end
@@ -563,7 +557,7 @@ end
 baseGlobals.bountyInfo = {}
 baseGlobals.bountyInfo.playerBountyInfoGlobal = 1835505
 baseGlobals.bountyInfo.testIntRange = function()
-    return getPlayerBountyAmount(getTrueLocalplayerID())
+    return getPlayerBountyAmount(getLocalplayerID())
 end
 baseGlobals.bountyInfo.intRangeExplanation = "Own Bounty Value:"
 
@@ -609,3 +603,128 @@ baseGlobals.sessantaShit.testFunction = function()
     newSessantaVehicle()
 end
 baseGlobals.sessantaShit.testFunctionExplanation = "Trigger new Sessanta Vehicle"
+
+---------------------------------------------------------------------------------
+--------------------------------- Disable Phone ---------------------------------
+--Global_20796
+phoneDisabledState = false
+local phoneLoopRunning = false
+baseGlobals.phoneDisabler = {}
+baseGlobals.phoneDisabler.base_global = 20796
+baseGlobals.phoneDisabler.testFunction = function()
+    setPhoneDisabled(not phoneDisabledState)
+end
+
+local function disablePhoneLoop()
+    phoneLoopRunning = true
+    while phoneDisabledState do
+        globals.set_bool(baseGlobals.phoneDisabler.base_global, true)
+        sleep(0.01)
+    end
+    globals.set_bool(baseGlobals.phoneDisabler.base_global, false)
+    phoneLoopRunning = false
+end
+menu.register_callback('disablePhoneLoop', disablePhoneLoop)
+
+function setPhoneDisabled(disable)
+    if disable then
+        phoneDisabledState = disable
+        if not phoneLoopRunning then
+            menu.emit_event('disablePhoneLoop')
+        end
+    else
+        phoneDisabledState = disable
+    end
+end
+
+---------------------------------------------------------------------------------
+---------------------------- RID Lookup -----------------------------------------
+baseGlobals.ridLookup = {}
+local possible_offsets = {
+    7054197,
+    6089231,
+    5479225,
+    5435199,
+    5429055,
+    5411151,
+    5401441,
+    5396451,
+    5313405,
+    5312011,
+    5311567,
+    5308651,
+    5307915,
+    5306851,
+    5304055,
+    5303659,
+    5302691,
+    5302059,
+    5300643,
+    5299563,
+    5299301,
+    5299053,
+    5298931,
+    5298653,
+    5298147,
+    5296547,
+    5296521,
+    5295641,
+    5295353,
+    5295193,
+    5294051,
+    5293719,
+    5291545,
+    5289049,
+    5287575,
+    5285735,
+    5274493,
+    5272807,
+    5269823,
+    5259409,
+    5233557,
+    5231509,
+    5211367,
+    5173341,
+    5079249,
+    5009215,
+    4589067,
+    4473591,
+    4386689,
+    4385361,
+    4344659
+}
+
+baseGlobals.ridLookup.freemode_base_local = -1
+ridLookupTable = {}
+function triggerRidLookupTableRefresh(plyname)
+    local freemode_script = script("freemode")
+    if not freemode_script or not plyname then return end
+    --Only update the used offset if it hasn't been determined before
+    if baseGlobals.ridLookup.freemode_base_local == -1 then
+        for _, offset in pairs(possible_offsets) do
+            local shortenedPlyName = freemode_script:get_string(offset + (0 * 526) + 3, 30)
+            if shortenedPlyName == string.sub(plyname, 5) then
+                baseGlobals.ridLookup.freemode_base_local = offset
+                break
+            end
+        end
+    end
+    --Couldn't find the correct offset, exit
+    if baseGlobals.ridLookup.freemode_base_local == -1 then return end
+    for i = 0, 100 do
+        local shortenedPlyName = freemode_script:get_string(baseGlobals.ridLookup.freemode_base_local + (i * 526) + 3, 30)
+        local rid = freemode_script:get_int(baseGlobals.ridLookup.freemode_base_local + (i * 526))
+        if rid ~= nil and rid > 1 and shortenedPlyName ~= nil then
+            ridLookupTable[shortenedPlyName] = rid
+        end
+    end
+end
+
+function getRidForPlayer(plyName)
+    return ridLookupTable[string.sub(plyName, 5)]
+end
+baseGlobals.ridLookup.bareStringCheck = function()
+    local freemode_script = script("freemode")
+    if not freemode_script then return "Freemode Script not found" end
+    return "Plyname - 4: " .. tostring(freemode_script:get_string(baseGlobals.ridLookup.freemode_base_local + 3, 30))
+end
