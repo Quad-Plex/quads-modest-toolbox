@@ -31,6 +31,7 @@ local function adjustSpeed(amount)
 	end
 end
 
+local oldPhoneDisableState
 local function NoClip(toggle)
 	if localplayer ~= nil then
 		if toggle then
@@ -48,9 +49,10 @@ local function NoClip(toggle)
 				menu.register_hotkey(keycodes.SUBTRACT_KEY, function() adjustSpeed(-1) end)
 			}
 			displayHudBanner("SG_CLIP", "PIM_NCL_PRIV1", "", 109)
+			oldPhoneDisableState = phoneDisabledState
 			setPhoneDisabled(true, true)
 		else
-			setPhoneDisabled(false, true)
+			setPhoneDisabled(oldPhoneDisableState, true)
 			localplayer:set_freeze_momentum(false)
 			localplayer:set_no_ragdoll(false)
 			localplayer:set_config_flag(292, false)
