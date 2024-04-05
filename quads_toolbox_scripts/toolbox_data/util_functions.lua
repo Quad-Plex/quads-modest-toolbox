@@ -33,10 +33,16 @@ end
 --------------------Spawned Vehicle Godmode toggler-----------------------------------
 
 local function findAndEnableGodmodeForVehicle(vehicle_hash, checkPos)
-    for veh in replayinterface.get_vehicles() do
-        if veh:get_model_hash() == vehicle_hash and distanceBetween(veh, checkPos, true) < 2 then
-            veh:set_godmode(true)
+    print("Starting godmode search")
+    for _ = 0, 5 do
+        for veh in replayinterface.get_vehicles() do
+            if veh:get_model_hash() == vehicle_hash and distanceBetween(veh, checkPos, true) < 5 then
+                print("Setting godmode...")
+                veh:set_godmode(true)
+                return
+            end
         end
+        sleep(0.06)
     end
 end
 
@@ -101,10 +107,9 @@ local function addVehicleEntry(vehMenu, vehicle, ply)
     end)
     vehMenu:add_toggle("Spawn with Godmode enabled", function()
         if vehicle[3] then
-            return vehicle[3]
-        else
-            return godmodeEnabledSpawn
+            godmodeEnabledSpawn = vehicle[3]
         end
+        return godmodeEnabledSpawn
     end, function(n)
         if vehicle[3] ~= nil then
             local isFavorite = isInFavorites(vehicle[1])
