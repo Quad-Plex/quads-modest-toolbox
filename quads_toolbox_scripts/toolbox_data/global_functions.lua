@@ -327,7 +327,7 @@ baseGlobals.blipType.testIntRange = function()
     return getPlayerBlip(getLocalplayerID())
 end
 baseGlobals.blipType.intRangeExplanation = "Should be 4 while idling outside"
-local vehicle_blips = utils_Set({ 262144, 262145, 262148, 262149, 262156, 262164, 262208, 262212, 262276, 262277, 262660, 262661, 262724, 262784, 262789, 262788, 786564, 2627888, 2359300 })
+local vehicle_blips = utils_Set({ 262144, 262145, 262148, 262149, 262156, 262164, 262165, 262208, 262212, 262276, 262277, 262660, 262661, 262724, 262784, 262789, 262788, 786564, 2627888, 2359300 })
 local plane_ghost_blips = utils_Set({ 8388612, 8650884, 8651332, 8651396, 8651397, 8650756, 8650757, 8650820, 8651268, 8651269 })
 local ultralight_ghost_blips = utils_Set({ 262676, 262740 })
 local ls_customs_blip = utils_Set({ 2097280, 2359330, 2359458, 262178 })
@@ -632,14 +632,20 @@ local function disablePhoneLoop()
 end
 menu.register_callback('disablePhoneLoop', disablePhoneLoop)
 
-function setPhoneDisabled(disable)
+function setPhoneDisabled(disable, disableNotification)
     if disable then
         phoneDisabledState = disable
+        if not disableNotification then
+            displayHudBanner("S23_SOAD_BLP1", "PIM_NCL_PRIV0", "", 109)
+        end
         if not phoneLoopRunning then
             menu.emit_event('disablePhoneLoop')
         end
     else
         phoneDisabledState = disable
+        if not disableNotification then
+            displayHudBanner("S23_SOAD_BLP1", "PIM_NCL_PRIV1", "", 109)
+        end
     end
 end
 

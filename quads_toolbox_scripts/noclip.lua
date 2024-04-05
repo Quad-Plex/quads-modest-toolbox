@@ -48,9 +48,9 @@ local function NoClip(toggle)
 				menu.register_hotkey(keycodes.SUBTRACT_KEY, function() adjustSpeed(-1) end)
 			}
 			displayHudBanner("SG_CLIP", "PIM_NCL_PRIV1", "", 109)
-			setPhoneDisabled(true)
+			setPhoneDisabled(true, true)
 		else
-			setPhoneDisabled(false)
+			setPhoneDisabled(false, true)
 			localplayer:set_freeze_momentum(false)
 			localplayer:set_no_ragdoll(false)
 			localplayer:set_config_flag(292, false)
