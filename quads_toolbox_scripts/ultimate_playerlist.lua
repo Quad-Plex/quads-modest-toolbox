@@ -1449,11 +1449,11 @@ local function addSettingsMenu(sub)
     sub:clear()
     greyText(sub, "-- ⚙️ Configure Playerlist: ⚙️ --")
     greyText(sub, "Changes are saved automatically!!")
-    sub:add_toggle("Disable Automatic Spectator Warning", function() return playerlistSettings.disableSpectatorWarning end, function(value)
+    sub:add_toggle("|Disable Spectator Warning ", function() return playerlistSettings.disableSpectatorWarning end, function(value)
         playerlistSettings.disableSpectatorWarning =  value
         json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/PLAYERLIST_SETTINGS.json", playerlistSettings)
     end)
-    sub:add_toggle("Disable Automatic Modder Warning", function() return playerlistSettings.disableModdersWarning end, function(value)
+    sub:add_toggle("|Disable Modder Warning ", function() return playerlistSettings.disableModdersWarning end, function(value)
         playerlistSettings.disableModdersWarning =  value
         json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/PLAYERLIST_SETTINGS.json", playerlistSettings)
     end)
@@ -1532,12 +1532,12 @@ local function SubMenus(playerList)
     greyText(playerList, "------------ Players: " .. #sortedPlayers .. " ------------")
 
     local sessionOptionsSub
-    sessionOptionsSub = playerList:add_submenu("\u{26A0}\u{26A0}\u{26A0} Session Options/Info \u{26A0}\u{26A0}\u{26A0}", function() addSessionOptions(sessionOptionsSub) end)
+    sessionOptionsSub = playerList:add_submenu("   🛈🛈🛈 Session Options/Info 🛈🛈🛈", function() addSessionOptions(sessionOptionsSub) end)
 
     updateable = true
 
     local settingsMenuSub
-    settingsMenuSub = playerList:add_submenu("    ⚙️ Playerlist Settings ⚙️", function() addSettingsMenu(settingsMenuSub) end)
+    settingsMenuSub = playerList:add_submenu("     ⚙️ Playerlist Settings ⚙️", function() addSettingsMenu(settingsMenuSub) end)
 end
 
 
