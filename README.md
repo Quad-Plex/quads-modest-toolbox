@@ -1,8 +1,6 @@
 Testers:
-- Don Reagan
 - maybe gaymer?
 - @Viperlinox on disc
-- Kitty @mootx on disc
 
 TODO:
 - Search for globals related to remote controlling a vehicle (start engine, turn on lights, open doors etc)
@@ -63,6 +61,7 @@ DONE:
 - ~~add global constants for all the hotkey IDs~~
 - ~~add separate Vehicle Spawner Submenu not inside the playerList~~
 - ~~Look for displaybannerMessages for Water/Smoke/Fire for weaponMods~~
+  - ~~Even more displayBannerMessages for other menu actions~~ 
 - ~~FIX THE PICKUPS/MODEL LIST JFC what have I done there~~
 - ~~make hotkeys customizable with array actions containing the hotkeys~~
 - ~~refactor base globals into indexable table~~
