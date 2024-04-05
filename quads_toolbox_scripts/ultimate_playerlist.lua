@@ -844,8 +844,8 @@ local function ridList(sub)
         text(sub, "Check after a restart if RIDs are found")
         sub:add_action("⚠️ BRUTE FORCE SEARCH (LONG) ⚠️", function()
             greyText(sub, " 0% searched...")
-            local min_value = 4000001
-            local max_value = 9999999
+            local min_value = math.min(table.unpack(possible_offsets))
+            local max_value = math.max(table.unpack(possible_offsets))
             local playerName = player.get_player_name(getLocalplayerID())
             local current_count = math.ceil((max_value - min_value) / 2)
             local counter = 0
@@ -886,7 +886,7 @@ local function playerInfo(plyId, sub, plyName)
     if not ply then
         return
     end
-    greyText(sub, "============= PLAYER INFO =============")
+    greyText(sub, "======== ⇩ 🛈 PLAYER INFO 🛈 ⇩ ========")
 
     --Display player state
     local function playerState()
@@ -1515,9 +1515,9 @@ local function SubMenus(playerList)
     playerList:add_array_item("==========  UPDATE: ", sortStyles, function()
         return playerlistSettings.defaultSortingMethod
     end, function(value)
-        playerlistSettings.defaultSortingMethod = value
-        json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/PLAYERLIST_SETTINGS.json", playerlistSettings)
         if updateable then
+            playerlistSettings.defaultSortingMethod = value
+            json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/PLAYERLIST_SETTINGS.json", playerlistSettings)
             SubMenus(playerList)
             return
         end
