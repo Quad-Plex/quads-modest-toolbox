@@ -136,6 +136,12 @@ local function rcSpamThread()
     local counter = 0
     local counter2 = 0
     while strobeLights or flappyDoors do
+        if not localplayer:is_in_vehicle() then
+            strobeLights = false
+            flappyDoors = false
+            rcSpamRunning = false
+            return
+        end
         counter = counter + 1
         if counter < 6 then
             if strobeLights then
