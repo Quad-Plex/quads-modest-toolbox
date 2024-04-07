@@ -550,7 +550,7 @@ local function advancedGlobalEditor(sub, global, origValue, typeSelection, selec
     greyText(sub, "to add/remove it from watchlist")
 end
 
-local function printFoundGlobals(sub, numToPrint, typeSelection, selectedScript)
+local function printFoundGlobals(sub, numToPrint, typeSelection, selectedScript, start_index)
     --Prepare a sorted table for all found globals
     local keys = {}
     for key, _ in pairs(found_globals) do
@@ -561,7 +561,7 @@ local function printFoundGlobals(sub, numToPrint, typeSelection, selectedScript)
     local counter = 0
     for _, global in ipairs(keys) do
         counter = counter + 1
-        if counter == numToPrint then
+        if counter == numToPrint or start_index and counter < start_index then
             return
         end
         sub:add_bare_item("",function() return selectedScript .. "[" .. global .. "] = " .. tostring(getGlobalForTypeAndScript(global, typeSelection, selectedScript)) .. "|(Print)" end, function() print(selectedScript .. "[" .. global .. "] = " .. getGlobalForTypeAndScript(global, typeSelection, selectedScript)) end, null, null)
@@ -755,6 +755,12 @@ local function updateGlobalScanner(sub)
                 if not hasRun then
                     printFoundGlobals(sub, 50, ScannerTypes[scannerSelection], ScriptTypes[scriptSelection])
                     hasRun=true
+                    sub:add_action("Show next 50 results", function()
+                        printFoundGlobals(sub, 100, ScannerTypes[scannerSelection], ScriptTypes[scriptSelection], 51)
+                        sub:add_action("Show next 50 results", function()
+                            printFoundGlobals(sub, 150, ScannerTypes[scannerSelection], ScriptTypes[scriptSelection], 101)
+                        end)
+                    end)
                 end
             end, function() return not hasRun end)
         end
