@@ -325,7 +325,7 @@ end
 
 menu.register_callback('launchOnce', launchOnce)
 
-local CageTypes = { "CableCar", "Remove Cages", "Spawned MOC", "TP invis MOC" }
+local CageTypes = { "CableCar", "Spawned MOC", "TP invis MOC", "Remove Cages" }
 local CageType = 1
 local prepared = true
 local function cagePlayer(ply, type)
@@ -833,8 +833,6 @@ end
 
 local function ridList(sub)
     sub:clear()
-    greyText(sub, "Names have their first 4 letters cut")
-    greyText(sub, "off, ask R* Devs why")
     if baseGlobals.ridLookup.freemode_base_local == -1 then
         text(sub, "ERROR Couldn't find RIDs in memory")
         text(sub, "This can happen sometimes, because")
@@ -868,12 +866,15 @@ local function ridList(sub)
                     table.insert(possible_offsets, i)
                     table.sort(possible_offsets)
                     json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/RID_DATA_OFFSETS.json", possible_offsets)
+                    triggerRidLookupTableRefresh(player.get_player_name(getLocalplayerID()) or nil)
                     return
                 end
             end
             text(sub, "NOT FOUND! Restart the game and try again")
         end)
     else
+        greyText(sub, "Names have their first 4 letters cut")
+        greyText(sub, "off, ask R* Devs why")
         for name, rid in pairs(ridLookupTable) do
             sub:add_bare_item("", function() return "Name: " .. name .. "| Rid: " .. rid end, null, null, null)
         end
@@ -1065,7 +1066,7 @@ local function playerInfo(plyId, sub, plyName)
         end, null, null, null)
     end
 
-    --Respawn State
+    --Debug Stuff
     greyText(sub, centeredText("------ DEBUGGING INFOS ------"))
     local respawnState = function()
         return "RespawnState: " .. getPlayerRespawnState(plyId)
