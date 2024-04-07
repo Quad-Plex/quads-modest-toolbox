@@ -259,7 +259,7 @@ getPlayerOrgID = function(plyId)
 end
 
 joinPlayerOrg = function(plyId)
-    local plyOrgId = getPlayerOrgId(plyId)
+    local plyOrgId = getPlayerOrgID(plyId)
     globals.set_int(baseGlobals.playerOrg.baseGlobal + 1 + (getLocalplayerID() * 609) + 10, plyOrgId)
 end
 
@@ -319,7 +319,8 @@ shortformBlips = {
     ["CAR MEET"] = "LSCM",
     ["AUTO SHOP"] = "AUTO",
     ["JUNK PARACHUTE"] = "PRCH",
-    ["SHOP"] = "SHOP"
+    ["SHOP"] = "SHOP",
+    ["BALLISTIC ARMOR"] = "ARMR",
 }
 baseGlobals.blipType = {}
 baseGlobals.blipType.baseGlobal = 2657921
@@ -327,26 +328,27 @@ baseGlobals.blipType.testIntRange = function()
     return getPlayerBlip(getLocalplayerID())
 end
 baseGlobals.blipType.intRangeExplanation = "Should be 4 while idling outside"
-local vehicle_blips = utils_Set({ 262144, 262145, 262148, 262149, 262156, 262164, 262165, 262208, 262212, 262276, 262277, 262660, 262661, 262724, 262784, 262789, 262788, 786564, 2627888, 2359300 })
+local vehicle_blips = utils_Set({ 262144, 262145, 262148, 262149, 262156, 262164, 262165, 262208, 262212, 262248, 262276, 262277, 262660, 262661, 262724, 262784, 262789, 262788, 786564, 2627888, 2359300 })
 local plane_ghost_blips = utils_Set({ 8388612, 8650884, 8651332, 8651396, 8651397, 8650756, 8650757, 8650820, 8651268, 8651269 })
 local ultralight_ghost_blips = utils_Set({ 262676, 262740 })
 local ls_customs_blip = utils_Set({ 2097280, 2359330, 2359458, 262178 })
 local interior_blips = utils_Set({ 262656, 262272, 192, 64, 128, 196, 576, 512, 517, 640, 708, 1 })
-local normal_blips = utils_Set({ 4, 5, 68, 132, 516, 580, 644 })
+local normal_blips = utils_Set({ 4, 5, 68, 132, 140, 516, 580, 644 })
 local ls_car_meet = utils_Set({ 2359334, 2359426, 2359296, 262146 })
 local cashier_blip = utils_Set({ 2097152 })
 local auto_shop = utils_Set({ 2359298, 2359302 })
-local beast_blips = utils_Set({ 1048580, 1049092, 1310724, 1310788, 1311236 })
+local beast_blips = utils_Set({ 1048580, 1049092, 1310724, 1310788, 1311236, 1572868, 1835012, 1835524 })
 local kosatka_blip = utils_Set({ 262213, 262341, 262336, 262337, 262340, 262720 })
 local ammo_nation_blip = utils_Set({ 2 })
 local junk_parachute_blip = utils_Set({ 2097156, 2097220 })
 local unsure_blips = utils_Set({ 2622788, 262656, 2359299, 524416, 524420 })
 local delivery_mission_blips = utils_Set({ 786432, 786436, 786437, 786500, 786560, 786948, 787076, 524256, 524292, 524288, 524293 })
-local ballistic_armor_blip = utils_Set({ 16777220, 16777216, 16777348 })
+local ballistic_armor_blip = utils_Set({ 16777220, 16777216, 16777348, 17039364, 17039876 })
 local hangar_modshop_blip = utils_Set({ 262274 })
 local shop_blips = utils_Set({ 2097282, 2097154 })
 local heist_planning_board = utils_Set({ 704 })
 local loading_blips = utils_Set({ 0, 6 })
+
 getPlayerBlipType = function(plyId)
     local plyBlip = globals.get_int(baseGlobals.blipType.baseGlobal + (plyId * 463) + 73 + 3)
 
@@ -625,7 +627,7 @@ local function disablePhoneLoop()
     phoneLoopRunning = true
     while phoneDisabledState do
         globals.set_bool(baseGlobals.phoneDisabler.base_global, true)
-        sleep(0.01)
+        sleep(0.04)
     end
     globals.set_bool(baseGlobals.phoneDisabler.base_global, false)
     phoneLoopRunning = false
@@ -688,3 +690,71 @@ baseGlobals.ridLookup.bareStringCheck = function()
     if not freemode_script then return "Freemode Script not found" end
     return "Plyname - 4: " .. tostring(freemode_script:get_string(baseGlobals.ridLookup.freemode_base_local + 3, 30))
 end
+
+----------------------------------------------------------------------------
+--------------------------- Vehicle Options --------------------------------
+baseGlobals.vehicleOptions = {}
+baseGlobals.vehicleOptions.base_global=1572015
+baseGlobals.vehicleOptions.base_global_doors = baseGlobals.vehicleOptions.base_global + 8
+
+vehicleStates = {
+    ["open_door"] = 0,
+    ["close_door"] = 1,
+    ["engine_on"] = 2,
+    ["engine_off"] = 3,
+    ["headlights_on"] = 4,
+    ["headlights_off"] = 5,
+    ["radio_on"] = 6,
+    ["radio_off"] = 7,
+    ["neon_lights_on"] = 8,
+    ["neon_lights_off"] = 9,
+    ["stance_default"] = 13,
+    ["stance_lowered"] = 14,
+    ["roof_up"] = 15,
+    ["roof_down"] = 16,
+    ["hydraulics_all"] = 17,
+    ["hydraulics_off"] = 18,
+    ["hydraulics_front"] = 19,
+    ["hydraulics_rear"] = 20,
+}
+
+--0=driver, 1=passenger, 2=left back, 3=right back
+doorTypes = {
+}
+
+function getCurrentVehicleState(stateName)
+    local stateIndex = vehicleStates[stateName]
+    print("StateIndex: " .. stateIndex)
+    if stateIndex == nil then
+        error("Invalid vehicle state name")
+        return
+    end
+    print("Global: " .. globals.get_int(baseGlobals.vehicleOptions.base_global) .. ", result: " .. tostring(checkBit(globals.get_int(baseGlobals.vehicleOptions.base_global), stateIndex)))
+    return checkBit(globals.get_int(baseGlobals.vehicleOptions.base_global), stateIndex)
+end
+
+function toggleVehicleState(stateName, stateName2, stateName3)
+    local stateIndex = vehicleStates[stateName]
+    local stateIndex2 = stateName2 and vehicleStates[stateName2]
+    local stateIndex3 = stateName3 and vehicleStates[stateName3]
+    local vehRemoteOptionsState = globals.get_int(baseGlobals.vehicleOptions.base_global)
+    vehRemoteOptionsState = setBit(vehRemoteOptionsState, stateIndex)
+    if stateIndex2 then
+        vehRemoteOptionsState = setBit(vehRemoteOptionsState, stateIndex2)
+    end
+    if stateIndex3 then
+        vehRemoteOptionsState = setBit(vehRemoteOptionsState, stateIndex3)
+    end
+    globals.set_int(baseGlobals.vehicleOptions.base_global, vehRemoteOptionsState)
+end
+
+function setDoorBit(door, bit)
+    local doorState = globals.get_int(baseGlobals.vehicleOptions.base_global_doors)
+    if bit == 1 then
+        doorState = setBit(doorState, door)
+    else
+        doorState = clearBit(doorState, door)
+    end
+    globals.set_int(baseGlobals.vehicleOptions.base_global_doors, doorState)
+end
+

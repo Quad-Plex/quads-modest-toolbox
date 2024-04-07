@@ -369,6 +369,22 @@ function checkBit(value, pos)
     return (value >> pos) % 2 == 1
 end
 
+-- Function to set a bit
+function setBit(value, bit)
+    if not checkBit(value, bit) then
+        value = value + (2 ^ bit)
+    end
+    return value
+end
+
+-- Function to clear a bit
+function clearBit(value, bit)
+    if checkBit(value, bit) then
+        value = value - (2 ^ bit)
+    end
+    return value
+end
+
 ---------------------------Type Checker-------------------------------
 function checkType(var)
     if type(var) == "number" then

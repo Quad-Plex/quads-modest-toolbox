@@ -3,8 +3,6 @@ Testers:
 - @Viperlinox on disc
 
 TODO:
-- Search for globals related to remote controlling a vehicle (start engine, turn on lights, open doors etc)
-  - If I can open doors - can I make flappy doors??
 - See if GPS coordinates can be controlled through globals, then add a 'Track Player with GPS' option
   - Hmmm... Can't find it in globals or the scripts I've implemented in my scanner so far, might not be possible
 - Add Readme and FAQ description for unclear actions
@@ -12,6 +10,9 @@ TODO:
 
 
 DONE:
+- ~~Search for globals related to remote controlling a vehicle (start engine, turn on lights, open doors etc)~~
+  - ~~If I can open doors - can I make flappy doors?? HELL YEA I CAN~~
+- ~~AUTO UPDATE OF RID WITHOUT UPDATING PLAYERLIST~~
 - ~~- Can I find RID from globals??~~
   - ~~Yes, through freemode script locals, but THE FUCKING OFFSET CHANGES WITH EVERY LAUNCH OF THE GAME FFS~~
   - ~~Created a huge list of possible offsets through trial and error and made the script choose the right one~~
