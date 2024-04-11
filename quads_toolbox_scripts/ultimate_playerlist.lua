@@ -834,12 +834,12 @@ end
 local function ridList(sub)
     sub:clear()
     if baseGlobals.ridLookup.freemode_base_local == -1 then
-        text(sub, "ERROR Couldn't find RIDs in memory")
-        text(sub, "This can happen sometimes, because")
-        text(sub, "their location changes with every")
-        text(sub, "restart of the game.")
-        text(sub, "Make sure you are fully loaded or")
-        text(sub, "Check after a restart if RIDs are found")
+        addText(sub, "ERROR Couldn't find RIDs in memory")
+        addText(sub, "This can happen sometimes, because")
+        addText(sub, "their location changes with every")
+        addText(sub, "restart of the game.")
+        addText(sub, "Make sure you are fully loaded or")
+        addText(sub, "Check after a restart if RIDs are found")
         sub:add_action("⚠️ BRUTE FORCE SEARCH (LONG) ⚠️", function()
             greyText(sub, " 0% searched...")
             local min_value = math.min(table.unpack(possible_offsets))
@@ -861,7 +861,7 @@ local function ridList(sub)
                 end
                 local shortenedPlyName = freemode_script:get_string(i + (0 * 526) + 3, 30)
                 if shortenedPlyName == string.sub(playerName, 5) then
-                    text(sub, "FOUND! Correct Offset: " .. i)
+                    addText(sub, "FOUND! Correct Offset: " .. i)
                     baseGlobals.ridLookup.freemode_base_local = i
                     table.insert(possible_offsets, i)
                     table.sort(possible_offsets)
@@ -870,7 +870,7 @@ local function ridList(sub)
                     return
                 end
             end
-            text(sub, "NOT FOUND! Restart the game and try again")
+            addText(sub, "NOT FOUND! Restart the game and try again")
         end)
     else
         greyText(sub, "Names have their first 4 letters cut")
@@ -1201,7 +1201,7 @@ function addSubActions(sub, plyName, plyId)
     greyText(sub, centeredText("--------Trolling--------"))
     local trollSub = sub:add_submenu("\u{1F480} Trolling Options:")
     if ply == localplayer then
-        text(trollSub, centeredText("Troll yourself"))
+        addText(trollSub, centeredText("Troll yourself"))
     else
         trollSub:add_bare_item("Trolling " .. plyName .. "...", function()
             refreshPlayer(plyName, plyId)
@@ -1308,55 +1308,55 @@ function addSubActions(sub, plyName, plyId)
         auto_peds = value
         menu.emit_event('autoPedSpam')
     end)
-    trollSub:add_toggle("|BIKE BLOCK", function()
+    trollSub:add_toggle("|🚫 BIKE BLOCK 🚫", function()
         return auto_bike
     end, function(value)
         auto_bike = value
         menu.emit_event('autoBikeSpam')
     end)
-    trollSub:add_toggle("|KEEP LAUNCHING", function()
+    trollSub:add_toggle("|⬆️ KEEP LAUNCHING ⬆️", function()
         return auto_launch
     end, function(value)
         auto_launch = value
         menu.emit_event('autoLaunch')
     end)
-    trollSub:add_toggle("|RANDOM VEHICLE SPAM", function()
+    trollSub:add_toggle("|🚗 RANDOM VEHICLE SPAM 🚗", function()
         return auto_vehicle_spam
     end, function(value)
         auto_vehicle_spam = value
         menu.emit_event('autoVehicleSpam')
     end)
-    trollSub:add_toggle("|CABLECAR SPAM", function()
+    trollSub:add_toggle("|🚠 CABLECAR SPAM 🚠", function()
         return auto_cable_spam
     end, function(value)
         auto_cable_spam = value
         menu.emit_event('autoCableCarSpam')
     end)
-    trollSub:add_toggle("|TRAIN SPAM", function()
+    trollSub:add_toggle("|🚂 TRAIN SPAM (NO DESPAWN)", function()
         return auto_train_spam
     end, function(value)
         auto_train_spam = value
         menu.emit_event('trainSpam')
     end)
-    trollSub:add_toggle("|RANDOM VEHICLE RAIN", function()
+    trollSub:add_toggle("|🌧️ RANDOM VEHICLE RAIN 🌧️", function()
         return auto_rain
     end, function(value)
         auto_rain = value
         menu.emit_event('startRainThread')
     end)
-    trollSub:add_toggle("|VEHICLE STORM", function()
+    trollSub:add_toggle("|🌪️ VEHICLE STORM 🌪️", function()
         return auto_storm
     end, function(value)
         auto_storm = value
         menu.emit_event('autoVehicleStorm')
     end)
-    trollSub:add_toggle("|CONSTANT EXPLOSION", function()
+    trollSub:add_toggle("|💥💥 CONSTANT EXPLOSION 💥💥", function()
         return auto_explode
     end, function(value)
         auto_explode = value
         menu.emit_event('startAutoExplode')
     end)
-    trollSub:add_toggle("    \u{26A0} ITS RAINING PLANES \u{26A0}", function()
+    trollSub:add_toggle("   ✈️\u{26A0} ITS RAINING PLANES \u{26A0}✈️", function()
         return auto_cargo_spam
     end, function(value)
         auto_cargo_spam = value

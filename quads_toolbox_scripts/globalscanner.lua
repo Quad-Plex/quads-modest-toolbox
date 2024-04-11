@@ -455,7 +455,7 @@ local function advancedGlobalEditor(sub, global, origValue, typeSelection, selec
     end
     sub:add_bare_item("",function() return selectedScript .. "[" .. global .. "] = " .. tostring(getGlobalForTypeAndScript(global, typeSelection, selectedScript)) end, null, null, null)
     greyText(sub, selectedScript .. "[" .. global .. "] = ".. tostring(origValue) .. " (Orig. Value)")
-    text(sub, "---------------------------")
+    addText(sub, "---------------------------")
     sub:add_int_range("As Int:", 1, -MAX_INT, MAX_INT, function()
         if selectedScript and selectedScript ~= "Global"  then
             local scriptToUse = script(selectedScript)

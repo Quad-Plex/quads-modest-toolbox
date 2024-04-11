@@ -209,7 +209,7 @@ vehicleOptionsSub:add_action("Reset all modified handling data", function()
     end
 end, function() return tableCount(cars_data) > 0 end)
 
-greyText(vehicleOptionsSub, centeredText("----- Vehicle Tools -----"))
+greyText(vehicleOptionsSub, centeredText("----- Vehicle Actions -----"))
 
 --------------------------------
 --car jump, numpad comma (Script by Quad_Plex)

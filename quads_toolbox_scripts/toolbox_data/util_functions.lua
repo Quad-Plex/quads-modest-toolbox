@@ -325,7 +325,7 @@ function tableCount(table)
 end
 
 -----------------------Text functions------------------------------
-function text(sub, string)
+function addText(sub, string)
     sub:add_bare_item("", function()
         return string
     end, null, null, null)

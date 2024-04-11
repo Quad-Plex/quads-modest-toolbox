@@ -137,7 +137,7 @@ end)
 
 -- Function to add all the hotkey toggles
 local function addHotkeyToggles(hotkeyMenu)
-    text(hotkeyMenu, centeredText("    ⚙️ Hotkey Config ⚙️"))
+    addText(hotkeyMenu, centeredText("    ⚙️ Hotkey Config ⚙️"))
     greyText(hotkeyMenu, "Changes are saved automatically!!")
     greyText(hotkeyMenu, "----------------------------------")
     for i, hotkeyData in ipairs(hotkeysData) do

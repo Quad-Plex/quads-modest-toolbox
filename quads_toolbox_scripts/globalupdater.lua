@@ -5,12 +5,12 @@ end
 table.sort(sortedGlobals)
 
 local function launchGlobalUpdater(sub)
-    text(sub, "!!WARNING!! DON'T CHANGE THESE")
-    text(sub, "VALUES IF YOU DON'T KNOW WHAT")
-    text(sub, "YOU'RE DOING!")
+    addText(sub, "!!WARNING!! DON'T CHANGE THESE")
+    addText(sub, "VALUES IF YOU DON'T KNOW WHAT")
+    addText(sub, "YOU'RE DOING!")
     greyText(sub, "============================")
     for _, globalCategory in ipairs(sortedGlobals) do
-        text(sub, centeredText("====" .. globalCategory .. "===="))
+        addText(sub, centeredText("====" .. globalCategory .. "===="))
         local sortedCategory = {}
         local testFunction
         local testFunctionExplanation
