@@ -38,14 +38,14 @@ local auto_action_player_name
 
 local function emergencyStop()
     auto_teleport = false
-    auto_explode = false
     auto_storm = false
+    auto_explode = false
     auto_bike = false
     auto_peds = false
-    auto_cargo_spam = false
     auto_launch = false
     auto_fly = false
     auto_rain = false
+    auto_cargo_spam = false
     auto_vehicle_spam = false
     auto_yeet = false
     auto_cable_spam = false
@@ -469,14 +469,14 @@ end
 menu.register_callback('giveRamp', giveRamp)
 
 local BikeTypes = { "Bmx", "Inductor", "Inductor2", "Cruiser", "Fixter", "Scorcher", "TriBike", "TriBike2", "TriBike3" }
-local function giveRandomBike(ply)
+local function giveRandomBike(ply, skip_remove)
     if not ply or ply == nil then
         return
     end
-    createVehicle(joaat(BikeTypes[math.random(#BikeTypes)]), ply:get_position() + ply:get_heading() * 7)
+    createVehicle(joaat(BikeTypes[math.random(#BikeTypes)]), ply:get_position() + ply:get_heading() * 7, skip_remove)
 end
 
-local function giveRandomVehicle(ply, pos)
+local function giveRandomVehicle(ply, pos, skip_remove)
     if not ply or ply == nil then
         return
     end
@@ -492,7 +492,7 @@ local function giveRandomVehicle(ply, pos)
     -- vehicle = { hash, { name, class} }
     local selection = math.random(#sorted_vehicles)
     print("Giving vehicle: " .. sorted_vehicles[selection][2][1])
-    createVehicle(sorted_vehicles[selection][1], pos, angle)
+    createVehicle(sorted_vehicles[selection][1], pos, angle, skip_remove)
     return sorted_vehicles[selection][1]
 end
 
@@ -509,7 +509,7 @@ local function randomVehicleRain(ply)
     local random_dist = vector3(math.random(-4, 4), math.random(-4, 4), math.random(-2, 2))
     local rainDropPosition = plyPosition + plyHeading + plyVelocity + vector3(0, 0, 37) + random_dist
 
-    local spawned_vehicle_hash = giveRandomVehicle(ply, rainDropPosition)
+    local spawned_vehicle_hash = giveRandomVehicle(ply, rainDropPosition, true)
     local found = false
     while not found and rainTries < 9 do
         for veh in replayinterface.get_vehicles() do
@@ -875,6 +875,7 @@ local function ridList(sub)
     else
         greyText(sub, "Names have their first 4 letters cut")
         greyText(sub, "off, ask R* Devs why")
+        greyText(sub, "Using Offset: " .. tostring(baseGlobals.ridLookup.freemode_base_local))
         for name, rid in pairs(ridLookupTable) do
             sub:add_bare_item("", function() return "Name: " .. name .. "| Rid: " .. rid end, null, null, null)
         end
@@ -972,6 +973,18 @@ local function playerInfo(plyId, sub, plyName)
 
     greyText(sub, centeredText("------ 🔫 Weapon / Vehicle 🚗------"))
     sub:add_bare_item("", wpn_veh, null, null, null)
+
+    if ply:is_in_vehicle() or getPlayerBlipType(plyId) == "VEHICLE" or getPlayerBlipType(plyId) == "PLANE GHOST" or getPlayerBlipType(plyId) == "ULTRALIGHT GHOST" then
+        sub:add_action("Try to enter " .. plyName .. "'s Vehicle", function()
+            if ply:is_in_vehicle() or getPlayerBlipType(plyId) == "VEHICLE" or getPlayerBlipType(plyId) == "PLANE GHOST" or getPlayerBlipType(plyId) == "ULTRALIGHT GHOST" then
+                local oldPos = localplayer:get_position()
+                if not ply:is_in_vehicle() then
+                    tpToPlayer(ply, -5)
+                end
+                setPedIntoVehicle(getVehicleForPlayerID(plyId), oldPos)
+            end
+        end)
+    end
 
     --Player Stats
     greyText(sub, centeredText("------ Player Stats ------"))
@@ -1485,9 +1498,6 @@ local function getSortedPlayers()
             if plyId == -1 then
                 print("Warn; Player-ID for player #" .. i .. " is -1, substituting with i instead")
                 plyId = i
-                if ply == localplayer then
-                    getLocalplayerID(i)
-                end
             end
             local isModder = modCheck(ply, name, plyId)
             local isGod = ply:get_godmode()
@@ -1669,7 +1679,7 @@ local function autoBikeSpamThread()
             auto_bike = false
             return
         end
-        giveRandomBike(autoPly())
+        giveRandomBike(autoPly(), true)
         sleep(0.12)
     end
 end
@@ -1683,7 +1693,7 @@ local function autoRandomCarSpamThread()
         end
         local pos = autoPly():get_position() + autoPly():get_heading() * 2 + autoPly():get_velocity() * 2
         local random_distance = vector3(math.random(-2, 2), math.random(2, 2), math.random(2, 2))
-        giveRandomVehicle(autoPly(), pos + random_distance)
+        giveRandomVehicle(autoPly(), pos + random_distance, true)
         sleep(0.2)
     end
 end
@@ -1697,7 +1707,7 @@ local function autoCableCarSpamThread()
         end
         local rot = autoPly():get_rotation()
         local angle = math.deg(math.atan(rot.y, rot.x + math.pi / 2))
-        createVehicle(joaat("CableCar"), autoPly():get_position(), angle)
+        createVehicle(joaat("CableCar"), autoPly():get_position(), angle, true)
         sleep(0.2)
     end
 end
@@ -1710,7 +1720,7 @@ local function trainSpam()
             auto_train_spam = false
             return
         end
-        createVehicle(joaat("Freight"), autoPly():get_position() + vector3(math.random(-10, 10), math.random(-10, 10), math.random(-10, 10)), math.random(0, 360))
+        createVehicle(joaat("Freight"), autoPly():get_position() + vector3(math.random(-10, 10), math.random(-10, 10), math.random(-10, 10)), math.random(0, 360), true)
         sleep(0.1)
         i = i + 1
     end
@@ -1740,7 +1750,7 @@ local function cargoSpamThread()
 
         local vehicle = vehicles[math.random(#vehicles)] -- select random vehicle
         local random_distance = vector3((math.random(-900, 900) / 10), (math.random(-900, 900) / 10), (math.random(10, 1200) / 10))
-        createVehicle(joaat(vehicle), autoPly():get_position() + random_distance, math.random(0, 360))
+        createVehicle(joaat(vehicle), autoPly():get_position() + random_distance, math.random(0, 360), true)
 
         for veh in replayinterface.get_vehicles() do
             if veh:get_model_hash() == joaat(vehicle) then

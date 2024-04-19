@@ -195,3 +195,10 @@ local function rcSpamThread()
     rcSpamRunning = false
 end
 menu.register_callback("startRCSpamThread", rcSpamThread)
+
+------------------------------ Vehicle TP Options -----------------------------
+greyText(vehicleOptionsSub, "------------ Misc -----------")
+vehicleOptionsSub:add_action("Enter last spawned car", function()
+    local vehicleNetID = getNetIDOfLastSpawnedVehicle()
+    if vehicleNetID then setPedIntoVehicle(getNetIDOfLastSpawnedVehicle(), localplayer:get_position()) end
+end)

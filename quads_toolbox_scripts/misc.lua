@@ -68,7 +68,7 @@ miscOptionsSub:add_action("Refill Inventory |🍪🍫🍾", function()
 end)
 
 ----------------------Respawn State changer----------------------
-local stateToSet = 6
+local stateToSet = 7
 miscOptionsSub:add_int_range("Trigger Respawn (Unstuck) |🔁", 1, -10, 10, function() return stateToSet end, function(n)
 	displayHudBanner("TRI_WARP", "", "", 109)
 	sleep(0.3)

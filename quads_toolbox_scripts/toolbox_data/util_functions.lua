@@ -6,30 +6,6 @@ function null() end
 
 MAX_INT = 2147483647
 
-------------------------------Localplayer ID getter----------------------------
-
-local globalLocalplayerIDvariable = -1
-function getLocalplayerID(set)
-    if set then
-        globalLocalplayerIDvariable = set
-        return
-    else
-        local localplayerID = localplayer and localplayer:get_player_id()
-        if localplayerID and localplayerID ~= -1 then
-            globalLocalplayerIDvariable = localplayerID
-            return localplayerID
-        elseif globalLocalplayerIDvariable == -1 then
-            for i = 0, 31 do
-                local ply = player.get_player_ped(i)
-                if ply == localplayer then
-                    globalLocalplayerIDvariable = i
-                end
-            end
-        end
-        return globalLocalplayerIDvariable
-    end
-end
-
 --------------------Spawned Vehicle Godmode toggler-----------------------------------
 
 local function findAndEnableGodmodeForVehicle(vehicle_hash, checkPos)
@@ -83,13 +59,17 @@ local function isInFavorites(veh_hash)
 end
 
 local godmodeEnabledSpawn = false
+local enterOnSpawn = false
 local function addVehicleEntry(vehMenu, vehicle, ply)
     vehMenu:clear()
     greyText(vehMenu, "|Spawning " .. vehicle[2][1] .. "...")
     vehMenu:add_action("Spawn using Method #1", function()
         local spawnPos = ply:get_position() + ply:get_heading() * 7
-        createVehicle(vehicle[1], spawnPos)
-        if godmodeEnabledSpawn then
+        local spawnedVehicle = createVehicle(vehicle[1], spawnPos)
+        if enterOnSpawn or vehicle[4] then
+            setPedIntoVehicle(spawnedVehicle, localplayer:get_position())
+        end
+        if godmodeEnabledSpawn or vehicle[3] then
             sleep(0.08)
             findAndEnableGodmodeForVehicle(vehicle[1], spawnPos)
         end
@@ -98,32 +78,46 @@ local function addVehicleEntry(vehMenu, vehicle, ply)
         local spawnPos = ply:get_position() + ply:get_heading() * 7
         local oldToggle = alternative_spawn_toggle
         alternative_spawn_toggle = true
-        createVehicle(vehicle[1], spawnPos)
+        local spawnedVehicle = createVehicle(vehicle[1], spawnPos)
         alternative_spawn_toggle = oldToggle
-        if godmodeEnabledSpawn then
+        if enterOnSpawn or vehicle[4] then
+            setPedIntoVehicle(spawnedVehicle, localplayer:get_position())
+        end
+        if godmodeEnabledSpawn or vehicle[3] then
             sleep(0.08)
             findAndEnableGodmodeForVehicle(vehicle[1], spawnPos)
         end
     end)
     vehMenu:add_toggle("Spawn with Godmode enabled", function()
-        if vehicle[3] then
-            godmodeEnabledSpawn = vehicle[3]
+        if vehicle[3] ~= nil then
+            return vehicle[3]
         end
         return godmodeEnabledSpawn
     end, function(n)
         if vehicle[3] ~= nil then
-            local isFavorite = isInFavorites(vehicle[1])
-            if isFavorite then
-                vehicle[3] = n
-                json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/FAVORITED_CARS.json", favoritedCars)
-            end
+            vehicle[3] = n
+            json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/FAVORITED_CARS.json", favoritedCars)
         else
             godmodeEnabledSpawn = n
         end
     end)
-    vehMenu:add_toggle("Add " .. vehicle[2][1] .. " to favorites", function() return isInFavorites(vehicle[1]) ~= false end, function(add)
+    vehMenu:add_toggle("Immediately enter when spawning", function()
+        if vehicle[4] ~= nil then
+            return vehicle[4]
+        end
+        return enterOnSpawn
+    end, function(n)
+        if vehicle[4] ~= nil then
+            vehicle[4] = n
+            json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/FAVORITED_CARS.json", favoritedCars)
+        else
+            enterOnSpawn = n
+        end
+    end)
+    vehMenu:add_toggle("Mark " .. vehicle[2][1] .. " as favorite", function() return isInFavorites(vehicle[1]) ~= false end, function(add)
         if add then
             vehicle[3]=godmodeEnabledSpawn
+            vehicle[4]=enterOnSpawn
             table.insert(favoritedCars, vehicle)
             json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/FAVORITED_CARS.json", favoritedCars)
         else

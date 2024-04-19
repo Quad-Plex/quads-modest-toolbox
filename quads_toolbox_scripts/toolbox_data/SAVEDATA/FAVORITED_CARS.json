@@ -5,6 +5,34 @@
       "Ruiner3",
       "Sport"
     ],
+    true,
+    true
+  ],
+  [
+    -129283887,
+    [
+      "Phantom Christmas",
+      "Commercials"
+    ],
+    false,
+    false
+  ],
+  [
+    -1334453816,
+    [
+      "Trailers5 christmas",
+      "Trailer"
+    ],
+    true,
+    false
+  ],
+  [
+    -214455498,
+    [
+      "Stockade3",
+      "Commercials"
+    ],
+    false,
     true
   ],
   [
@@ -13,30 +41,7 @@
       "Cheburek",
       "Sport Classic"
     ],
-    false
-  ],
-  [
-    -129283887,
-    [
-      "Phantom Christmas",
-      "Commercials"
-    ],
-    true
-  ],
-  [
-    -1334453816,
-    [
-      "Trailers5 christmas",
-      "Trailer"
-    ],
-    true
-  ],
-  [
-    -214455498,
-    [
-      "Stockade3",
-      "Commercials"
-    ],
+    false,
     true
   ]
 ]

@@ -1,5 +1,44 @@
 baseGlobals = {}
 
+------------------------------Localplayer ID getter----------------------------
+baseGlobals.localPlayerGlobal = {}
+baseGlobals.localPlayerGlobal.baseGlobal = 2672741
+baseGlobals.localPlayerGlobal.bareStringCheck = function()
+    return "LocalplayerID from Global: " .. tostring(globals.get_int(baseGlobals.localPlayerGlobal.baseGlobal))
+end
+
+function getLocalplayerID()
+    if (localplayer:get_player_id() ~= -1) then
+        return localplayer:get_player_id()
+    else
+        return globals.get_int(baseGlobals.localPlayerGlobal.baseGlobal)
+    end
+end
+
+function getOrSetPlayerPedID(set)
+    if set then
+        globals.set_int(baseGlobals.localPlayerGlobal.baseGlobal + 4 + 15, set)
+    else
+        return globals.get_int(baseGlobals.localPlayerGlobal.baseGlobal + 4 + 15)
+    end
+end
+
+baseGlobals.playerPedGlobal = {}
+baseGlobals.playerPedGlobal.baseGlobal = 1906517
+baseGlobals.playerPedGlobal.freemode_local = 450 + 641
+baseGlobals.playerPedGlobal.bareStringCheck = function()
+    return "PlayerPed for me: " .. tostring(getPlayerPed(getLocalplayerID()))
+end
+
+function getPlayerPed(playerID)
+    if not globals.get_bool(baseGlobals.playerPedGlobal.baseGlobal + 1 + (getLocalplayerID() * 299) + 29 + 18) then
+        globals.set_bool(baseGlobals.playerPedGlobal.baseGlobal + 1 + (getLocalplayerID() * 299) + 29 + 18, true)
+    end
+    if script("freemode"):is_active() then
+        return script("freemode"):get_int(baseGlobals.playerPedGlobal.freemode_local + 1 + (playerID * 3) + 2)
+    end
+end
+
 ------------------Message Display-----------------------
 --TODO: only displayBoxType 39 showed a weird string on the bottom sometimes, which seemed to contain a playername
 --after session switch that string disappeared - has to be configurable somehow
@@ -49,7 +88,9 @@ function OnScriptsLoadedGlobal()
 end
 
 menu.register_callback('OnScriptsLoaded', OnScriptsLoadedGlobal)
-------------------Vehicle Spawners-----------------------------------
+
+-----------------------------------------------------------------------------
+------------------------ Vehicle Spawners -----------------------------------
 alternative_spawn_toggle = false
 baseGlobals.vehicleSpawner = {}
 baseGlobals.vehicleSpawner.baseGlobal = 2640095
@@ -57,6 +98,7 @@ baseGlobals.vehicleSpawner.testFunction = function()
     createVehicle(joaat("Youga4"), localplayer:get_position() + localplayer:get_heading() * 5)
 end
 baseGlobals.vehicleSpawner.testFunctionExplanation = "Spawn Youga4 with spawner#1"
+
 
 baseGlobals.vehicleSpawner2 = {}
 baseGlobals.vehicleSpawner2.baseGlobal2 = 2695991
@@ -67,7 +109,22 @@ baseGlobals.vehicleSpawner2.testFunction = function()
     alternative_spawn_toggle = oldToggle
 end
 baseGlobals.vehicleSpawner2.testFunctionExplanation = "Spawn PoliceOld2 with spawner#2"
-function createVehicle(modelHash, pos, heading)
+
+baseGlobals.vehicleSpawnerNetID = {}
+baseGlobals.vehicleSpawnerNetID.vehNetIDGlobal = 2738587
+baseGlobals.vehicleSpawnerNetID.bareStringCheck = function()
+    return "VehNetID (last spawned): " .. tostring(getNetIDOfLastSpawnedVehicle())
+end
+
+function getNetIDOfLastSpawnedVehicle()
+    return globals.get_int(baseGlobals.vehicleSpawnerNetID.vehNetIDGlobal + 6762)
+end
+
+function createVehicle(modelHash, pos, heading, skip_remove_current, mod)
+    if not type(modelHash):match("number") then
+        modelHash = joaat(modelHash)
+    end
+    --###SPAWNER #1 (With heading, spammable, without mods)
     if not alternative_spawn_toggle and not player.get_player_ped():is_in_vehicle() then
         globals.set_int(baseGlobals.vehicleSpawner.baseGlobal + 47, modelHash)
         globals.set_float(baseGlobals.vehicleSpawner.baseGlobal + 43, pos.x)
@@ -78,16 +135,57 @@ function createVehicle(modelHash, pos, heading)
         end
         globals.set_boolean(baseGlobals.vehicleSpawner.baseGlobal + 42, true)
     else
-        globals.set_boolean(baseGlobals.vehicleSpawner2.baseGlobal2 + 5, false) -- SpawnVehicles
-        globals.set_boolean(baseGlobals.vehicleSpawner2.baseGlobal2 + 2, false) -- SpawnVehicles
-        globals.set_float(baseGlobals.vehicleSpawner2.baseGlobal2 + 7 + 0, pos.x) -- pos.x
-        globals.set_float(baseGlobals.vehicleSpawner2.baseGlobal2 + 7 + 1, pos.y) -- pos.y
-        globals.set_float(baseGlobals.vehicleSpawner2.baseGlobal2 + 7 + 2, pos.z) -- pos.z
-        globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 66, modelHash) -- modelHash
-        globals.set_boolean(baseGlobals.vehicleSpawner2.baseGlobal2 + 5, true) -- SpawnVehicles
-        globals.set_boolean(baseGlobals.vehicleSpawner2.baseGlobal2 + 2, true) -- SpawnVehicles
-        --thanks to @Alice2333 on UKC for showing me the second spawner code
+    --###SPAWNER #2 (Without heading, with mods, more reliable)
+        if not vehicle_is_creating then
+            vehicle_is_creating = true
+            if (not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 2) and not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 5)) then
+                globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 5, -1) --primary color selection
+                globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 6, -1) --secondary color selection
+                globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 7, -1) --pearlescent color selection
+                globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 8, -1) --wheel color selection
+                if type(mod):match("table") then
+                    --Write each mod integer into the globals in an array
+                    for i = 1, globals.get_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 9) do
+                        --see eVehicleModType
+                        globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 9 + i, mod[i])
+                    end
+                end
+                globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 62, math.random(0, 255)) --VEHICLE::SET_VEHICLE_TYRE_SMOKE_COLOR Red
+                globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 63, math.random(0, 255)) --Green
+                globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 64, math.random(0, 255)) --Blue
+                globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 66, modelHash) --veh hash
+                globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 69, -1) --veh wheel type (category) see eVehicleWheelType
+                globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 74, math.random(0, 255)) --Neon color Red
+                globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 75, math.random(0, 255)) --Green
+                globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 76, math.random(0, 255)) --Blue
+                --globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 71, math.random(0, 255)) --Custom Primary/Secondary Color Red
+                --globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 72, math.random(0, 255)) --Green
+                --globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 73, math.random(0, 255)) --Blue (has to be enabled via flag)
+                globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 77, -264240640) --Bit-Storage for veh flags 0-8: veh-specific, reserved, 9:bulletproof tires, 10: bool vehicle_is_stolen,  12: custom secondary color, 13: custom primary color, 27: bool IgnoredByQuickSave decor 28: Neon Front, 29: Neon Back, 30: Neon Left, 31: Neon Right
+                globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 94, 4) --0: nil, 1: set decor player_vehicle, 2: set decor veh_modded_by_player
+                globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 95, 15) --Bit-Storage for previous global (1111)
+                if not skip_remove_current then
+                    globals.set_float(baseGlobals.vehicleSpawner2.baseGlobal2 + 7 + 0, pos.x) --Spawn location xyz
+                    globals.set_float(baseGlobals.vehicleSpawner2.baseGlobal2 + 7 + 1, pos.y)
+                    globals.set_float(baseGlobals.vehicleSpawner2.baseGlobal2 + 7 + 2, -255)
+                    globals.set_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 2, true) --Spawn trigger #1
+                    globals.set_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 5, true) --Spawn trigger #2
+                    repeat
+                    until (not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 2) and not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 5)) --Wait for under-map spawn to complete
+                end
+                globals.set_float(baseGlobals.vehicleSpawner2.baseGlobal2 + 7 + 0, pos.x)
+                globals.set_float(baseGlobals.vehicleSpawner2.baseGlobal2 + 7 + 1, pos.y)
+                globals.set_float(baseGlobals.vehicleSpawner2.baseGlobal2 + 7 + 2, pos.z)
+                globals.set_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 2, true) --Spawn trigger #1
+                globals.set_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 5, true) --Spawn trigger #2
+                repeat
+                until (not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 2) and not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 5)) --Spawn again at correct coords, removing any vehicle in the way
+            end
+            vehicle_is_creating = nil
+            return getNetIDOfLastSpawnedVehicle()
+        end
     end
+    --thanks to @Alice2333 on UKC for showing me the second spawner code
 end
 
 function toggleAlternativeSpawner()
@@ -109,6 +207,85 @@ menu.register_callback('ToggleAltSpawnerHotkey', function()
         altSpawnerHotkey = nil
     end
 end)
+
+------------------------------------------------------------------------------------------------
+----------------------------------- set ped into vehicle ---------------------------------------
+baseGlobals.setIntoVehicle = {}
+baseGlobals.setIntoVehicle.baseGlobal = 2738587
+baseGlobals.setIntoVehicle.forceControl = 2635562
+baseGlobals.setIntoVehicle.bareStringCheck = function()
+    return "Using Veh with ID:: " .. tostring(getVehicleForPlayerID() or "")
+end
+
+local function getForcedVehicleHandle(playerID)
+    local oldVehicleNetIDValue = globals.get_int(baseGlobals.setIntoVehicle.baseGlobal + 7022)
+    local playerPed = getPlayerPed(playerID)
+    local count = 0
+    while true and (count < 100000) do
+        --Force a different playerPed into the function that gets the veh net ID
+        getOrSetPlayerPedID(playerPed)
+        local newVehicleNetIDValue = globals.get_int(baseGlobals.setIntoVehicle.baseGlobal + 7022)
+        --Hope that the game used that Ped to get a different car net ID
+        if (newVehicleNetIDValue ~= oldVehicleNetIDValue) then
+            return newVehicleNetIDValue
+        end
+        count = count + 1
+    end
+end
+
+function getVehicleForPlayerID(playerID)
+    if not playerID or playerID == getLocalplayerID() then
+        if (globals.get_int(baseGlobals.setIntoVehicle.baseGlobal + 7022) ~= 0) then
+            return globals.get_int(baseGlobals.setIntoVehicle.baseGlobal + 7022) --ped:get_vehicle_ped_is_in(Global_2672741.f_4.f_15
+        end
+    else
+        local player = player.get_player_ped(playerID)
+        if player then
+            if localplayer:is_in_vehicle() then
+                if (localplayer:get_current_vehicle() == player:get_current_vehicle()) then
+                    return globals.get_int(baseGlobals.setIntoVehicle.baseGlobal + 7022)
+                end
+            end
+            return getForcedVehicleHandle(playerID)
+        end
+    end
+end
+
+function setPedIntoVehicle(vehicleNetID, oldPos)
+    if (vehicleNetID and (vehicleNetID ~= 0)) then
+        local oldRagdoll = localplayer:get_no_ragdoll()
+        localplayer:set_freeze_momentum(true)
+        localplayer:set_no_ragdoll(true)
+        localplayer:set_config_flag(292, true)
+        local i = 0
+        repeat
+            i = i + 1
+            globals.set_int(baseGlobals.setIntoVehicle.forceControl + 3184, vehicleNetID) --Network request control of entity
+            setPlayerRespawnState(getLocalplayerID(), 5)
+            globals.set_int(baseGlobals.setIntoVehicle.forceControl + 614, 5) --ped:set_ped_into_vehicle set in #1
+            if (i == 5) then
+                break
+            end
+            sleep(0.1)
+        until (getVehicleForPlayerID() == vehicleNetID)
+        sleep(0.1)
+        if getVehicleForPlayerID() ~= vehicleNetID then
+            --Assume entering the vehicle failed
+            local tries = 0
+            while (localplayer:get_position() ~= oldPos and tries < 10) do
+                for _ = 0, 100 do
+                    localplayer:set_position(oldPos)
+                end
+                tries = tries + 1
+                sleep(0.8)
+            end
+            setPlayerRespawnState(getLocalplayerID(), 7) --setting respawn to 7 gives back player control after getting stuck, unable to enter a car
+        end
+        localplayer:set_freeze_momentum(false)
+        localplayer:set_no_ragdoll(oldRagdoll)
+        localplayer:set_config_flag(292, false)
+    end
+end
 
 ----------------------Pickup Spawner--------------------------
 baseGlobals.ambientSpawner = {}
@@ -695,7 +872,6 @@ end
 --------------------------- Vehicle Options --------------------------------
 baseGlobals.vehicleOptions = {}
 baseGlobals.vehicleOptions.base_global=1572015
-baseGlobals.vehicleOptions.base_global_doors = baseGlobals.vehicleOptions.base_global + 8
 
 vehicleStates = {
     ["open_door"] = 0,
@@ -723,14 +899,7 @@ doorTypes = {
 }
 
 function getCurrentVehicleState(stateName)
-    local stateIndex = vehicleStates[stateName]
-    print("StateIndex: " .. stateIndex)
-    if stateIndex == nil then
-        error("Invalid vehicle state name")
-        return
-    end
-    print("Global: " .. globals.get_int(baseGlobals.vehicleOptions.base_global) .. ", result: " .. tostring(checkBit(globals.get_int(baseGlobals.vehicleOptions.base_global), stateIndex)))
-    return checkBit(globals.get_int(baseGlobals.vehicleOptions.base_global), stateIndex)
+    return checkBit(globals.get_int(baseGlobals.vehicleOptions.base_global), vehicleStates[stateName])
 end
 
 function toggleVehicleState(stateName, stateName2, stateName3)
@@ -749,12 +918,12 @@ function toggleVehicleState(stateName, stateName2, stateName3)
 end
 
 function setDoorBit(door, bit)
-    local doorState = globals.get_int(baseGlobals.vehicleOptions.base_global_doors)
+    local doorState = globals.get_int(baseGlobals.vehicleOptions.base_global + 8)
     if bit == 1 then
         doorState = setBit(doorState, door)
     else
         doorState = clearBit(doorState, door)
     end
-    globals.set_int(baseGlobals.vehicleOptions.base_global_doors, doorState)
+    globals.set_int(baseGlobals.vehicleOptions.base_global + 8, doorState)
 end
 
