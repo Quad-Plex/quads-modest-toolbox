@@ -84,7 +84,7 @@ local function changeVehicleColor(vehicle, colorFunc)
         vehicle:set_custom_secondary_colour(red, green, blue)
     else
         red2, green2, blue2 = colorFunc(red2, green2, blue2)
-        --Make sure we actually produce non-uniform colors
+        --Make sure to actually produce non-uniform colors
         if math.abs(red2 - red) < 20 and math.abs(blue2 - blue) < 20 and math.abs(green2 - green) < 20 then
             red2, blue2, green2 = 255, 0, 125
         end

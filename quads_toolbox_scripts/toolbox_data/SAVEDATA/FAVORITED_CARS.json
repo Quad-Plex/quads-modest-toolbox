@@ -32,7 +32,7 @@
       "Stockade3",
       "Commercials"
     ],
-    false,
+    true,
     true
   ],
   [
@@ -41,7 +41,7 @@
       "Cheburek",
       "Sport Classic"
     ],
-    false,
+    true,
     true
   ]
 ]

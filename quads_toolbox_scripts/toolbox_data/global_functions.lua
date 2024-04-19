@@ -11,7 +11,8 @@ function getLocalplayerID()
     if (localplayer and localplayer:get_player_id() ~= -1) then
         return localplayer:get_player_id()
     else
-        return globals.get_int(baseGlobals.localPlayerGlobal.baseGlobal)
+        local globalID = globals.get_int(baseGlobals.localPlayerGlobal.baseGlobal)
+        return globalID or -1
     end
 end
 
@@ -27,7 +28,7 @@ baseGlobals.playerPedGlobal = {}
 baseGlobals.playerPedGlobal.baseGlobal = 1906517
 baseGlobals.playerPedGlobal.freemode_local = 450 + 641
 baseGlobals.playerPedGlobal.bareStringCheck = function()
-    return "PlayerPed for me: " .. tostring(getPlayerPed(getLocalplayerID()))
+    return "Own PlayerPed: " .. tostring(getPlayerPed(getLocalplayerID()))
 end
 
 function getPlayerPed(playerID)
@@ -324,11 +325,11 @@ end
 function setPedIntoVehicle(vehicleNetID, oldPos)
     if (vehicleNetID and (vehicleNetID ~= 0)) then
         local oldRagdoll = localplayer:get_no_ragdoll()
-        localplayer:set_freeze_momentum(true)
-        localplayer:set_no_ragdoll(true)
-        localplayer:set_config_flag(292, true)
         local i = 0
         repeat
+            localplayer:set_freeze_momentum(true)
+            localplayer:set_no_ragdoll(true)
+            localplayer:set_config_flag(292, true)
             i = i + 1
             globals.set_int(baseGlobals.setIntoVehicle.forceControl + 3184, vehicleNetID) --Network request control of entity
             setPlayerRespawnState(getLocalplayerID(), 5)
@@ -338,16 +339,17 @@ function setPedIntoVehicle(vehicleNetID, oldPos)
             end
             sleep(0.1)
         until (getVehicleForPlayerID() == vehicleNetID)
+        localplayer:set_freeze_momentum(true)
+        localplayer:set_no_ragdoll(true)
+        localplayer:set_config_flag(292, true)
         sleep(0.1)
         if getVehicleForPlayerID() ~= vehicleNetID then
             --Assume entering the vehicle failed
             local tries = 0
             while (localplayer:get_position() ~= oldPos and tries < 10) do
-                for _ = 0, 100 do
-                    localplayer:set_position(oldPos)
-                end
+                nativeTeleport(oldPos)
                 tries = tries + 1
-                sleep(0.8)
+                sleep(0.1)
             end
             setPlayerRespawnState(getLocalplayerID(), 7) --setting respawn to 7 gives back player control after getting stuck, unable to enter a car
         end

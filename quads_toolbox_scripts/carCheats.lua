@@ -50,29 +50,28 @@ vehicleOptionsSub:add_toggle("Alternative Veh. Spawner", function() return alter
 --functions for carboost
 local _, cars_data = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/KNOWN_BOOSTED_CARS.json")
 
-local multiplier_percent = 70
 local function boostVehicle(vehicle_data, vehicle, boost)
     if boost then
         --boost mode
-        accel = vehicle_data[1] * (17 * (multiplier_percent / 100))
-        brake_force = vehicle_data[2] * (23 * (multiplier_percent / 100))
+        accel = vehicle_data[1] * (17 * (playerlistSettings.defaultBoostStrength / 100))
+        brake_force = vehicle_data[2] * (23 * (playerlistSettings.defaultBoostStrength / 100))
         gravity = 21.420
-        handbrake_force = vehicle_data[4] * (14 * (multiplier_percent / 100))
-        initial_drive_force = vehicle_data[5] * (690 * (multiplier_percent / 100))   --nice
-        traction_min = 6 + (2 * (multiplier_percent / 100))   --very high traction. Used without roll_centre modification, the car will constantly flip
-        traction_max = vehicle_data[7] + (2 * (multiplier_percent / 100))
+        handbrake_force = vehicle_data[4] * (14 * (playerlistSettings.defaultBoostStrength / 100))
+        initial_drive_force = vehicle_data[5] * (690 * (playerlistSettings.defaultBoostStrength / 100))   --nice
+        traction_min = 6 + (2 * (playerlistSettings.defaultBoostStrength / 100))   --very high traction. Used without roll_centre modification, the car will constantly flip
+        traction_max = vehicle_data[7] + (2 * (playerlistSettings.defaultBoostStrength / 100))
         traction_bias_front = 0.420
         up_shift = 10000  --huge shift values, causing cars to get stuck in gear and accelerate rapidly
         down_shift = 10000
         max_flat_vel = 10000
         collision_dmg_multiplier = 0
         engine_dmg_multiplier = 0
-        if multiplier_percent >= 100 then
+        if playerlistSettings.defaultBoostStrength >= 100 then
             --Dont increase the following roll_centre variables more than 100%. Makes things flip.
-            multiplier_percent = 100
+            playerlistSettings.defaultBoostStrength = 100
         end
-        roll_centre_front = vehicle_data[14] + (0.300 * (multiplier_percent / 100)) --these two stop the car from rolling even at high speeds, it rolls inwards instead
-        roll_centre_rear = vehicle_data[15] + (0.300 * (multiplier_percent / 100))
+        roll_centre_front = vehicle_data[14] + (0.300 * (playerlistSettings.defaultBoostStrength / 100)) --these two stop the car from rolling even at high speeds, it rolls inwards instead
+        roll_centre_rear = vehicle_data[15] + (0.300 * (playerlistSettings.defaultBoostStrength / 100))
         drive_bias = 0.5   --all wheel drive
         traction_loss_multiplier = 1
         initial_drag_coefficient = 1  --no drag forces
@@ -175,7 +174,7 @@ local function carBoost()
 
             --boost car if data has been read successfully
             boostVehicle(cars_data[tostring(current:get_model_hash())], current, true)
-            displayHudBanner("DRONE_BOOST", "FM_ISC_RAT1", multiplier_percent, 109)
+            displayHudBanner("DRONE_BOOST", "FM_ISC_RAT1", playerlistSettings.defaultBoostStrength, 109)
         else
             reloadVehicle(current)
         end
@@ -197,9 +196,10 @@ vehicleOptionsSub:add_toggle("ULTIMATE BOOST", function()
     return localplayer and localplayer:is_in_vehicle() and localplayer:get_current_vehicle():get_gravity() == 21.420
 end, carBoost)
 vehicleOptionsSub:add_int_range("Car Boost strength |%", 5, 0, 690, function()
-    return multiplier_percent
+    return playerlistSettings.defaultBoostStrength
 end, function(value)
-    multiplier_percent = value
+    playerlistSettings.defaultBoostStrength = value
+    json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/PLAYERLIST_SETTINGS.json", playerlistSettings)
 end)
 vehicleOptionsSub:add_action("Reset all modified handling data", function()
     for veh in replayinterface.get_vehicles() do

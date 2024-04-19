@@ -130,6 +130,8 @@ local function buildSpecialExportSubmenu(sub)
 			local vector = localplayer:get_heading()
 			local angle = math.deg(math.atan(vector.y, vector.x))
 			createVehicle(hash, localplayer:get_position() + localplayer:get_heading() * 7, angle)
+			sleep(0.1)
+			setPedIntoVehicle(getNetIDOfLastSpawnedVehicle(), localplayer:get_position())
 		end)
 	end
 end
@@ -140,7 +142,7 @@ specialExportSub = miscOptionsSub:add_submenu("$ Get Special Export Vehicles $",
 greyText(miscOptionsSub, "-------- Casino Options --------")
 -----------------Podium Changer-------------------
 --Create Vehicle Spawn Menu
---Pre-sort this table so we only do it once
+--Pre-sort this table in order to only do it once
 local sorted_vehicles = {}
 for hash, vehicle in pairs(VEHICLE) do
 	table.insert(sorted_vehicles, { hash, vehicle })

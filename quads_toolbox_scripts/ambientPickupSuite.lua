@@ -50,16 +50,12 @@ end
 
 local function teleportCloseToPickup(pickup)
 	--teleport just in front of the pickup, without collecting it
-	if localplayer:is_in_vehicle() then
-		localplayer:get_current_vehicle():set_position(pickup:get_position() + (localplayer:get_heading() * -2.4))
-	else
-		localplayer:set_position(pickup:get_position() + (localplayer:get_heading() * -2.4))
-	end
+	nativeTeleport(pickup:get_position() + (localplayer:get_heading() * -2.4))
 end
 
 local function tpToPickup(pickup)
 	local pickupPos = pickup:get_position()
-	localplayer:set_position(pickupPos + vector3(0,0,-0.35))
+	nativeTeleport(pickupPos)
 	--IsOnGround, toggling off and on updates the player and collects the pickup
 	localplayer:set_config_flag(60, false)
 	sleep(0.51)
@@ -80,14 +76,9 @@ local function collectPickups(singlePickup)
 			tpToPickup(pickup)
 		end
 	end
-	local tries = 0
-	while (localplayer:get_position() ~= oldPos and tries < 10) do
-		for _ = 0, 100 do
-			localplayer:set_position(oldPos)
-		end
-		tries = tries + 1
-		sleep(0.8)
-	end
+
+	nativeTeleport(oldPos)
+
 	localplayer:set_godmode(oldGodmode)
 	localplayer:set_max_health(oldHealth)
 end
@@ -125,7 +116,7 @@ local function getAllWeapons()
 		if string.find(pickupName[1], "PICKUP_WEAPON") then
 			createCustomPickupWithCustomModel(pickupName[1], nil, startIdentifierAmount)
 			startIdentifierAmount = startIdentifierAmount + 1
-			sleep(0.12)
+			sleep(0.15)
 		end
 	end
 end

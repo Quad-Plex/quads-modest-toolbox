@@ -10,11 +10,14 @@ MAX_INT = 2147483647
 
 local function findAndEnableGodmodeForVehicle(vehicle_hash, checkPos)
     print("Starting godmode search")
-    for _ = 0, 5 do
+    for _ = 0, 12 do
         for veh in replayinterface.get_vehicles() do
-            if veh:get_model_hash() == vehicle_hash and distanceBetween(veh, checkPos, true) < 5 then
-                print("Setting godmode...")
-                veh:set_godmode(true)
+            if veh:get_model_hash() == vehicle_hash and distanceBetween(veh, checkPos, true) < 3 then
+                for _ = 0, 42 do
+                    --For some reason godmode gets enabled here but doesn't stick well so I just force it for a while
+                    veh:set_godmode(true)
+                    sleep(0.08)
+                end
                 return
             end
         end
@@ -36,7 +39,7 @@ table.sort(favoritedCars, function(a, b)
     return a[2][1]:upper() < b[2][1]:upper()
 end)
 
---Pre-sort this table so we only do it once
+--Pre-sort this table in order to only do it once
 sorted_vehicles = {}
 for hash, vehicle in pairs(VEHICLE) do
     table.insert(sorted_vehicles, { hash, vehicle })
@@ -65,12 +68,13 @@ local function addVehicleEntry(vehMenu, vehicle, ply)
     greyText(vehMenu, "|Spawning " .. vehicle[2][1] .. "...")
     vehMenu:add_action("Spawn using Method #1", function()
         local spawnPos = ply:get_position() + ply:get_heading() * 7
-        local spawnedVehicle = createVehicle(vehicle[1], spawnPos)
+        createVehicle(vehicle[1], spawnPos)
         if enterOnSpawn or vehicle[4] then
-            setPedIntoVehicle(spawnedVehicle, localplayer:get_position())
+            sleep(0.1)
+            setPedIntoVehicle(getNetIDOfLastSpawnedVehicle(), localplayer:get_position())
         end
         if godmodeEnabledSpawn or vehicle[3] then
-            sleep(0.08)
+            sleep(0.1)
             findAndEnableGodmodeForVehicle(vehicle[1], spawnPos)
         end
     end)
@@ -84,7 +88,7 @@ local function addVehicleEntry(vehMenu, vehicle, ply)
             setPedIntoVehicle(spawnedVehicle, localplayer:get_position())
         end
         if godmodeEnabledSpawn or vehicle[3] then
-            sleep(0.08)
+            sleep(0.1)
             findAndEnableGodmodeForVehicle(vehicle[1], spawnPos)
         end
     end)
@@ -237,7 +241,7 @@ end
 
 
 --return one of 8 directional unicode arrows according to the angle given
--- 180/4 = 45, we shift it by 22.5 to make the arrows squarely point at the directions, and not between them
+-- 180/4 = 45, shift it by 22.5 to make the arrows squarely point at the directions, and not between them
 function getDirectionalArrow(angle)
     if not angle then
         return
@@ -309,7 +313,7 @@ function table.copy(t)
     return copy
 end
 
---We need this counter for working with non-contingent tables
+--This counter is for working with non-contingent tables
 function tableCount(table)
     local count = 0
     for _ in pairs(table) do

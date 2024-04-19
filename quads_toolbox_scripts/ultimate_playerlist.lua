@@ -16,6 +16,7 @@ if not settingsLoadingSuccess then
     playerlistSettings.disableModdersWarning = false
     playerlistSettings.defaultSortingMethod = 0
     playerlistSettings.stringFormat = 0
+    playerlistSettings.defaultBoostStrength = 70
     json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/PLAYERLIST_SETTINGS.json", playerlistSettings)
 end
 
@@ -115,7 +116,7 @@ local function tpToPlayer(ply, height, auto_localplayer)
     teleportHeight = height
 
     if not current_me:is_in_vehicle() then
-        current_me:set_position(pos)
+        nativeTeleport(pos)
     else
         current_me:get_current_vehicle():set_position(pos)
     end
@@ -268,10 +269,8 @@ local function launchOnce()
     if model == "ArmyTrailer" or model == "Dump" then
         local vel = launchPly:get_velocity()
         vel.z = 0;
-        local plyHeading = launchPly:get_heading()
-        local angle = math.deg(math.atan(plyHeading.y, plyHeading.x)) + 90
-        angle = (angle + 360) % 360
-        createVehicle(joaat(model), (launchPly:get_position() + (vel * 0.48) + vector3(0, 0, -12)))
+        local angle = math.deg(math.atan(launchPly:get_heading().y, launchPly:get_heading().x)) + 90
+        createVehicle(joaat(model), (launchPly:get_position() + (vel * 0.48) + vector3(0, 0, -12)), angle, true)
 
         local found = false
         local tries = 0
@@ -353,7 +352,7 @@ local function cagePlayer(ply, type)
         --try to teleport the unloaded MOC to cage the player
         --this thing is so f*cking buggy it just doesn't seem to have collision unless it's exploded with other vehicles once
         for moc in replayinterface.get_vehicles() do
-            --we use tostring here to avoid floating point comparison bs while making sure we tp the right MOC
+            --use tostring here to avoid floating point comparison bs while making sure to tp the right MOC
             if moc:get_model_hash() == joaat("TrailerLarge") and ((tostring(moc:get_position().z) == "-149.6112") or (moc:get_gravity() == 14.20)) then
                 moc:set_godmode(false)
                 moc:set_gravity(14.20)
@@ -442,11 +441,11 @@ local function giveRamp()
                 found = true
                 veh:set_gravity(10)
                 --createVehicle will use the alternative spawning method if we're in a vehicle,
-                --which doesn't support setting the heading, so we only need to do the following in that case
+                --which doesn't support setting the heading, so the following only needs to be done in that case
                 if localplayer:is_in_vehicle() then
                     local rot = rampPly:get_rotation()
-                    --to rotate the buggy by 180°, we add 1 PI to its x rotation as it's in radians
-                    --and in order to tilt it properly if the player is e.g. driving upwards, we take the inverse of the player's z rotation
+                    --to rotate the buggy by 180°, add 1 PI to its x rotation as it's in radians
+                    --and in order to tilt it properly if the player is e.g. driving upwards, take the inverse of the player's z rotation
                     rot = vector3(rot.x + math.pi, rot.y, rot.z * -1)
                     for _ = 0, 200000 do
                         veh:set_rotation(rot)
@@ -469,11 +468,11 @@ end
 menu.register_callback('giveRamp', giveRamp)
 
 local BikeTypes = { "Bmx", "Inductor", "Inductor2", "Cruiser", "Fixter", "Scorcher", "TriBike", "TriBike2", "TriBike3" }
-local function giveRandomBike(ply, skip_remove)
+local function giveRandomBike(ply)
     if not ply or ply == nil then
         return
     end
-    createVehicle(joaat(BikeTypes[math.random(#BikeTypes)]), ply:get_position() + ply:get_heading() * 7, skip_remove)
+    createVehicle(joaat(BikeTypes[math.random(#BikeTypes)]), ply:get_position() + ply:get_heading() * 7, nil, true)
 end
 
 local function giveRandomVehicle(ply, pos, skip_remove)
@@ -574,7 +573,7 @@ local function isInInterior(ply, plyId)
         return true
     end
 
-    --unloaded players are stored at the -51.3 z coordinate, so we exclude them from the interior check
+    --unloaded players are stored at the -51.3 z coordinate, so exclude them from the interior check
     --also exclude config flag 65, which is 'is_swimming', as you can't swim inside and swimming as such usually means they're in the ocean or in a deep pool
     local plyPos = ply:get_position()
     if ply:is_in_cutscene()
@@ -1209,7 +1208,7 @@ function addSubActions(sub, plyName, plyId)
         addVehicleSpawnMenu(ply, vehSpawnSub)
     end)
     sub:add_action("Give Random Vehicle to " .. plyName, function()
-        giveRandomVehicle(ply, nil)
+        giveRandomVehicle(ply)
     end)
     greyText(sub, centeredText("--------Trolling--------"))
     local trollSub = sub:add_submenu("\u{1F480} Trolling Options:")
@@ -1280,7 +1279,7 @@ function addSubActions(sub, plyName, plyId)
         menu.emit_event('launchOnce')
     end)
     trollSub:add_action("Give Random Vehicle to " .. plyName, function()
-        giveRandomVehicle(ply, nil)
+        giveRandomVehicle(ply)
     end)
     trollSub:add_action("DROP Random Vehicle on " .. plyName, function()
         randomVehicleRain(ply)
@@ -1557,7 +1556,7 @@ local randomVehicleHotkey
 menu.register_callback('ToggleRandomVehicleHotkey', function()
     if not randomVehicleHotkey then
         randomVehicleHotkey = menu.register_hotkey(find_keycode("ToggleRandomVehicleHotkey"), function()
-            giveRandomVehicle(localplayer, nil)
+            giveRandomVehicle(localplayer)
             displayHudBanner("HUD_RANDOM", "FMSTP_PRCL3", "", 109)
         end)
     else
@@ -1643,7 +1642,7 @@ local function autoTeleportThread()
         myPlayer:set_max_health(328.0)
         myPlayer:set_freeze_momentum(false)
         myPlayer:set_no_ragdoll(false)
-        myPlayer:set_position(original_pos)
+        nativeTeleport(original_pos)
         teleported = false
     end
 end
@@ -1679,7 +1678,7 @@ local function autoBikeSpamThread()
             auto_bike = false
             return
         end
-        giveRandomBike(autoPly(), true)
+        giveRandomBike(autoPly())
         sleep(0.12)
     end
 end
@@ -1795,7 +1794,7 @@ local function modWatcher()
             if not ply then goto continue end
             local plyName = player.get_player_name(i)
             --Warn about spectating players with a "Warning! Spectator" label
-            --Save their names to a table, so we don't warn again for the same player
+            --Save their names to a table, as not to warn again for the same player
             --Then delete their name if its been in there 12 (*5sec=60sec) times
             if isSpectatingMe(i) and not spectators_cache[plyName] then
                 if not playerlistSettings.disableSpectatorWarning then

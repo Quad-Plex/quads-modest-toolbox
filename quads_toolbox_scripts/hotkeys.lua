@@ -163,7 +163,7 @@ local function addHotkeyToggles(hotkeyMenu)
             json.savefile("scripts/quads_toolbox_scripts/toolbox_data/HOTKEY_CONFIG.json", hotkeysData)
             if hotkeyData.toggleVar then
                 displayHudBanner("PM_PANE_KEYS", "HEIST_IB_NAV2", "", 109)
-                --Hotkey is already enabled, so we need to toggle it twice to un-set it and then set it to the new keycode
+                --Hotkey is already enabled, so to toggle it twice to un-set it and then set it to the new keycode
                 menu.emit_event(hotkeyData.event)
                 sleep(0.1)
                 menu.emit_event(hotkeyData.event)

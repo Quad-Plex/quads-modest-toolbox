@@ -618,7 +618,7 @@ local function updateGlobalScanner(sub)
         return
     end
 
-    ------No results yet, so we do the initial scan routine
+    ------No results yet, so do the initial scan routine
     if found_globals == nil or (current_num_of_results == 0) then
         sub:add_int_range("Lower Bound: ", 100000, 1, 9999999, function() return lower_bound end,
                 function(value) lower_bound = value end)
