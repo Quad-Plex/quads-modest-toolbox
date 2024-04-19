@@ -3,14 +3,16 @@ Testers:
 - @Viperlinox on disc
 
 TODO:
+- Add vehicle mod options
 - Add toggle for speedometer to be a banner or license plate related
 - See if GPS coordinates can be controlled through globals, then add a 'Track Player with GPS' option
   - Hmmm... Can't find it in globals or the scripts I've implemented in my scanner so far, might not be possible
 - Add Readme and FAQ description for unclear actions
 - More testing with the invisible MOC maybe
 
-
 DONE:
+- ~~TP into spawned vehicles~~
+  - ~~TP into other players' vehicles~~
 - ~~Added simple Nightclub safe money loop~~
 - ~~Added Stat Changer Submenu~~
 - ~~Search for globals related to remote controlling a vehicle (start engine, turn on lights, open doors etc)~~

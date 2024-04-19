@@ -135,8 +135,12 @@ local function rcSpamThread()
     rcSpamRunning = true
     local counter = 0
     local counter2 = 0
+    local disableVehicleCheck
+    if not localplayer:is_in_vehicle() then
+        disableVehicleCheck = true
+    end
     while strobeLights or flappyDoors do
-        if not localplayer:is_in_vehicle() then
+        if not localplayer:is_in_vehicle() and not disableVehicleCheck then
             strobeLights = false
             flappyDoors = false
             rcSpamRunning = false

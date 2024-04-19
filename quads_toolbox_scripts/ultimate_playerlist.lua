@@ -1521,7 +1521,7 @@ local updateable = true
 local function SubMenus(playerList)
     updateable = false
     playerList:clear()
-    triggerRidLookupTableRefresh(player.get_player_name(getLocalplayerID()) or nil)
+    triggerRidLookupTableRefresh(player.get_player_name(getLocalplayerID()) or -1)
 
     playerList:add_array_item("==========  UPDATE: ", sortStyles, function()
         return playerlistSettings.defaultSortingMethod
