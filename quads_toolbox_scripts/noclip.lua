@@ -28,7 +28,7 @@ end
 local function move(direction)
 	if not noclipToggle then return end
 	local tpPos = localplayer:get_position()
-	if not localplayer:is_in_vehicle() then tpPos = tpPos + vector3(0,0,0.25) end
+	if not localplayer:is_in_vehicle() then tpPos = tpPos + vector3(0,0,0.3) end
 	nativeTeleport(tpPos + direction)
 end
 

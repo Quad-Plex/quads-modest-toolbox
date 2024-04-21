@@ -17,6 +17,7 @@ if not settingsLoadingSuccess then
     playerlistSettings.defaultSortingMethod = 0
     playerlistSettings.stringFormat = 0
     playerlistSettings.defaultBoostStrength = 70
+    playerlistSettings.speedDisplaySelection = "Banner"
     json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/PLAYERLIST_SETTINGS.json", playerlistSettings)
 end
 
@@ -1590,7 +1591,7 @@ local function vehicleRainThread()
             return
         end
         randomVehicleRain(autoPly())
-        sleep(0.06)
+        sleep(0.07)
     end
 end
 

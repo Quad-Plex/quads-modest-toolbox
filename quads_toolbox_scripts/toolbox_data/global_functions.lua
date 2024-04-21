@@ -876,7 +876,7 @@ local function disablePhoneLoop()
     phoneLoopRunning = true
     while phoneDisabledState do
         globals.set_bool(baseGlobals.phoneDisabler.base_global, true)
-        sleep(0.04)
+        sleep(0.06)
     end
     globals.set_bool(baseGlobals.phoneDisabler.base_global, false)
     phoneLoopRunning = false
@@ -943,7 +943,16 @@ end
 ----------------------------------------------------------------------------
 --------------------------- Vehicle Options --------------------------------
 baseGlobals.vehicleOptions = {}
-baseGlobals.vehicleOptions.base_global=1572015
+baseGlobals.vehicleOptions.base_global = 1572015
+baseGlobals.vehicleOptions.testFunctionExplanation = "Toggle Flappy Doors"
+baseGlobals.vehicleOptions.testFunction = function()
+    flappyDoors = not flappyDoors
+    if flappyDoors then
+        if not rcSpamRunning then
+            menu.emit_event("startRCSpamThread")
+        end
+    end
+end
 
 vehicleStates = {
     ["open_door"] = 0,

@@ -14,7 +14,8 @@ local radioState = 0
 local stanceState = 0
 local roofState = 0
 local hydraulicState = 0
-local flappyDoors = false
+--Not a local because we need it for the global check
+flappyDoors = false
 local strobeLights = false
 local rcSpamRunning = false
 vehicleOptionsSub:add_toggle("Flappy Vehicle Doors", function() return flappyDoors end, function(toggle)
@@ -147,15 +148,15 @@ local function rcSpamThread()
             return
         end
         counter = counter + 1
-        if counter < 6 then
+        if counter < 5 then
             if strobeLights then
                 toggleVehicleState("headlights_on", "neon_lights_on")
             end
-            sleep(0.04)
+            sleep(0.06)
             if strobeLights then
                 toggleVehicleState("headlights_off", "neon_lights_off")
             end
-            sleep(0.04)
+            sleep(0.06)
         elseif flappyDoors and strobeLights then
             if flappyDoors then
                 if counter2 == 0 then
@@ -171,9 +172,9 @@ local function rcSpamThread()
                 end
             end
             toggleVehicleState("headlights_on", "neon_lights_on", "open_door")
-            sleep(0.04)
+            sleep(0.06)
             toggleVehicleState("headlights_off", "neon_lights_off")
-            sleep(0.04)
+            sleep(0.06)
             counter = 0
             counter2 = 1 - counter2
         elseif flappyDoors then
@@ -189,7 +190,7 @@ local function rcSpamThread()
                 setDoorBit(3, 0)
             end
             toggleVehicleState("open_door")
-            sleep(0.04)
+            sleep(0.06)
             counter = 0
             counter2 = 1 - counter2
         else
@@ -202,7 +203,9 @@ menu.register_callback("startRCSpamThread", rcSpamThread)
 
 ------------------------------ Vehicle TP Options -----------------------------
 greyText(vehicleOptionsSub, "------------ Misc -----------")
-vehicleOptionsSub:add_action("Enter last spawned car", function()
+vehicleOptionsSub:add_action("TP into last spawned car", function()
     local vehicleNetID = getNetIDOfLastSpawnedVehicle()
     if vehicleNetID then setPedIntoVehicle(getNetIDOfLastSpawnedVehicle(), localplayer:get_position()) end
 end)
+
+vehicleOptionsSub:add_toggle("Alternative Veh. Spawner", function() return alternative_spawn_toggle end, function(_) toggleAlternativeSpawner() end)

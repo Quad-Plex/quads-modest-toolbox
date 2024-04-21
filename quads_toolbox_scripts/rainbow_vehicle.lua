@@ -104,12 +104,12 @@ end, function(value)
         menu.emit_event("rainbowRunner")
     end
 end)
-vehicleOptionsSub:add_toggle("uniform color", function()
+vehicleOptionsSub:add_toggle("Mix primary/secondary colors", function()
     return uniform
 end, function(value)
     uniform = value
 end)
-vehicleOptionsSub:add_toggle("affect traffic", function()
+vehicleOptionsSub:add_toggle("Affect traffic", function()
     return affect_traffic
 end, function(value)
     affect_traffic = value

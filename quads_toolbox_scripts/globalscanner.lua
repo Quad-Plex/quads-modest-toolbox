@@ -775,7 +775,7 @@ local function startFreezer()
         for _, globalData in ipairs(frozenGlobals) do
             setGlobalOrScriptValue(globalData[1], globalData[2], globalData[3], globalData[4])
 
-            sleep(0.05)
+            sleep(0.09)
         end
     end
     isFreezerRunning = false
