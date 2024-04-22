@@ -53,6 +53,7 @@ local function NoClip(toggle)
 			localplayer:set_freeze_momentum(true)
 			localplayer:set_no_ragdoll(true)
 			localplayer:set_config_flag(292, true)
+			nativeTeleport(localplayer:get_position())
 			hotkeys = {
 				menu.register_hotkey(keycodes.SHIFT_KEY, function() move(vector3(0,0,speed)) end),
 				menu.register_hotkey(keycodes.CTRL_KEY, function() move(vector3(0,0,speed * -1)) end),
