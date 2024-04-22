@@ -117,8 +117,8 @@ local function buildSpecialExportSubmenu(sub)
 	addText(sub, "--- Special Export Vehicles: ---")
 	greyText(sub, "Wait ~2 min between selling vehicles")
 	greyText(sub, "or the transaction might fail")
-	for _, hash in ipairs(specialExportVehicles) do
-		sub:add_action("Spawn " .. VEHICLE[hash][1], function()
+	for i, hash in ipairs(specialExportVehicles) do
+		sub:add_action("Spawn #" .. i .. ": " .. VEHICLE[hash][1], function()
 			local vector = localplayer:get_heading()
 			local angle = math.deg(math.atan(vector.y, vector.x))
 			createVehicle(hash, localplayer:get_position() + localplayer:get_heading() * 7, angle)

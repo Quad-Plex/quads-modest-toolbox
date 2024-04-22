@@ -154,8 +154,7 @@ local function rcSpamThread()
         if not localplayer:is_in_vehicle() and not disableVehicleCheck then
             strobeLights = false
             flappyDoors = false
-            rcSpamRunning = false
-            return
+            break
         end
         counter = counter + 1
         if counter < 5 then
@@ -216,6 +215,14 @@ local function rcSpamThread()
         end
     end
     rcSpamRunning = false
+    sleep(0.3)
+    setDoorBit(0,0)
+    setDoorBit(1, 0)
+    setDoorBit(2, 0)
+    setDoorBit(3, 0)
+    setDoorBit(4, 0)
+    setDoorBit(5, 0)
+    toggleVehicleState("open_door")
 end
 menu.register_callback("startRCSpamThread", rcSpamThread)
 

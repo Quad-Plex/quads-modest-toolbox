@@ -974,18 +974,17 @@ local function playerInfo(plyId, sub, plyName)
     greyText(sub, centeredText("------ 🔫 Weapon / Vehicle 🚗------"))
     sub:add_bare_item("", wpn_veh, null, null, null)
 
-    if ply:is_in_vehicle() or getPlayerBlipType(plyId) == "VEHICLE" or getPlayerBlipType(plyId) == "PLANE GHOST" or getPlayerBlipType(plyId) == "ULTRALIGHT GHOST" then
-        sub:add_action("Try to enter " .. plyName .. "'s Vehicle", function()
-            if ply:is_in_vehicle() or getPlayerBlipType(plyId) == "VEHICLE" or getPlayerBlipType(plyId) == "PLANE GHOST" or getPlayerBlipType(plyId) == "ULTRALIGHT GHOST" then
-                local oldPos = localplayer:get_position()
-                if not ply:is_in_vehicle() then
-                    tpToPlayer(ply, -5)
-                end
-                setPedIntoVehicle(getVehicleForPlayerID(plyId), oldPos)
+    sub:add_action("Try to enter " .. plyName .. "'s Vehicle", function()
+        if ply:is_in_vehicle() or getPlayerBlipType(plyId) == "VEHICLE" or getPlayerBlipType(plyId) == "PLANE GHOST" or getPlayerBlipType(plyId) == "ULTRALIGHT GHOST" then
+            local oldPos = localplayer:get_position()
+            if not ply:is_in_vehicle() then
+                tpToPlayer(ply, -5)
             end
-        end)
-    end
-
+            setPedIntoVehicle(getVehicleForPlayerID(plyId), oldPos)
+        end
+    end, function()
+        return ply:is_in_vehicle() or getPlayerBlipType(plyId) == "VEHICLE" or getPlayerBlipType(plyId) == "PLANE GHOST" or getPlayerBlipType(plyId) == "ULTRALIGHT GHOST"
+    end)
     --Player Stats
     greyText(sub, centeredText("------ Player Stats ------"))
     sub:add_bare_item("", function()
@@ -1018,12 +1017,9 @@ local function playerInfo(plyId, sub, plyName)
     end
     sub:add_bare_item("", playerOrg, null, null, null)
 
-    local plyOrgID = getPlayerOrgID(plyId)
-    if plyOrgID ~= -1 then
-        sub:add_action("\u{26A0} Force Join " .. getPlayerOrgName(plyId) .. " \u{26A0}", function()
-            joinPlayerOrg(plyId)
-        end)
-    end
+    sub:add_action("\u{26A0} Force Join " .. getPlayerOrgName(plyId) .. " \u{26A0}", function()
+        joinPlayerOrg(plyId)
+    end, function() return getPlayerOrgID(plyId) ~= -1 end)
 
     --distance/speed
     greyText(sub, centeredText("--- Distance / Speed / Direction ---"))

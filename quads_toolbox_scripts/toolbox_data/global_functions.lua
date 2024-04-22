@@ -337,7 +337,7 @@ function setPedIntoVehicle(vehicleNetID, oldPos)
             if (i == 5) then
                 break
             end
-            sleep(0.1)
+            sleep(0.11)
         until (getVehicleForPlayerID() == vehicleNetID)
         localplayer:set_freeze_momentum(true)
         localplayer:set_no_ragdoll(true)
@@ -616,7 +616,7 @@ getPlayerBlipType = function(plyId)
     elseif shop_blips[plyBlip] then
         return "SHOP"
     elseif normal_blips[plyBlip] then
-        return "NORMAL"
+        return ""
     elseif cashier_blip[plyBlip] then
         return "CASHIER"
     elseif loading_blips[plyBlip] then
@@ -789,7 +789,7 @@ function isSpectatingMe(plyId)
     if not ply then return end
     local visibleState = getIsTrackedPedVisibleState(plyId)
     local isWatchingMe = checkBit(visibleState, getLocalplayerID())
-    return isWatchingMe and distanceBetween(player.get_player_ped(), ply) > 230
+    return isWatchingMe and distanceBetween(player.get_player_ped(), ply) > 232
 end
 
 function amISpectating(plyId)
