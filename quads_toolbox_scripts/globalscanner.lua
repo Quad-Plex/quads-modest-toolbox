@@ -328,13 +328,13 @@ local function initialScan(sub, typeSelection, selectedScript, initialSearchValu
         end
     end
     greyText(sub, "100% processed!")
-    greyText(sub, "DONE PROCESSING GLOBALS!")
+    greyText(sub, "DONE PROCESSING VARIABLES!")
 end
 
 local function search(sub, search_type, current_count, typeSelection, selectedScript, exact_search_value)
     sub:clear()
     old_count = current_count
-    greyText(sub, "UPDATING GLOBALS.....")
+    greyText(sub, "UPDATING VARIABLES.....")
     greyText(sub, "0% searched...")
     local temp_globals = {}
     local temp_new_found_globals = {}
@@ -660,7 +660,7 @@ local function updateGlobalScanner(sub)
             local stringChangerSub
             stringChangerSub = sub:add_submenu("Enter new String for String Search", function() stringChanger(stringChangerSub) end)
         end
-        sub:add_action( #oldResultsHistory == 0 and "| 🔎 Scan for Unknown Value 🔍" or "|🔄 Reset And Start New Scan 🔄", function()
+        sub:add_action( #oldResultsHistory == 0 and "| 🔎 Scan for Unknown Value 🔍" or "|🔄 Start New Unknown Scan 🔄", function()
             greyText(sub, "SCANNING.....")
             oldResultsHistory = {}
             initialScan(sub, ScannerTypes[scannerSelection], ScriptTypes[scriptSelection], initialSearchValue)
