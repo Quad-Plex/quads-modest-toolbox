@@ -3,46 +3,59 @@
 ---------------------------------------------------------------------------
 
 local speedDisplayEnabled = false
+local speedDisplayRunning= false
 function speedDisplay()
     local myPlayer = player.get_player_ped()
     while speedDisplayEnabled do
+        speedDisplayRunning = true
+        local current_vehicle
         if not myPlayer:is_in_vehicle() then
-            return
+            current_vehicle = myPlayer
+        else
+            current_vehicle = myPlayer:get_current_vehicle()
         end
-        local current_vehicle = myPlayer:get_current_vehicle()
         local velocity = current_vehicle:get_velocity()
         local abs_velocity = math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y + velocity.z * velocity.z)
         local trueSpeed
-        if formatStyles[playerlistSettings.stringFormat] == "EU" then
+        if formatStyles[playerlistSettings.stringFormat] == "Metric (EU)" then
             trueSpeed = math.floor(3.6371084 * abs_velocity) --KMH
             if playerlistSettings.speedDisplaySelection == "Banner" then
                 displayHudBanner("FM_AE_SORT_3", "AMCH_KMHN", math.floor(3.6371084 * abs_velocity), 109)
-            else
+            elseif myPlayer:is_in_vehicle() then
                 current_vehicle:set_number_plate_text(" " .. trueSpeed .. " KMH")
             end
         else
             trueSpeed = math.floor(2.26 * abs_velocity) --MPH
             if playerlistSettings.speedDisplaySelection == "Banner" then
                 displayHudBanner("FM_AE_SORT_3", "AMCH_MPHN", math.floor(2.26 * abs_velocity), 109)
-            else
+            elseif myPlayer:is_in_vehicle() then
                 current_vehicle:set_number_plate_text(" " .. trueSpeed .. " MPH")
             end
         end
         sleep(0.09)
     end
+    speedDisplayRunning = false
 end
 menu.register_callback('speedDisplay', speedDisplay)
 vehicleOptionsSub:add_toggle("Toggle Speedometer", function()
     return speedDisplayEnabled
 end, function(toggle)
     speedDisplayEnabled = toggle
-    menu.emit_event("speedDisplay")
+    if not speedDisplayRunning then
+        menu.emit_event("speedDisplay")
+    end
 end)
 local speedDisplayTypes = { [0]="Banner", "License Plate"}
 local speedDisplayType = 0
 vehicleOptionsSub:add_array_item("Speedometer Type:", speedDisplayTypes, function() return speedDisplayType end, function(value)
     speedDisplayType = value
     playerlistSettings.speedDisplaySelection = speedDisplayTypes[speedDisplayType]
+    json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/PLAYERLIST_SETTINGS.json", playerlistSettings)
+end)
+vehicleOptionsSub:add_array_item("Show Speed in: ", formatStyles, function()
+    return playerlistSettings.stringFormat
+end, function(value)
+    playerlistSettings.stringFormat = value
     json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/PLAYERLIST_SETTINGS.json", playerlistSettings)
 end)
 
