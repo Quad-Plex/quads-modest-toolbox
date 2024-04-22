@@ -1,7 +1,7 @@
 greyText(vehicleOptionsSub, "---- Pers. Vehicle Remote Control ----")
 
 ----------------- Remote Control Vehicle -----------------
-local doorStates = {[0]="Driver", "Passenger", "Back Left", "Back Right", "All", "None"}
+local doorStates = {[0]="Driver", "Passenger", "Back Left", "Back Right", "Hood", "Trunk", "All", "None"}
 local engineStates = {[0]="Off", "On"}
 local stanceStates = {[0]="Default", "Lowered"}
 local roofStates = {[0]="Up", "Down"}
@@ -117,17 +117,27 @@ vehicleOptionsSub:add_array_item("Open Vehicle Doors:", doorStates, function() r
     elseif doorStates[doorState] == "Back Right" then
         setDoorBit(3, 1)
         toggleVehicleState("open_door")
+    elseif doorStates[doorState] == "Hood" then
+        setDoorBit(4, 1)
+        toggleVehicleState("open_door")
+    elseif doorStates[doorState] == "Trunk" then
+        setDoorBit(5, 1)
+        toggleVehicleState("open_door")
     elseif doorStates[doorState] == "All" then
         setDoorBit(0,1)
         setDoorBit(1, 1)
         setDoorBit(2, 1)
         setDoorBit(3, 1)
+        setDoorBit(4, 1)
+        setDoorBit(5, 1)
         toggleVehicleState("open_door")
     else
         setDoorBit(0,0)
         setDoorBit(1, 0)
         setDoorBit(2, 0)
         setDoorBit(3, 0)
+        setDoorBit(4, 0)
+        setDoorBit(5, 0)
         toggleVehicleState("open_door")
     end
 end)
@@ -164,11 +174,15 @@ local function rcSpamThread()
                     setDoorBit(1, 1)
                     setDoorBit(2, 1)
                     setDoorBit(3, 1)
+                    setDoorBit(4, 1)
+                    setDoorBit(5, 1)
                 else
                     setDoorBit(0,0)
                     setDoorBit(1, 0)
                     setDoorBit(2, 0)
                     setDoorBit(3, 0)
+                    setDoorBit(4, 0)
+                    setDoorBit(5, 0)
                 end
             end
             toggleVehicleState("headlights_on", "neon_lights_on", "open_door")
@@ -183,11 +197,15 @@ local function rcSpamThread()
                 setDoorBit(1, 1)
                 setDoorBit(2, 1)
                 setDoorBit(3, 1)
+                setDoorBit(4, 1)
+                setDoorBit(5, 1)
             else
                 setDoorBit(0,0)
                 setDoorBit(1, 0)
                 setDoorBit(2, 0)
                 setDoorBit(3, 0)
+                setDoorBit(4, 0)
+                setDoorBit(5, 0)
             end
             toggleVehicleState("open_door")
             sleep(0.06)
