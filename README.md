@@ -6,6 +6,7 @@ TODO:
 - More testing with the invisible MOC maybe
 
 DONE:
+- ~~Add Beyblade Mode for current car~~
 - ~~Add toggle for speedometer to be a banner or license plate related~~
 - ~~TP into spawned vehicles~~
   - ~~TP into other players' vehicles~~
