@@ -1,7 +1,3 @@
-Testers:
-- maybe gaymer?
-- @Viperlinox on disc
-
 TODO:
 - Add vehicle mod options (LOT of work... idk)
 - See if GPS coordinates can be controlled through globals, then add a 'Track Player with GPS' option
