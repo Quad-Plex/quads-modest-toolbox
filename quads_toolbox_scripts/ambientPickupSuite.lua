@@ -192,7 +192,7 @@ end
 local function pickupOptions(sub, pickup)
 	sub:clear()
 	greyText(sub, "------ Pickup Actions ------")
-	sub:add_action("Collect Pickup (STAND STILL!)", function() collectPickup(pickup[1]) end)
+	sub:add_action("Quick Collect Pickup", function() collectPickup(pickup[1]) end)
 	sub:add_action("Teleport close to Pickup", function() teleportCloseToPickup(pickup[1]) end)
 
 	greyText(sub, "------Pickup Info:------")
@@ -257,7 +257,7 @@ local function initializePickups(sub)
 
 	if #pickupArray > 0 then
 		greyText(sub, "-----------------")
-		sub:add_action("   - Collect All (STAND STILL!) -", function() collectAllPickups() end)
+		sub:add_action("   - Quick Collect All -", function() collectAllPickups() end)
 	end
 	updateable = true
 end
