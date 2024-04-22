@@ -7,7 +7,7 @@
 --not every label will work with this display but many short ones do
 
 --Regarding DisplayBoxType:
---109/112 doesn't play a sound so they're good for just displaying stuff
+--108/112 doesn't play a sound so they're good for just displaying stuff
 --11 displays the configured stuff
 --10 displays my name (or 'undefined'? lol)
 --9 fades in from black (as do many others)

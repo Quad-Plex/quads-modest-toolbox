@@ -37,7 +37,7 @@ local function carAPult()
 	if enabled then
 		--register hotkey to left click for continually spawning cars
 		hotkey = menu.register_hotkey(1, function() if not isActive then spawnCarWhereAiming() end end)
-		displayHudBanner("GR_PWD_LA", "PIM_NCL_PRIV1","", 109)
+		displayHudBanner("GR_PWD_LA", "PIM_NCL_PRIV1","", 108)
 	else
 		--reset weapon hit force from table
 		local weapon = localplayer:get_current_weapon()
@@ -50,7 +50,7 @@ local function carAPult()
 		
 		--unregister hotkey
 		menu.remove_hotkey(hotkey)
-		displayHudBanner("GR_PWD_LA", "PIM_NCL_PRIV0", "", 109)
+		displayHudBanner("GR_PWD_LA", "PIM_NCL_PRIV0", "", 108)
 	end
 end
 

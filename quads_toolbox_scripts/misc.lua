@@ -1,11 +1,3 @@
---displayboxtype = 39
---menu.add_int_range("Display Box Type Tester", 1, -100, 500, function()
---	return displayboxtype
---end, function(n)
---	displayboxtype = n
---	displayHudBanner("EPS_CASH", "~s~", 0, n, true)
---end)
-
 --------------------------------
 --UNDEAD OFFRADAR
 --------------------------------
@@ -14,10 +6,10 @@ local function offRadar()
 	if localplayer ~= nil then
 		if localplayer:get_max_health() > 100 then
 			localplayer:set_max_health(0.0)
-			displayHudBanner("PM_UCON_T32", "CANNON_CAM_ACTIVE", "", 109)
+			displayHudBanner("PM_UCON_T32", "CANNON_CAM_ACTIVE", "", 108)
 		else
 			localplayer:set_max_health(328.0)
-			displayHudBanner("PM_UCON_T32", "CANNON_CAM_INACTIVE", "", 109)
+			displayHudBanner("PM_UCON_T32", "CANNON_CAM_INACTIVE", "", 108)
 		end
 	end
 end
@@ -60,7 +52,7 @@ local function refillInventory()
 	stats.set_int(mpx().."MP_CHAR_ARMOUR_3_COUNT", 10)
 	stats.set_int(mpx().."MP_CHAR_ARMOUR_4_COUNT", 10)
 	stats.set_int(mpx().."MP_CHAR_ARMOUR_5_COUNT", 10)
-	displayHudBanner("PIM_TINVE", "CC_BLUSH_0", "", 109)
+	displayHudBanner("PIM_TINVE", "CC_BLUSH_0", "", 108)
 end
 
 miscOptionsSub:add_action("Refill Inventory |🍪🍫🍾", function()
@@ -70,7 +62,7 @@ end)
 ----------------------Respawn State changer----------------------
 local stateToSet = 7
 miscOptionsSub:add_int_range("Trigger Respawn (Unstuck) |🔁", 1, -10, 10, function() return stateToSet end, function(n)
-	displayHudBanner("TRI_WARP", "", "", 109)
+	displayHudBanner("TRI_WARP", "", "", 108)
 	sleep(0.3)
 	stateToSet = n
 	setPlayerRespawnState(getLocalplayerID(), n)
@@ -103,7 +95,7 @@ end)
 
 miscOptionsSub:add_action("Make Nightclub Popular |🪩🕺🏻", function()
 	stats.set_int(mpx() .. "CLUB_POPULARITY", 1000)
-	displayHudBanner("BB_BM_PC_SUCC_S", "", "", 109)
+	displayHudBanner("BB_BM_PC_SUCC_S", "", "", 108)
 end)
 
 ---------------------- Sessanta Options ----------------------

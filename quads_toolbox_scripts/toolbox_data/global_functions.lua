@@ -47,7 +47,7 @@ local timeoutDuration
 baseGlobals.messageDisplay = {}
 baseGlobals.messageDisplay.baseGlobal = 2672741 + 2518 + 1
 baseGlobals.messageDisplay.testFunction = function()
-    displayHudBanner("FGTXT_F_F3", "RESPAWN_W", "", 109)
+    displayHudBanner("FGTXT_F_F3", "RESPAWN_W", "", 108)
 end
 --Credits to Kiddion for finding this stuff in an older version
 --https://www.unknowncheats.me/forum/3523555-post2032.html
@@ -192,9 +192,9 @@ end
 function toggleAlternativeSpawner()
     alternative_spawn_toggle = not alternative_spawn_toggle
     if alternative_spawn_toggle then
-        displayHudBanner("BLIP_125", "MO_CCONF_2", "", 109)
+        displayHudBanner("BLIP_125", "MO_CCONF_2", "", 108)
     else
-        displayHudBanner("BLIP_125", "CELL_840", "", 109)
+        displayHudBanner("BLIP_125", "CELL_840", "", 108)
     end
 end
 
@@ -887,7 +887,7 @@ function setPhoneDisabled(disable, disableNotification)
     if disable then
         phoneDisabledState = disable
         if not disableNotification then
-            displayHudBanner("S23_SOAD_BLP1", "PIM_NCL_PRIV0", "", 109)
+            displayHudBanner("S23_SOAD_BLP1", "PIM_NCL_PRIV0", "", 108)
         end
         if not phoneLoopRunning then
             menu.emit_event('disablePhoneLoop')
@@ -895,7 +895,7 @@ function setPhoneDisabled(disable, disableNotification)
     else
         phoneDisabledState = disable
         if not disableNotification then
-            displayHudBanner("S23_SOAD_BLP1", "PIM_NCL_PRIV1", "", 109)
+            displayHudBanner("S23_SOAD_BLP1", "PIM_NCL_PRIV1", "", 108)
         end
     end
 end

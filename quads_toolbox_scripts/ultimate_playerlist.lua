@@ -1558,7 +1558,7 @@ menu.register_callback('ToggleRandomVehicleHotkey', function()
     if not randomVehicleHotkey then
         randomVehicleHotkey = menu.register_hotkey(find_keycode("ToggleRandomVehicleHotkey"), function()
             giveRandomVehicle(localplayer)
-            displayHudBanner("HUD_RANDOM", "FMSTP_PRCL3", "", 109)
+            displayHudBanner("HUD_RANDOM", "FMSTP_PRCL3", "", 108)
         end)
     else
         menu.remove_hotkey(randomVehicleHotkey)

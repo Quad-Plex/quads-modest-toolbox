@@ -20,14 +20,14 @@ function speedDisplay()
         if formatStyles[playerlistSettings.stringFormat] == "Metric (EU)" then
             trueSpeed = math.floor(3.6371084 * abs_velocity) --KMH
             if playerlistSettings.speedDisplaySelection == "Banner" then
-                displayHudBanner("FM_AE_SORT_3", "AMCH_KMHN", math.floor(3.6371084 * abs_velocity), 109)
+                displayHudBanner("FM_AE_SORT_3", "AMCH_KMHN", math.floor(3.6371084 * abs_velocity), 108)
             elseif myPlayer:is_in_vehicle() then
                 current_vehicle:set_number_plate_text(" " .. trueSpeed .. " KMH")
             end
         else
             trueSpeed = math.floor(2.26 * abs_velocity) --MPH
             if playerlistSettings.speedDisplaySelection == "Banner" then
-                displayHudBanner("FM_AE_SORT_3", "AMCH_MPHN", math.floor(2.26 * abs_velocity), 109)
+                displayHudBanner("FM_AE_SORT_3", "AMCH_MPHN", math.floor(2.26 * abs_velocity), 108)
             elseif myPlayer:is_in_vehicle() then
                 current_vehicle:set_number_plate_text(" " .. trueSpeed .. " MPH")
             end
@@ -159,7 +159,7 @@ local function reloadVehicle(vehicle)
     if restoreData then
         boostVehicle(restoreData, vehicle, false)
     end
-    displayHudBanner("DRONE_BOOST", "PIM_NCL_PRIV0", "", 109)
+    displayHudBanner("DRONE_BOOST", "PIM_NCL_PRIV0", "", 108)
 end
 
 --------------------------------
@@ -203,7 +203,7 @@ local function carBoost()
 
             --boost car if data has been read successfully
             boostVehicle(cars_data[tostring(current:get_model_hash())], current, true)
-            displayHudBanner("DRONE_BOOST", "FM_ISC_RAT1", playerlistSettings.defaultBoostStrength, 109)
+            displayHudBanner("DRONE_BOOST", "FM_ISC_RAT1", playerlistSettings.defaultBoostStrength, 108)
         else
             reloadVehicle(current)
         end
@@ -283,7 +283,7 @@ local function makeCarMassive()
         local vehicle = localplayer:get_current_vehicle()
         if vehicle then
             vehicle:set_mass(26969)
-            displayHudBanner("FACE_F_FAT", "FMSTP_PRCL3", 69, 109)
+            displayHudBanner("FACE_F_FAT", "FMSTP_PRCL3", 69, 108)
         end
     end
 end

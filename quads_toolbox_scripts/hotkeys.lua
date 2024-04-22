@@ -5,7 +5,7 @@ menu.register_callback('ToggleWantedLevelHotkey', function()
         loseWantedLevelHotkey = menu.register_hotkey(find_keycode("ToggleWantedLevelHotkey"), function()
             menu.clear_wanted_level()
             menu.set_bribe_authorities(not menu.get_bribe_authorities())
-            displayHudBanner("LOSE_WANTED", "LEST_NCOPS", "", 109)
+            displayHudBanner("LOSE_WANTED", "LEST_NCOPS", "", 108)
         end)
     else
         menu.remove_hotkey(loseWantedLevelHotkey)
@@ -20,7 +20,7 @@ menu.register_callback('ToggleHealthAndArmorHotkey', function()
         maxHealthArmorHotkey = menu.register_hotkey(find_keycode("ToggleHealthAndArmorHotkey"), function()
             menu.heal_all()
             menu.max_all_ammo()
-            displayHudBanner("CHEAT_HEALTH_ARMOR", "PIM_FULL1", "", 109)
+            displayHudBanner("CHEAT_HEALTH_ARMOR", "PIM_FULL1", "", 108)
         end)
     else
         menu.remove_hotkey(maxHealthArmorHotkey)
@@ -34,7 +34,7 @@ menu.register_callback('ToggleRepairVehicleHotkey', function()
     if not repairVehicleHotkey then
         repairVehicleHotkey = menu.register_hotkey(find_keycode("ToggleRepairVehicleHotkey"), function()
             menu.repair_online_vehicle()
-            displayHudBanner("BLIP_402", "", "", 109)
+            displayHudBanner("BLIP_402", "", "", 108)
         end)
     else
         menu.remove_hotkey(repairVehicleHotkey)
@@ -51,9 +51,9 @@ menu.register_callback('ToggleVehicleGodmodeHotkey', function()
                 localplayer:get_current_vehicle():set_godmode(not localplayer:get_current_vehicle():get_godmode())
 
                 if localplayer:get_current_vehicle():get_godmode() then
-                    displayHudBanner("GBC_HUD_VH", "GREEN_LIV5", "", 109)
+                    displayHudBanner("GBC_HUD_VH", "GREEN_LIV5", "", 108)
                 else
-                    displayHudBanner("GBC_HUD_VH", "CELL_840", "", 109)
+                    displayHudBanner("GBC_HUD_VH", "CELL_840", "", 108)
                 end
             end
         end)
@@ -73,12 +73,12 @@ menu.register_callback('ToggleGodmodeRagdollHotkey', function()
                 localplayer:set_no_ragdoll(true)
                 localplayer:set_infinite_ammo(true)
                 localplayer:set_infinite_clip(true)
-                displayHudBanner("GREEN_LIV5", "PIM_NCL_PRIV1", "", 109)
+                displayHudBanner("GREEN_LIV5", "PIM_NCL_PRIV1", "", 108)
             else
                 localplayer:set_no_ragdoll(false)
                 localplayer:set_infinite_ammo(false)
                 localplayer:set_infinite_clip(false)
-                displayHudBanner("GREEN_LIV5", "PIM_NCL_PRIV0", "", 109)
+                displayHudBanner("GREEN_LIV5", "PIM_NCL_PRIV0", "", 108)
             end
         end)
     else
@@ -149,9 +149,9 @@ local function addHotkeyToggles(hotkeyMenu)
             hotkeysData[i]=hotkeyData
             json.savefile("scripts/quads_toolbox_scripts/toolbox_data/HOTKEY_CONFIG.json", hotkeysData)
             if hotkeyData.toggleVar then
-                displayHudBanner("PM_PANE_KEYS", "CANNON_CAM_ACTIVE", "", 109)
+                displayHudBanner("PM_PANE_KEYS", "CANNON_CAM_ACTIVE", "", 108)
             else
-                displayHudBanner("PM_PANE_KEYS", "CANNON_CAM_INACTIVE", "", 109)
+                displayHudBanner("PM_PANE_KEYS", "CANNON_CAM_INACTIVE", "", 108)
             end
             menu.emit_event(hotkeyData.event)
         end)
@@ -162,7 +162,7 @@ local function addHotkeyToggles(hotkeyMenu)
             hotkeysData[i]=hotkeyData
             json.savefile("scripts/quads_toolbox_scripts/toolbox_data/HOTKEY_CONFIG.json", hotkeysData)
             if hotkeyData.toggleVar then
-                displayHudBanner("PM_PANE_KEYS", "HEIST_IB_NAV2", "", 109)
+                displayHudBanner("PM_PANE_KEYS", "HEIST_IB_NAV2", "", 108)
                 --Hotkey is already enabled, so to toggle it twice to un-set it and then set it to the new keycode
                 menu.emit_event(hotkeyData.event)
                 sleep(0.1)

@@ -64,7 +64,7 @@ local function NoClip(toggle)
 				menu.register_hotkey(keycodes.ADD_KEY, function() adjustSpeed(1) end),
 				menu.register_hotkey(keycodes.SUBTRACT_KEY, function() adjustSpeed(-1) end)
 			}
-			displayHudBanner("SG_CLIP", "PIM_NCL_PRIV1", "", 109)
+			displayHudBanner("SG_CLIP", "PIM_NCL_PRIV1", "", 108)
 			oldPhoneDisableState = phoneDisabledState
 			setPhoneDisabled(true, true)
 		else
@@ -76,7 +76,7 @@ local function NoClip(toggle)
 				menu.remove_hotkey(hotkey)
 			end
 			hotkeys = {}
-			displayHudBanner("SG_CLIP", "PIM_NCL_PRIV0", "", 109)
+			displayHudBanner("SG_CLIP", "PIM_NCL_PRIV0", "", 108)
 		end
 	end
 end

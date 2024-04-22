@@ -49,10 +49,10 @@ end
 local function ToggleWeaponStats(toggle, new_expl_type, new_damage_type, new_range, new_damage, banner_message)
     if toggle then
         ChangeWeaponStats(new_expl_type, new_damage_type, new_range, new_damage)
-        displayHudBanner(banner_message, "PIM_NCL_PRIV1", "", 109)
+        displayHudBanner(banner_message, "PIM_NCL_PRIV1", "", 108)
     else
         ResetWeaponStats()
-        displayHudBanner(banner_message, "PIM_NCL_PRIV0", "", 109)
+        displayHudBanner(banner_message, "PIM_NCL_PRIV0", "", 108)
     end
 end
 

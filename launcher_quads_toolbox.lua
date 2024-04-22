@@ -47,6 +47,13 @@ debugToolsSub = toolboxSub:add_submenu(centeredText(" 📟 Debug Tools 📟"))
 greyText(debugToolsSub, centeredText(" 📟 Debug Tools "))
 require("scripts/quads_toolbox_scripts/globalscanner")
 require("scripts/quads_toolbox_scripts/globalupdater")
+displayboxtype = 108
+debugToolsSub:add_int_range("Display Box Type Tester", 1, -100, 500, function()
+	return displayboxtype
+end, function(n)
+	displayboxtype = n
+	displayHudBanner("EPS_CASH", "~s~", 0, n, true)
+end)
 
 greyText(toolboxSub, "--------------------------------------")
 
@@ -72,7 +79,7 @@ addText(creditsSub, "name belongs here <3")
 addText(creditsSub, "        Peace, Quad_Plex")
 local secretMenu
 secretMenu = creditsSub:add_submenu("Secret Menu...")
-secretMenu:add_action("Don't press this button!", function() displayHudBanner("FGTXT_F_F3", "RESPAWN_W", "", 109) end)
+secretMenu:add_action("Don't press this button!", function() displayHudBanner("FGTXT_F_F3", "RESPAWN_W", "", 108) end)
 
 finishedLoading = true
 
