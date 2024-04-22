@@ -165,6 +165,26 @@ function addVehicleSpawnMenu(ply, sub)
         local vehSub
         vehSub = vehSubs[vehicle[2][2]]:add_submenu(vehicle[2][1], function() addVehicleEntry(vehSub, vehicle, ply) end)
     end
+
+    greyText(sub, "---------------------------")
+
+    sub:add_action("Spawn Random Vehicle", function()
+        giveRandomVehicle(localplayer)
+        if enterOnSpawn then
+            sleep(0.1)
+            setPedIntoVehicle(getNetIDOfLastSpawnedVehicle(), localplayer:get_position())
+        end
+    end)
+    sub:add_toggle("Immediately enter when spawning", function()
+        return enterOnSpawn
+    end, function(n)
+        enterOnSpawn = n
+    end)
+    sub:add_toggle("Spawn with Godmode enabled", function()
+        return godmodeEnabledSpawn
+    end, function(n)
+        godmodeEnabledSpawn = n
+    end)
 end
 
 -------------------------------------------------------------

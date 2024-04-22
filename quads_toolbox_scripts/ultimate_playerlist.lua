@@ -476,7 +476,7 @@ local function giveRandomBike(ply)
     createVehicle(joaat(BikeTypes[math.random(#BikeTypes)]), ply:get_position() + ply:get_heading() * 7, nil, true)
 end
 
-local function giveRandomVehicle(ply, pos, skip_remove)
+function giveRandomVehicle(ply, pos, skip_remove)
     if not ply or ply == nil then
         return
     end
