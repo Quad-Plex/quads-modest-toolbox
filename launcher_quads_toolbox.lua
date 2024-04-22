@@ -22,7 +22,7 @@ require("scripts/quads_toolbox_scripts/ambientPickupSuite")
 
 vehicleSpawnMenu = toolboxSub:add_submenu("     ★🚗 Vehicle Spawner: ★🚗", function() addVehicleSpawnMenu(localplayer, vehicleSpawnMenu) end)
 
-vehicleOptionsSub = toolboxSub:add_submenu(centeredText("    🔧 Vehicle Tools 🔧"))
+vehicleOptionsSub = toolboxSub:add_submenu(centeredText("   🔧 Vehicle Tools 🔧"))
 greyText(vehicleOptionsSub, centeredText(" ----- 🚗 Vehicle Options 🚗 -----"))
 require("scripts/quads_toolbox_scripts/trafficremover")
 require("scripts/quads_toolbox_scripts/carCheats")
