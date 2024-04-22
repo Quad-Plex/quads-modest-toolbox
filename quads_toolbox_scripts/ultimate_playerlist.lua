@@ -8,7 +8,7 @@ if interiorsLoadingSuccess then
 end
 
 local sortStyles = { [0]="Modders first", "Nearest first" }
-formatStyles = { [0]="EU", "US"}
+formatStyles = { [0]="Metric (EU)", "Imperial (US)"}
 
 settingsLoadingSuccess, playerlistSettings = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/PLAYERLIST_SETTINGS.json")
 if not settingsLoadingSuccess then
@@ -89,7 +89,7 @@ local function updateSpeed(ply)
     local vel = ply:get_velocity()
     local x, y, z = math.abs(vel.x), math.abs(vel.y), math.abs(vel.z)
 
-    if formatStyles[playerlistSettings.stringFormat] == "US" then
+    if formatStyles[playerlistSettings.stringFormat] == "Imperial (US)" then
         currentSpeed = math.floor((math.sqrt(x * x + y * y + z * z) * 2.26) * 10) / 10
     else
         currentSpeed = math.floor((math.sqrt(x * x + y * y + z * z) * 3.6371084) * 10) / 10
@@ -726,7 +726,7 @@ local function addPlayerOption(playerData, optionSub, distancePly)
     local playerDistance = localplayer
     local largeDistanceDisplay = true
     local distanceUnit
-    if formatStyles[playerlistSettings.stringFormat] == "EU" then
+    if formatStyles[playerlistSettings.stringFormat] == "Metric (EU)" then
         distanceUnit = "㎞"
     else
         distanceUnit = "㏕"
@@ -739,7 +739,7 @@ local function addPlayerOption(playerData, optionSub, distancePly)
     if distancePly then
         playerDistance = distancePly
         largeDistanceDisplay = false
-        if formatStyles[playerlistSettings.stringFormat] == "EU" then
+        if formatStyles[playerlistSettings.stringFormat] == "Metric (EU)" then
             distanceUnit = "m"
         else
             distanceUnit = "ft"
@@ -773,7 +773,7 @@ local function addPlayerOption(playerData, optionSub, distancePly)
         local playerStateSymbol = getPlayerStateSymbol(player, playerId)
         local modelIconStr = modelIcon(player, playerId)
         local distance = distanceBetween(playerDistance, player, false, largeDistanceDisplay)
-        if formatStyles[playerlistSettings.stringFormat] == "US" then
+        if formatStyles[playerlistSettings.stringFormat] == "Imperial (US)" then
             if distanceUnit == "㏕" then
                 --km to miles
                 distance = distance * 0.621371
@@ -1028,7 +1028,7 @@ local function playerInfo(plyId, sub, plyName)
     --distance/speed
     greyText(sub, centeredText("--- Distance / Speed / Direction ---"))
     sub:add_bare_item("", function()
-        local distanceStr = formatStyles[playerlistSettings.stringFormat] == "EU" and " km/h" or " mph"
+        local distanceStr = formatStyles[playerlistSettings.stringFormat] == "Metric (EU)" and " km/h" or " mph"
         return "    " .. distanceBetween(localplayer, ply) .. " m    " .. updateSpeed(ply) .. distanceStr .. "   " .. getDirectionalArrow(getDirectionToThing(ply)) .. "    "
     end, null, null, null)
     sub:add_bare_item("", function()

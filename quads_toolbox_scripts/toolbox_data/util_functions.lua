@@ -347,9 +347,9 @@ end
 -----------------------Number Formatter--------------------------
 function formatNumberWithDots(n)
     n = tostring(n):reverse()
-    if formatStyles[playerlistSettings.stringFormat] == "EU" then
+    if formatStyles[playerlistSettings.stringFormat] == "Metric (EU)" then
         n = n:gsub("(%d%d%d)", "%1.")
-    elseif formatStyles[playerlistSettings.stringFormat] == "US" then
+    elseif formatStyles[playerlistSettings.stringFormat] == "Imperial (US)" then
         n = n:gsub("(%d%d%d)", "%1,")
     end
     if n:sub(-1) == "." then
