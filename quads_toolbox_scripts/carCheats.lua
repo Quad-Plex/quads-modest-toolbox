@@ -305,22 +305,38 @@ vehicleOptionsSub:add_action("Set Car Mass to 26969", makeCarMassive, function()
 --------------------------------
 local beybladeEnabled = false
 local beybladeRunning = false
+local beybladeModes = {[0]="Hover", "Carnage"}
+local beybladeModeSelection = 0
 local function carBeyblade()
     if not localplayer:is_in_vehicle() or beybladeRunning or not beybladeEnabled then return end
     beybladeRunning = true
     local checkHeight = localplayer:get_current_vehicle():get_position().z + 1.5
+    local additionalGrav
+    local heightDifference
     menu.send_key_down(keycodes.W_KEY)
     menu.send_key_down(keycodes.S_KEY)
     menu.send_key_down(keycodes.A_KEY)
     carJump(-35)
     sleep(0.8)
     while beybladeEnabled do
-        local additionalGrav = localplayer:get_velocity().z * 7
-        local heightDifference = localplayer:get_current_vehicle():get_position().z - checkHeight
-        additionalGrav = additionalGrav + heightDifference * 2
-        carJump(-50 + additionalGrav)
+        if not localplayer:is_in_vehicle() then goto stop end
+        heightDifference = localplayer:get_current_vehicle():get_position().z - checkHeight
+        if beybladeModes[beybladeModeSelection] == "Hover" then
+            additionalGrav = localplayer:get_velocity().z * 7
+            carJump(-50 + additionalGrav + heightDifference * 2)
+        else
+            local plyVelocity = localplayer:get_velocity().z
+            if plyVelocity > 0 then
+                additionalGrav = plyVelocity * 7
+            else
+                additionalGrav = plyVelocity * 3
+            end
+            if heightDifference < 0 then heightDifference = 0 end
+            carJump(-40 + additionalGrav + heightDifference * 2)
+        end
         sleep(0.69)
     end
+    ::stop::
     menu.send_key_up(keycodes.W_KEY)
     menu.send_key_up(keycodes.S_KEY)
     menu.send_key_up(keycodes.A_KEY)
@@ -328,9 +344,12 @@ local function carBeyblade()
 end
 menu.register_callback('startBeyblade', carBeyblade)
 
-vehicleOptionsSub:add_toggle("Beyblade enabler", function() return beybladeEnabled end, function(value)
+vehicleOptionsSub:add_toggle("Beyblade: LET IT RIP!", function() return beybladeEnabled end, function(value)
     beybladeEnabled = value
     if not beybladeRunning and beybladeEnabled then
         menu.emit_event('startBeyblade')
     end
+end)
+vehicleOptionsSub:add_array_item("Beyblade Type:", beybladeModes, function() return beybladeModeSelection end, function(value)
+    beybladeModeSelection = value
 end)
