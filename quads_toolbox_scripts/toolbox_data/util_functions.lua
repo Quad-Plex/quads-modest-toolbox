@@ -154,9 +154,16 @@ function addVehicleSpawnMenu(ply, sub)
 
     if #favoritedCars > 0 then
         vehSubs["Favorites"] = sub:add_submenu("Favorites", function() buildFavoriteVehiclesSub(ply, vehSubs["Favorites"]) end)
-        greyText(sub, "---------------------------")
     end
 
+    sub:add_action("Add current vehicle to favorites", function()
+        local currentVeh = ply:get_current_vehicle()
+        local vehData = VEHICLE[currentVeh:get_model_hash()]
+        local vehicle = { currentVeh:get_model_hash(), vehData, false, false }
+        table.insert(favoritedCars, vehicle)
+        json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/FAVORITED_CARS.json", favoritedCars)
+    end, function() return ply:is_in_vehicle() and #favoritedCars > 0 and not table.contains(favoritedCars, ply:get_current_vehicle():get_model_hash()) end)
+    greyText(sub, "---------------------------")
     -- vehicle = { hash, { name, class} }
     for _, vehicle in ipairs(sorted_vehicles) do
         if not vehSubs[vehicle[2][2]] then
@@ -169,12 +176,60 @@ function addVehicleSpawnMenu(ply, sub)
     greyText(sub, "---------------------------")
 
     sub:add_action("Spawn Random Vehicle", function()
-        giveRandomVehicle(localplayer)
+        local oldAltSpawnToggle = alternative_spawn_toggle
+        alternative_spawn_toggle = true
+        local spawnPos = ply:get_position() + ply:get_heading() * 7
+        local spawnedModel = giveRandomVehicle(ply)
+        alternative_spawn_toggle = oldAltSpawnToggle
         if enterOnSpawn then
             sleep(0.1)
             setPedIntoVehicle(getNetIDOfLastSpawnedVehicle(), localplayer:get_position())
         end
+        if godmodeEnabledSpawn and ply:is_in_vehicle() then
+            sleep(0.1)
+            findAndEnableGodmodeForVehicle(spawnedModel, spawnPos)
+        end
     end)
+    sub:add_action("Duplicate nearest Vehicle", function()
+        local minDistance = 5000
+        local minDistanceVeh
+        local ownVeh = ply:is_in_vehicle() and ply:get_current_vehicle()
+        for veh in replayinterface.get_vehicles() do
+           local distance = distanceBetween(ply, veh)
+            if distance < minDistance and (not ownVeh or (ownVeh:get_model_hash() ~= veh:get_model_hash())) then
+                minDistance = distance
+                minDistanceVeh = veh
+            end
+        end
+        local oldAltSpawnToggle = alternative_spawn_toggle
+        alternative_spawn_toggle = true
+        local spawnPos = ply:get_position() + ply:get_heading() * 7
+        createVehicle(minDistanceVeh:get_model_hash(), spawnPos, math.deg(math.atan(ply:get_heading().y, ply:get_heading().x)))
+        alternative_spawn_toggle = oldAltSpawnToggle
+        if enterOnSpawn then
+            sleep(0.1)
+            setPedIntoVehicle(getNetIDOfLastSpawnedVehicle(), localplayer:get_position())
+        end
+        if godmodeEnabledSpawn and ply:is_in_vehicle() then
+            sleep(0.1)
+            findAndEnableGodmodeForVehicle(minDistanceVeh:get_model_hash(), spawnPos)
+        end
+    end)
+    sub:add_action("Duplicate current Vehicle", function()
+        local oldAltSpawnToggle = alternative_spawn_toggle
+        alternative_spawn_toggle = true
+        local spawnPos = ply:get_position() + ply:get_heading() * 7
+        createVehicle(ply:get_current_vehicle():get_model_hash(), spawnPos, math.deg(math.atan(ply:get_heading().y, ply:get_heading().x)))
+        alternative_spawn_toggle = oldAltSpawnToggle
+        if enterOnSpawn then
+            sleep(0.1)
+            setPedIntoVehicle(getNetIDOfLastSpawnedVehicle(), localplayer:get_position())
+        end
+        if godmodeEnabledSpawn and ply:is_in_vehicle() then
+            sleep(0.1)
+            findAndEnableGodmodeForVehicle(ply:get_current_vehicle():get_model_hash(), spawnPos)
+        end
+    end, function() return ply:is_in_vehicle() end)
     sub:add_toggle("Immediately enter when spawning", function()
         return enterOnSpawn
     end, function(n)
