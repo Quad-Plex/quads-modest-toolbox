@@ -842,8 +842,8 @@ local function ridList(sub)
         addText(sub, "Check after a restart if RIDs are found")
         sub:add_action("⚠️ BRUTE FORCE SEARCH (LONG) ⚠️", function()
             greyText(sub, " 0% searched...")
-            local min_value = math.min(table.unpack(possible_offsets))
-            local max_value = math.max(table.unpack(possible_offsets))
+            local min_value = 1
+            local max_value = 9999999
             local playerName = player.get_player_name(getLocalplayerID())
             local current_count = math.ceil((max_value - min_value) / 2)
             local counter = 0
