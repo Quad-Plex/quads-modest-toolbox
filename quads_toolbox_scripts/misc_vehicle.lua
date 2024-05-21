@@ -232,5 +232,3 @@ vehicleOptionsSub:add_action("TP into last spawned car", function()
     local vehicleNetID = getNetIDOfLastSpawnedVehicle()
     if vehicleNetID then setPedIntoVehicle(getNetIDOfLastSpawnedVehicle(), localplayer:get_position()) end
 end)
-
-vehicleOptionsSub:add_toggle("Alternative Veh. Spawner", function() return alternative_spawn_toggle end, function(_) toggleAlternativeSpawner() end)

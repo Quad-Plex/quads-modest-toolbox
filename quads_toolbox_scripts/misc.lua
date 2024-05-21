@@ -121,9 +121,13 @@ local function buildSpecialExportSubmenu(sub)
 		sub:add_action("Spawn #" .. i .. ": " .. VEHICLE[hash][1], function()
 			local vector = localplayer:get_heading()
 			local angle = math.deg(math.atan(vector.y, vector.x))
+			local oldNetID = getNetIDOfLastSpawnedVehicle()
 			createVehicle(hash, localplayer:get_position() + localplayer:get_heading() * 7, angle)
 			sleep(0.1)
-			setPedIntoVehicle(getNetIDOfLastSpawnedVehicle(), localplayer:get_position())
+			local newNetID = getNetIDOfLastSpawnedVehicle()
+			if newNetID ~= oldNetID then
+				setPedIntoVehicle(getNetIDOfLastSpawnedVehicle(), localplayer:get_position())
+			end
 			sleep(0.2)
 			createVehicle(hash, vector3(2000,2000,2000), angle) --Create a second vehicle, which causes the first one to be considered deliverable
 		end)

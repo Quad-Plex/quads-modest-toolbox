@@ -1,11 +1,5 @@
 [
   {
-    "event": "ToggleAltSpawnerHotkey",
-    "keycode": 33,
-    "name": "Alternative Veh. Spawn",
-    "toggleVar": true
-  },
-  {
     "event": "ToggleAtomizerHotkey",
     "keycode": 161,
     "name": "Atomizer Gun",

@@ -425,7 +425,7 @@ local function giveRamp()
     local angle = math.deg(math.atan(plyHeading.y, plyHeading.x)) + 90
     angle = (angle + 360) % 360
 
-    if localplayer:is_in_vehicle() or alternative_spawn_toggle then
+    if localplayer:is_in_vehicle() then
         distanceMul = 1
     else
         distanceMul = 0.45
@@ -1561,8 +1561,8 @@ local randomVehicleHotkey
 menu.register_callback('ToggleRandomVehicleHotkey', function()
     if not randomVehicleHotkey then
         randomVehicleHotkey = menu.register_hotkey(find_keycode("ToggleRandomVehicleHotkey"), function()
-            giveRandomVehicle(localplayer)
             displayHudBanner("HUD_RANDOM", "FMSTP_PRCL3", "", 108)
+            giveRandomVehicle(localplayer)
         end)
     else
         menu.remove_hotkey(randomVehicleHotkey)

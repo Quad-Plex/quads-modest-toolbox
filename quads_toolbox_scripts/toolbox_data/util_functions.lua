@@ -80,10 +80,7 @@ local function addVehicleEntry(vehMenu, vehicle, ply)
     end)
     vehMenu:add_action("Spawn using Method #2", function()
         local spawnPos = ply:get_position() + ply:get_heading() * 7
-        local oldToggle = alternative_spawn_toggle
-        alternative_spawn_toggle = true
-        local spawnedVehicle = createVehicle(vehicle[1], spawnPos)
-        alternative_spawn_toggle = oldToggle
+        local spawnedVehicle = createVehicle(vehicle[1], spawnPos, nil, nil, nil, true)
         if enterOnSpawn or vehicle[4] then
             setPedIntoVehicle(spawnedVehicle, localplayer:get_position())
         end
@@ -176,11 +173,8 @@ function addVehicleSpawnMenu(ply, sub)
     greyText(sub, "---------------------------")
 
     sub:add_action("Spawn Random Vehicle", function()
-        local oldAltSpawnToggle = alternative_spawn_toggle
-        alternative_spawn_toggle = true
         local spawnPos = ply:get_position() + ply:get_heading() * 7
         local spawnedModel = giveRandomVehicle(ply)
-        alternative_spawn_toggle = oldAltSpawnToggle
         if enterOnSpawn then
             sleep(0.1)
             setPedIntoVehicle(getNetIDOfLastSpawnedVehicle(), localplayer:get_position())
@@ -201,11 +195,8 @@ function addVehicleSpawnMenu(ply, sub)
                 minDistanceVeh = veh
             end
         end
-        local oldAltSpawnToggle = alternative_spawn_toggle
-        alternative_spawn_toggle = true
         local spawnPos = ply:get_position() + ply:get_heading() * 7
         createVehicle(minDistanceVeh:get_model_hash(), spawnPos, math.deg(math.atan(ply:get_heading().y, ply:get_heading().x)))
-        alternative_spawn_toggle = oldAltSpawnToggle
         if enterOnSpawn then
             sleep(0.1)
             setPedIntoVehicle(getNetIDOfLastSpawnedVehicle(), localplayer:get_position())
@@ -216,11 +207,8 @@ function addVehicleSpawnMenu(ply, sub)
         end
     end)
     sub:add_action("Duplicate current Vehicle", function()
-        local oldAltSpawnToggle = alternative_spawn_toggle
-        alternative_spawn_toggle = true
         local spawnPos = ply:get_position() + ply:get_heading() * 7
         createVehicle(ply:get_current_vehicle():get_model_hash(), spawnPos, math.deg(math.atan(ply:get_heading().y, ply:get_heading().x)))
-        alternative_spawn_toggle = oldAltSpawnToggle
         if enterOnSpawn then
             sleep(0.1)
             setPedIntoVehicle(getNetIDOfLastSpawnedVehicle(), localplayer:get_position())

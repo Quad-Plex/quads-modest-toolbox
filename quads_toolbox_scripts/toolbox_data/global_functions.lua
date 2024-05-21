@@ -92,7 +92,6 @@ menu.register_callback('OnScriptsLoaded', OnScriptsLoadedGlobal)
 
 -----------------------------------------------------------------------------
 ------------------------ Vehicle Spawners -----------------------------------
-alternative_spawn_toggle = false
 baseGlobals.vehicleSpawner = {}
 baseGlobals.vehicleSpawner.baseGlobal = 2640095
 baseGlobals.vehicleSpawner.testFunction = function()
@@ -104,10 +103,7 @@ baseGlobals.vehicleSpawner.testFunctionExplanation = "Spawn Youga4 with spawner#
 baseGlobals.vehicleSpawner2 = {}
 baseGlobals.vehicleSpawner2.baseGlobal2 = 2695991
 baseGlobals.vehicleSpawner2.testFunction = function()
-    local oldToggle = alternative_spawn_toggle
-    alternative_spawn_toggle = true
-    createVehicle(joaat("PoliceOld2"), localplayer:get_position() + localplayer:get_heading() * 5)
-    alternative_spawn_toggle = oldToggle
+    createVehicle(joaat("PoliceOld2"), localplayer:get_position() + localplayer:get_heading() * 5, nil, nil, nil, true)
 end
 baseGlobals.vehicleSpawner2.testFunctionExplanation = "Spawn PoliceOld2 with spawner#2"
 
@@ -121,12 +117,13 @@ function getNetIDOfLastSpawnedVehicle()
     return globals.get_int(baseGlobals.vehicleSpawnerNetID.vehNetIDGlobal + 6762)
 end
 
-function createVehicle(modelHash, pos, heading, skip_remove_current, mod)
+function createVehicle(modelHash, pos, heading, skip_remove_current, mod, alternative_spawn_toggle)
     if not type(modelHash):match("number") then
         modelHash = joaat(modelHash)
     end
     --###SPAWNER #1 (With heading, spammable, without mods)
     if not alternative_spawn_toggle and not player.get_player_ped():is_in_vehicle() then
+        local oldNetID = getNetIDOfLastSpawnedVehicle()
         globals.set_int(baseGlobals.vehicleSpawner.baseGlobal + 47, modelHash)
         globals.set_float(baseGlobals.vehicleSpawner.baseGlobal + 43, pos.x)
         globals.set_float(baseGlobals.vehicleSpawner.baseGlobal + 44, pos.y)
@@ -135,79 +132,63 @@ function createVehicle(modelHash, pos, heading, skip_remove_current, mod)
             globals.set_float(baseGlobals.vehicleSpawner.baseGlobal + 46, heading)
         end
         globals.set_boolean(baseGlobals.vehicleSpawner.baseGlobal + 42, true)
-    else
+        sleep(0.1)
+        local newNetID = getNetIDOfLastSpawnedVehicle()
+        if newNetID ~= oldNetID then
+            return
+        end
+    end
     --###SPAWNER #2 (Without heading, with mods, more reliable)
-        if not vehicle_is_creating then
-            vehicle_is_creating = true
-            if (not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 2) and not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 5)) then
-                globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 5, -1) --primary color selection
-                globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 6, -1) --secondary color selection
-                globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 7, -1) --pearlescent color selection
-                globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 8, -1) --wheel color selection
-                if type(mod):match("table") then
-                    --Write each mod integer into the globals in an array
-                    for i = 1, globals.get_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 9) do
-                        --see eVehicleModType
-                        globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 9 + i, mod[i])
-                    end
+    if not vehicle_is_creating then
+        vehicle_is_creating = true
+        if (not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 2) and not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 5)) then
+            globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 5, -1) --primary color selection
+            globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 6, -1) --secondary color selection
+            globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 7, -1) --pearlescent color selection
+            globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 8, -1) --wheel color selection
+            if type(mod):match("table") then
+                --Write each mod integer into the globals in an array
+                for i = 1, globals.get_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 9) do
+                    --see eVehicleModType
+                    globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 9 + i, mod[i])
                 end
-                globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 62, math.random(0, 255)) --VEHICLE::SET_VEHICLE_TYRE_SMOKE_COLOR Red
-                globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 63, math.random(0, 255)) --Green
-                globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 64, math.random(0, 255)) --Blue
-                globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 66, modelHash) --veh hash
-                globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 69, -1) --veh wheel type (category) see eVehicleWheelType
-                globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 74, math.random(0, 255)) --Neon color Red
-                globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 75, math.random(0, 255)) --Green
-                globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 76, math.random(0, 255)) --Blue
-                --globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 71, math.random(0, 255)) --Custom Primary/Secondary Color Red
-                --globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 72, math.random(0, 255)) --Green
-                --globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 73, math.random(0, 255)) --Blue (has to be enabled via flag)
-                globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 77, -264240640) --Bit-Storage for veh flags 0-8: veh-specific, reserved, 9:bulletproof tires, 10: bool vehicle_is_stolen,  12: custom secondary color, 13: custom primary color, 27: bool IgnoredByQuickSave decor 28: Neon Front, 29: Neon Back, 30: Neon Left, 31: Neon Right
-                globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 94, 4) --0: nil, 1: set decor player_vehicle, 2: set decor veh_modded_by_player
-                globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 95, 15) --Bit-Storage for previous global (1111)
-                if not skip_remove_current then
-                    globals.set_float(baseGlobals.vehicleSpawner2.baseGlobal2 + 7 + 0, pos.x) --Spawn location xyz
-                    globals.set_float(baseGlobals.vehicleSpawner2.baseGlobal2 + 7 + 1, pos.y)
-                    globals.set_float(baseGlobals.vehicleSpawner2.baseGlobal2 + 7 + 2, -255)
-                    globals.set_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 2, true) --Spawn trigger #1
-                    globals.set_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 5, true) --Spawn trigger #2
-                    repeat
-                    until (not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 2) and not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 5)) --Wait for under-map spawn to complete
-                end
-                globals.set_float(baseGlobals.vehicleSpawner2.baseGlobal2 + 7 + 0, pos.x)
+            end
+            globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 62, math.random(0, 255)) --VEHICLE::SET_VEHICLE_TYRE_SMOKE_COLOR Red
+            globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 63, math.random(0, 255)) --Green
+            globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 64, math.random(0, 255)) --Blue
+            globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 66, modelHash) --veh hash
+            globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 69, -1) --veh wheel type (category) see eVehicleWheelType
+            globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 74, math.random(0, 255)) --Neon color Red
+            globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 75, math.random(0, 255)) --Green
+            globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 76, math.random(0, 255)) --Blue
+            --globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 71, math.random(0, 255)) --Custom Primary/Secondary Color Red
+            --globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 72, math.random(0, 255)) --Green
+            --globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 73, math.random(0, 255)) --Blue (has to be enabled via flag)
+            globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 77, -264240640) --Bit-Storage for veh flags 0-8: veh-specific, reserved, 9:bulletproof tires, 10: bool vehicle_is_stolen,  12: custom secondary color, 13: custom primary color, 27: bool IgnoredByQuickSave decor 28: Neon Front, 29: Neon Back, 30: Neon Left, 31: Neon Right
+            globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 94, 4) --0: nil, 1: set decor player_vehicle, 2: set decor veh_modded_by_player
+            globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 95, 15) --Bit-Storage for previous global (1111)
+            if not skip_remove_current then
+                globals.set_float(baseGlobals.vehicleSpawner2.baseGlobal2 + 7 + 0, pos.x) --Spawn location xyz
                 globals.set_float(baseGlobals.vehicleSpawner2.baseGlobal2 + 7 + 1, pos.y)
-                globals.set_float(baseGlobals.vehicleSpawner2.baseGlobal2 + 7 + 2, pos.z)
+                globals.set_float(baseGlobals.vehicleSpawner2.baseGlobal2 + 7 + 2, -255)
                 globals.set_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 2, true) --Spawn trigger #1
                 globals.set_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 5, true) --Spawn trigger #2
                 repeat
-                until (not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 2) and not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 5)) --Spawn again at correct coords, removing any vehicle in the way
+                until (not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 2) and not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 5)) --Wait for under-map spawn to complete
             end
-            vehicle_is_creating = nil
-            return getNetIDOfLastSpawnedVehicle()
+            globals.set_float(baseGlobals.vehicleSpawner2.baseGlobal2 + 7 + 0, pos.x)
+            globals.set_float(baseGlobals.vehicleSpawner2.baseGlobal2 + 7 + 1, pos.y)
+            globals.set_float(baseGlobals.vehicleSpawner2.baseGlobal2 + 7 + 2, pos.z)
+            globals.set_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 2, true) --Spawn trigger #1
+            globals.set_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 5, true) --Spawn trigger #2
+            repeat
+            until (not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 2) and not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 5)) --Spawn again at correct coords, removing any vehicle in the way
         end
-    end
-    --thanks to @Alice2333 on UKC for showing me the second spawner code
-end
-
-function toggleAlternativeSpawner()
-    alternative_spawn_toggle = not alternative_spawn_toggle
-    if alternative_spawn_toggle then
-        displayHudBanner("BLIP_125", "MO_CCONF_2", "", 108)
-    else
-        displayHudBanner("BLIP_125", "CELL_840", "", 108)
+        vehicle_is_creating = nil
+        return getNetIDOfLastSpawnedVehicle()
     end
 end
-
---PgUp alternative spawner toggle
-local altSpawnerHotkey
-menu.register_callback('ToggleAltSpawnerHotkey', function()
-    if not altSpawnerHotkey then
-        altSpawnerHotkey = menu.register_hotkey(find_keycode("ToggleAltSpawnerHotkey"), toggleAlternativeSpawner)
-    else
-        menu.remove_hotkey(altSpawnerHotkey)
-        altSpawnerHotkey = nil
-    end
-end)
+--thanks to @Alice2333 on UKC for showing me the second spawner code
 
 --{5, 3, -1, 6, 3, 1, -1, -1, -1, -1, -1, 4, 3, 3, 58, 4, 5, 1, 1, 1, 1, 1, math.random(0, 14), 217, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 15}
 local eVehicleModType = {
@@ -339,7 +320,8 @@ function setPedIntoVehicle(vehicleNetID, oldPos)
             sleep(0.11)
         until (getVehicleForPlayerID() == vehicleNetID)
         sleep(0.3)
-        if getVehicleForPlayerID() ~= vehicleNetID then
+        if getVehicleForPlayerID() ~= vehicleNetID or not localplayer:is_in_vehicle() then
+            print("Couldn't enter vehicle")
             --Assume entering the vehicle failed
             local tries = 0
             while (tries < 4) do
@@ -564,6 +546,7 @@ shortformBlips = {
     ["JUNK PARACHUTE"] = "PRCH",
     ["SHOP"] = "SHOP",
     ["BALLISTIC ARMOR"] = "ARMR",
+    ["PREP_MISSION"] = "PREP"
 }
 baseGlobals.blipType = {}
 baseGlobals.blipType.baseGlobal = 2657921
@@ -590,6 +573,7 @@ local ballistic_armor_blip = utils_Set({ 16777220, 16777216, 16777348, 17039364,
 local shop_blips = utils_Set({ 2097282, 2097154 })
 local heist_planning_board = utils_Set({ 704 })
 local loading_blips = utils_Set({ 0, 6 })
+local prep_mission_blips = utils_Set({524804})
 
 getPlayerBlipType = function(plyId)
     local plyBlip = globals.get_int(baseGlobals.blipType.baseGlobal + (plyId * 463) + 73 + 3)
@@ -632,6 +616,8 @@ getPlayerBlipType = function(plyId)
         return "HEIST BOARD"
     elseif unsure_blips[plyBlip] then
         return "UNSURE: " .. plyBlip
+    elseif prep_mission_blips[plyBlip] then
+        return "PREP_MISSION: " .. plyBlip
     else
         return "Blip:" .. plyBlip
     end
@@ -1021,6 +1007,8 @@ function nativeTeleport(vector, headingVec)
             globals.set_float(baseGlobals.teleport.baseGlobalPed + 949, math.deg(math.atan(localplayer:get_heading().y, localplayer:get_heading().x)) - 90)
         end
         globals.set_int(baseGlobals.teleport.baseGlobalPed + 943, 20) --Trigger Entity:set_entity_coords
+        sleep(0.05)
+        globals.set_int(baseGlobals.teleport.baseGlobalPed + 943, -1)
     elseif localplayer:is_in_vehicle() then
         coords_is_setting = true
         globals.set_float(baseGlobals.teleport.baseGlobalVeh + 505 + 0, vector.x)
@@ -1037,6 +1025,8 @@ function nativeTeleport(vector, headingVec)
         end
         globals.set_int(baseGlobals.teleport.baseGlobalVehTrigger + 1 + (getLocalplayerID() * 463) + 232, 7)
         globals.set_int(baseGlobals.teleport.baseGlobalVeh + 45 + 65, 1)
+        sleep(0.05)
+        globals.set_int(baseGlobals.teleport.baseGlobalVehTrigger + 1 + (getLocalplayerID() * 463) + 232, -1)
     end
     coords_is_setting = false
 end
