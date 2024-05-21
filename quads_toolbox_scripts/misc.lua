@@ -124,9 +124,12 @@ local function buildSpecialExportSubmenu(sub)
 			createVehicle(hash, localplayer:get_position() + localplayer:get_heading() * 7, angle)
 			sleep(0.1)
 			setPedIntoVehicle(getNetIDOfLastSpawnedVehicle(), localplayer:get_position())
+			sleep(0.2)
 			createVehicle(hash, vector3(2000,2000,2000), angle) --Create a second vehicle, which causes the first one to be considered deliverable
 		end)
 	end
+	greyText(sub, "-------------------------")
+	sub:add_action("TP to Docks (Deliver instantly)", function() nativeTeleport(vector3(1169.2, -2972.9, 5)) end)
 end
 local specialExportSub
 specialExportSub = miscOptionsSub:add_submenu("$ Get Special Export Vehicles $", function() buildSpecialExportSubmenu(specialExportSub) end)
