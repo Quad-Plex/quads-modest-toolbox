@@ -69,6 +69,7 @@ local function NoClip(toggle)
 			setPhoneDisabled(true, true)
 		else
 			setPhoneDisabled(oldPhoneDisableState, true)
+			speed = 2
 			localplayer:set_freeze_momentum(false)
 			localplayer:set_no_ragdoll(false)
 			localplayer:set_config_flag(292, false)

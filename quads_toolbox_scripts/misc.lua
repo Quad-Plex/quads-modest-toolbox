@@ -2,7 +2,7 @@
 --UNDEAD OFFRADAR
 --------------------------------
 greyText(miscOptionsSub, "-------- Player Options --------")
-local function offRadar()
+function offRadar()
 	if localplayer ~= nil then
 		if localplayer:get_max_health() > 100 then
 			localplayer:set_max_health(0.0)
