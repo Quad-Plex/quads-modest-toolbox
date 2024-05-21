@@ -6,7 +6,11 @@ TODO:
 - More testing with the invisible MOC maybe
 
 DONE:
+- ~~noclip updated for native vehicle tp using entity:set_entity_position and entity:set_entity_rotation~~
+- ~~Add native teleport with vehicle (BIG THANKS to Alice2333 on UKC)~~
+- ~~Add duplicate/clone/save near/current vehicle to favorites~~~~~~
 - ~~Add Beyblade Mode for current car~~
+  - ~~Multiple Improvements to beyblade Mode~~ 
 - ~~Add toggle for speedometer to be a banner or license plate related~~
 - ~~TP into spawned vehicles~~
   - ~~TP into other players' vehicles~~
