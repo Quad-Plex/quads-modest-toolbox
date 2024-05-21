@@ -358,6 +358,7 @@ end
 menu.register_callback('startBeyblade', carBeyblade)
 
 vehicleOptionsSub:add_toggle("Beyblade: LET IT RIP!", function() return beybladeEnabled end, function(value)
+    if not localplayer:is_in_vehicle() then return end
     beybladeEnabled = value
     if not beybladeRunning and beybladeEnabled then
         menu.emit_event('startBeyblade')
