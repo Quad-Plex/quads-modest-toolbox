@@ -1,6 +1,6 @@
 local function OnWeaponChanged(_, newWeapon)
     if newWeapon ~= nil then
-        local NAME = localplayer and localplayer:get_current_weapon():get_name_hash()
+        local NAME = localplayer and localplayer:get_current_weapon() and localplayer:get_current_weapon():get_name_hash()
         if NAME == joaat("weapon_stungun_mp") or NAME == joaat("weapon_stungun") then
             newWeapon:set_time_between_shots(1)
             newWeapon:set_range(1000)
