@@ -124,6 +124,7 @@ local function buildSpecialExportSubmenu(sub)
 			createVehicle(hash, localplayer:get_position() + localplayer:get_heading() * 7, angle)
 			sleep(0.1)
 			setPedIntoVehicle(getNetIDOfLastSpawnedVehicle(), localplayer:get_position())
+			createVehicle(hash, vector3(2000,2000,2000), angle) --Create a second vehicle, which causes the first one to be considered deliverable
 		end)
 	end
 end
