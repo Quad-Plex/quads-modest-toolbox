@@ -310,7 +310,7 @@ local beybladeModeSelection = 0
 local function carBeyblade()
     if not localplayer:is_in_vehicle() or beybladeRunning or not beybladeEnabled then return end
     beybladeRunning = true
-    local checkHeight = localplayer:get_current_vehicle():get_position().z + 1.5
+    local checkHeight = localplayer:get_current_vehicle():get_position().z + 1.2
     local additionalGrav
     local heightDifference
     local oldGrav = localplayer:get_current_vehicle():get_gravity()
@@ -318,7 +318,7 @@ local function carBeyblade()
     menu.send_key_down(keycodes.W_KEY)
     menu.send_key_down(keycodes.S_KEY)
     menu.send_key_down(keycodes.A_KEY)
-    carJump(-35)
+    carJump(-45)
     sleep(0.8)
     while beybladeEnabled do
         if not localplayer:is_in_vehicle() then goto stop end
@@ -326,26 +326,34 @@ local function carBeyblade()
         if beybladeModes[beybladeModeSelection] == "Hover" then
             localplayer:get_current_vehicle():set_gravity(9.8)
             additionalGrav = localplayer:get_velocity().z * 7
-            carJump(-39 + additionalGrav + heightDifference * 2)
+            menu.send_key_down(keycodes.W_KEY)
+            menu.send_key_down(keycodes.S_KEY)
+            menu.send_key_down(keycodes.A_KEY)
+            carJump(-25 + additionalGrav + heightDifference * 1.5)
         else
             local plyVelocity = localplayer:get_velocity().z
-            localplayer:get_current_vehicle():set_gravity(15.8)
+            localplayer:get_current_vehicle():set_gravity(25)
             if plyVelocity > 0 then
                 additionalGrav = plyVelocity * 7
             else
                 additionalGrav = plyVelocity * 3
             end
             if heightDifference < 0 then heightDifference = 0 end
-            carJump(-40 + additionalGrav + heightDifference * 2)
+            menu.send_key_down(keycodes.W_KEY)
+            menu.send_key_down(keycodes.S_KEY)
+            menu.send_key_down(keycodes.A_KEY)
+            carJump(-52 + additionalGrav + heightDifference * 1.5)
         end
-        sleep(0.4)
+        sleep(0.3)
     end
     ::stop::
     menu.send_key_up(keycodes.W_KEY)
     menu.send_key_up(keycodes.S_KEY)
     menu.send_key_up(keycodes.A_KEY)
+    menu.send_key_up(keycodes.D_KEY)
     localplayer:get_current_vehicle():set_gravity(oldGrav)
     beybladeRunning = false
+    beybladeEnabled = false
 end
 menu.register_callback('startBeyblade', carBeyblade)
 
