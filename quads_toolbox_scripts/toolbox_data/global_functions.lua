@@ -324,7 +324,6 @@ end
 
 function setPedIntoVehicle(vehicleNetID, oldPos)
     if (vehicleNetID and (vehicleNetID ~= 0)) then
-        local oldRagdoll = localplayer:get_no_ragdoll()
         local i = 0
         repeat
             localplayer:set_freeze_momentum(true)
@@ -339,24 +338,21 @@ function setPedIntoVehicle(vehicleNetID, oldPos)
             end
             sleep(0.11)
         until (getVehicleForPlayerID() == vehicleNetID)
-        localplayer:set_freeze_momentum(true)
-        localplayer:set_no_ragdoll(true)
-        localplayer:set_config_flag(292, true)
-        sleep(0.1)
+        sleep(0.3)
         if getVehicleForPlayerID() ~= vehicleNetID then
             --Assume entering the vehicle failed
             local tries = 0
-            while (localplayer:get_position() ~= oldPos and tries < 10) do
+            while (tries < 4) do
                 nativeTeleport(oldPos)
                 tries = tries + 1
                 sleep(0.1)
             end
             setPlayerRespawnState(getLocalplayerID(), 7) --setting respawn to 7 gives back player control after getting stuck, unable to enter a car
         end
-        localplayer:set_freeze_momentum(false)
-        localplayer:set_no_ragdoll(oldRagdoll)
-        localplayer:set_config_flag(292, false)
     end
+    localplayer:set_freeze_momentum(false)
+    localplayer:set_no_ragdoll(false)
+    localplayer:set_config_flag(292, false)
 end
 
 ----------------------Pickup Spawner--------------------------

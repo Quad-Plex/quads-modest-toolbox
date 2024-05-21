@@ -977,10 +977,22 @@ local function playerInfo(plyId, sub, plyName)
     sub:add_action("Try to enter " .. plyName .. "'s Vehicle", function()
         if ply:is_in_vehicle() or getPlayerBlipType(plyId) == "VEHICLE" or getPlayerBlipType(plyId) == "PLANE GHOST" or getPlayerBlipType(plyId) == "ULTRALIGHT GHOST" then
             local oldPos = localplayer:get_position()
+            local offRadarToggled = false
+            if localplayer:get_max_health() > 100 then --Do the TP into vehicle while in offradar so other people don't see us jumping around on the minimap if it fails
+                offRadar()
+                offRadarToggled = true
+            end
+            localplayer:set_freeze_momentum(true)
+            localplayer:set_no_ragdoll(true)
+            localplayer:set_config_flag(292, true)
             if not ply:is_in_vehicle() then
                 tpToPlayer(ply, -5)
             end
+            sleep(0.1)
             setPedIntoVehicle(getVehicleForPlayerID(plyId), oldPos)
+            if offRadarToggled then
+                offRadar()
+            end
         end
     end, function()
         return ply:is_in_vehicle() or getPlayerBlipType(plyId) == "VEHICLE" or getPlayerBlipType(plyId) == "PLANE GHOST" or getPlayerBlipType(plyId) == "ULTRALIGHT GHOST"
