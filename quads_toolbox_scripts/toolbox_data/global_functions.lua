@@ -1021,9 +1021,6 @@ function nativeTeleport(vector, headingVec)
             globals.set_float(baseGlobals.teleport.baseGlobalPed + 949, math.deg(math.atan(localplayer:get_heading().y, localplayer:get_heading().x)) - 90)
         end
         globals.set_int(baseGlobals.teleport.baseGlobalPed + 943, 20) --Trigger Entity:set_entity_coords
-        repeat
-        until (globals.get_int(baseGlobals.teleport.baseGlobalPed + 943) ~= 20)
-        globals.set_int(baseGlobals.teleport.baseGlobalPed + 943, -1)
     elseif localplayer:is_in_vehicle() then
         coords_is_setting = true
         globals.set_float(baseGlobals.teleport.baseGlobalVeh + 505 + 0, vector.x)
@@ -1038,10 +1035,8 @@ function nativeTeleport(vector, headingVec)
             globals.set_float(baseGlobals.teleport.baseGlobalVeh + 3207, pitchAngle)
             globals.set_float(baseGlobals.teleport.baseGlobalVeh + 508, yawAngle)
         end
-        globals.set_int(baseGlobals.teleport.baseGlobalVehTrigger + 1 + 232, 7)
+        globals.set_int(baseGlobals.teleport.baseGlobalVehTrigger + 1 + (getLocalplayerID() * 463) + 232, 7)
         globals.set_int(baseGlobals.teleport.baseGlobalVeh + 45 + 65, 1)
-        repeat
-        until (globals.get_int(baseGlobals.teleport.baseGlobalVehTrigger + 1 + 232) ~= 7)
     end
     coords_is_setting = false
 end
