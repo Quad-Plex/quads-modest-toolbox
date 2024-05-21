@@ -116,11 +116,7 @@ local function tpToPlayer(ply, height, auto_localplayer)
     pos.z = pos.z + height
     teleportHeight = height
 
-    if not current_me:is_in_vehicle() then
-        nativeTeleport(pos)
-    else
-        current_me:get_current_vehicle():set_position(pos)
-    end
+    nativeTeleport(pos)
 end
 
 --teleports all peds to player

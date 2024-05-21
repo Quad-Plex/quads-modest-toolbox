@@ -1,6 +1,11 @@
 local noclipToggle = false
 local speed = 2
 local hotkeys = {}
+local initialPos
+local initialHeading
+local initialRotation
+local initialYawAngle
+local initialPitchAngle
 
 local function getLocalplayerOrCar()
 	if localplayer:is_in_vehicle() then
@@ -10,35 +15,37 @@ local function getLocalplayerOrCar()
 	end
 end
 
-function nativeTeleport(vector)
-	if ((localplayer:get_pedtype() == 2) and not localplayer:is_in_vehicle()) then -- localplayer is netplayer and not in vehicle
-		globals.set_float(4521801 + 946 + 0, vector.x)
-		globals.set_float(4521801 + 946 + 1, vector.y)
-		globals.set_float(4521801 + 946 + 2, vector.z)
-		globals.set_float(4521801 + 949, math.deg(math.atan(localplayer:get_heading().y, localplayer:get_heading().x)) - 90)
-		globals.set_int(4521801 + 943, 20)
-		repeat
-		until (globals.get_int(4521801 + 943) ~= 20)
-		globals.set_int(4521801 + 943, -1)
-	elseif localplayer:is_in_vehicle() then
-		localplayer:get_current_vehicle():set_position(vector)
+local function move(direction)
+	if not noclipToggle then return end
+	initialPos = initialPos + direction
+	if not localplayer:is_in_vehicle() then
+		nativeTeleport(initialPos)
+	else
+		nativeTeleport(initialPos, vector3(initialYawAngle, 0, initialPitchAngle))
 	end
 end
 
-local function move(direction)
-	if not noclipToggle then return end
-	local tpPos = localplayer:get_position()
-	if not localplayer:is_in_vehicle() then tpPos = tpPos + vector3(0,0,0.3) end
-	nativeTeleport(tpPos + direction)
-end
-
-local function rotate(amount)
+local function rotate(amount, pitch)
 	if not noclipToggle then return end
 	local entity = getLocalplayerOrCar()
-	local direction = entity:get_rotation()
-	entity:set_rotation(direction + vector3(amount,0,0))
+	if not localplayer:is_in_vehicle() then
+		initialRotation = initialRotation + vector3(amount,0,0)
+		entity:set_rotation(initialRotation)
+		initialHeading = localplayer:get_heading()
+	else
+		if not pitch then
+			nativeTeleport(initialPos, vector3(initialYawAngle + amount * 90, 0, initialPitchAngle))
+			initialYawAngle = initialYawAngle + amount * 90
+			initialHeading = localplayer:get_heading()
+		else
+			initialPitchAngle = initialPitchAngle + amount * 90
+			if initialPitchAngle > 89 then initialPitchAngle = 89 end
+			if initialPitchAngle < -89 then initialPitchAngle = -89 end
+			nativeTeleport(initialPos, vector3(initialYawAngle, 0, initialPitchAngle))
+			initialHeading = localplayer:get_heading()
+		end
+	end
 end
-
 
 local function adjustSpeed(amount)
 	if speed + amount > 0 then
@@ -46,30 +53,51 @@ local function adjustSpeed(amount)
 	end
 end
 
-local oldPhoneDisableState
+local oldGrav
 local function NoClip(toggle)
 	if localplayer ~= nil then
 		if toggle then
+			if localplayer:is_in_vehicle() then
+				oldGrav = localplayer:get_current_vehicle():get_gravity()
+				localplayer:get_current_vehicle():set_gravity(0)
+			end
 			localplayer:set_freeze_momentum(true)
 			localplayer:set_no_ragdoll(true)
 			localplayer:set_config_flag(292, true)
 			nativeTeleport(localplayer:get_position())
+			initialPos = localplayer:get_position()
+			initialHeading = localplayer:get_heading()
+			initialRotation = localplayer:get_rotation()
+			initialYawAngle = math.deg(math.atan(initialHeading.y, initialHeading.x)) - 90
+			initialPitchAngle = math.deg(math.atan(initialHeading.z, math.sqrt(initialHeading.x^2 + initialHeading.y^2)))
 			hotkeys = {
-				menu.register_hotkey(keycodes.SHIFT_KEY, function() move(vector3(0,0,speed)) end),
-				menu.register_hotkey(keycodes.CTRL_KEY, function() move(vector3(0,0,speed * -1)) end),
-				menu.register_hotkey(keycodes.UP_ARROW_KEY, function() move(localplayer:get_heading() * speed) end),
-				menu.register_hotkey(keycodes.DOWN_ARROW_KEY, function() move(localplayer:get_heading() * speed * -1) end),
-				menu.register_hotkey(keycodes.LEFT_ARROW_KEY, function() rotate(0.25) end),
-				menu.register_hotkey(keycodes.RIGHT_ARROW_KEY, function() rotate(0.25 * -1) end),
+				menu.register_hotkey(keycodes.SHIFT_KEY, function()
+					if not localplayer:is_in_vehicle() then
+						move(vector3(0,0,speed))
+					else
+						rotate(0.2, true)
+					end
+				end),
+				menu.register_hotkey(keycodes.CTRL_KEY, function()
+					if not localplayer:is_in_vehicle() then
+						move(vector3(0,0,speed * -1))
+					else
+						rotate(-0.2, true)
+					end
+				end),
+				menu.register_hotkey(keycodes.W_KEY, function() move(initialHeading * speed) end),
+				menu.register_hotkey(keycodes.S_KEY, function() move(initialHeading * speed * -1) end),
+				menu.register_hotkey(keycodes.A_KEY, function() rotate(0.25) end),
+				menu.register_hotkey(keycodes.D_KEY, function() rotate(0.25 * -1) end),
 				menu.register_hotkey(keycodes.ADD_KEY, function() adjustSpeed(1) end),
 				menu.register_hotkey(keycodes.SUBTRACT_KEY, function() adjustSpeed(-1) end)
 			}
 			displayHudBanner("SG_CLIP", "PIM_NCL_PRIV1", "", 108)
-			oldPhoneDisableState = phoneDisabledState
-			setPhoneDisabled(true, true)
 		else
-			setPhoneDisabled(oldPhoneDisableState, true)
 			speed = 2
+			if oldGrav then
+				localplayer:get_current_vehicle():set_gravity(oldGrav)
+			end
 			localplayer:set_freeze_momentum(false)
 			localplayer:set_no_ragdoll(false)
 			localplayer:set_config_flag(292, false)

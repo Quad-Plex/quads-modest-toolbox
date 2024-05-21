@@ -545,8 +545,7 @@ interiorBlips = {
     ["LOADING"] = true,
     ["CAR MEET"] = true,
     ["AUTO SHOP"] = true,
-    ["CLOTHES"] = true,
-    ["HANGAR_MODSHOP"] = true
+    ["CLOTHES"] = true
 }
 -- Create a lookup table for playerBlipTypes
 shortformBlips = {
@@ -558,7 +557,6 @@ shortformBlips = {
     ["KOSATKA"] = "SUBM",
     ["HEIST BOARD"] = "HEIST",
     ["DELIVERY_MISSION"] = "DELIV",
-    ["HANGAR_MODSHOP"] = "HANGR",
     ["BEAST"] = "BEAST",
     ["CASHIER"] = "STORE",
     ["CAR MEET"] = "LSCM",
@@ -577,7 +575,7 @@ local vehicle_blips = utils_Set({ 262144, 262145, 262148, 262149, 262156, 262164
 local plane_ghost_blips = utils_Set({ 8388612, 8650884, 8651332, 8651396, 8651397, 8650756, 8650757, 8650820, 8651268, 8651269 })
 local ultralight_ghost_blips = utils_Set({ 262676, 262740 })
 local ls_customs_blip = utils_Set({ 2097280, 2359330, 2359458, 262178 })
-local interior_blips = utils_Set({ 262656, 262272, 192, 64, 128, 196, 576, 512, 517, 640, 708, 1 })
+local interior_blips = utils_Set({ 262274, 262656, 262272, 192, 64, 128, 196, 576, 512, 517, 640, 708, 1 })
 local normal_blips = utils_Set({ 4, 5, 68, 132, 140, 516, 580, 644 })
 local ls_car_meet = utils_Set({ 2359334, 2359426, 2359296, 262146 })
 local cashier_blip = utils_Set({ 2097152 })
@@ -589,7 +587,6 @@ local junk_parachute_blip = utils_Set({ 2097156, 2097220 })
 local unsure_blips = utils_Set({ 2622788, 262656, 2359299, 524416, 524420 })
 local delivery_mission_blips = utils_Set({ 786432, 786436, 786437, 786500, 786560, 786948, 787076, 524256, 524292, 524288, 524293 })
 local ballistic_armor_blip = utils_Set({ 16777220, 16777216, 16777348, 17039364, 17039876 })
-local hangar_modshop_blip = utils_Set({ 262274 })
 local shop_blips = utils_Set({ 2097282, 2097154 })
 local heist_planning_board = utils_Set({ 704 })
 local loading_blips = utils_Set({ 0, 6 })
@@ -623,8 +620,6 @@ getPlayerBlipType = function(plyId)
         return "JUNK PARACHUTE"
     elseif auto_shop[plyBlip] then
         return "AUTO SHOP"
-    elseif hangar_modshop_blip[plyBlip] then
-        return "HANGAR_MODSHOP"
     elseif delivery_mission_blips[plyBlip] then
         return "DELIVERY_MISSION"
     elseif kosatka_blip[plyBlip] then
@@ -1002,5 +997,52 @@ function setDoorBit(door, bit)
         doorState = clearBit(doorState, door)
     end
     globals.set_int(baseGlobals.vehicleOptions.base_global + 8, doorState)
+end
+
+---------------------------- Native Teleport (Entity:Set_entity_coords) ---------------------------------
+local coords_is_setting = false
+baseGlobals.teleport = {}
+baseGlobals.teleport.baseGlobalPed = 4521801
+baseGlobals.teleport.baseGlobalVeh = 2635562
+baseGlobals.teleport.baseGlobalVehTrigger = 2657921
+baseGlobals.teleport.testFunctionExplanation = "Teleport forward"
+baseGlobals.teleport.testFunction = function()
+    nativeTeleport(localplayer:get_position() + localplayer:get_heading() * 2)
+end
+function nativeTeleport(vector, headingVec)
+    if ((localplayer:get_pedtype() == 2) and not localplayer:is_in_vehicle() and not coords_is_setting) then -- localplayer is netplayer and not in vehicle
+        coords_is_setting = true
+        globals.set_float(baseGlobals.teleport.baseGlobalPed + 946 + 0, vector.x)
+        globals.set_float(baseGlobals.teleport.baseGlobalPed + 946 + 1, vector.y)
+        globals.set_float(baseGlobals.teleport.baseGlobalPed + 946 + 2, vector.z)
+        if headingVec then
+            globals.set_float(baseGlobals.teleport.baseGlobalPed + 949, math.deg(math.atan(headingVec.y, headingVec.x)) - 90)
+        else
+            globals.set_float(baseGlobals.teleport.baseGlobalPed + 949, math.deg(math.atan(localplayer:get_heading().y, localplayer:get_heading().x)) - 90)
+        end
+        globals.set_int(baseGlobals.teleport.baseGlobalPed + 943, 20) --Trigger Entity:set_entity_coords
+        repeat
+        until (globals.get_int(baseGlobals.teleport.baseGlobalPed + 943) ~= 20)
+        globals.set_int(baseGlobals.teleport.baseGlobalPed + 943, -1)
+    elseif localplayer:is_in_vehicle() then
+        coords_is_setting = true
+        globals.set_float(baseGlobals.teleport.baseGlobalVeh + 505 + 0, vector.x)
+        globals.set_float(baseGlobals.teleport.baseGlobalVeh + 505 + 1, vector.y)
+        globals.set_float(baseGlobals.teleport.baseGlobalVeh + 505 + 2, vector.z)
+        if headingVec then
+            globals.set_float(baseGlobals.teleport.baseGlobalVeh + 3207, headingVec.z) --pitch (NEEDS to be set to something other than 0 or yaw won't be applied either)
+            globals.set_float(baseGlobals.teleport.baseGlobalVeh + 508, headingVec.x) --yaw
+        else
+            local yawAngle = math.deg(math.atan(localplayer:get_heading().y, localplayer:get_heading().x)) - 90
+            local pitchAngle = math.deg(math.atan(localplayer:get_heading().z, math.sqrt(localplayer:get_heading().x^2 + localplayer:get_heading().y^2)))
+            globals.set_float(baseGlobals.teleport.baseGlobalVeh + 3207, pitchAngle)
+            globals.set_float(baseGlobals.teleport.baseGlobalVeh + 508, yawAngle)
+        end
+        globals.set_int(baseGlobals.teleport.baseGlobalVehTrigger + 1 + 232, 7)
+        globals.set_int(baseGlobals.teleport.baseGlobalVeh + 45 + 65, 1)
+        repeat
+        until (globals.get_int(baseGlobals.teleport.baseGlobalVehTrigger + 1 + 232) ~= 7)
+    end
+    coords_is_setting = false
 end
 
