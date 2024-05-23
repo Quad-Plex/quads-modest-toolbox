@@ -132,7 +132,7 @@ function createVehicle(modelHash, pos, heading, skip_remove_current, mod, altern
             globals.set_float(baseGlobals.vehicleSpawner.baseGlobal + 46, heading)
         end
         globals.set_boolean(baseGlobals.vehicleSpawner.baseGlobal + 42, true)
-        sleep(0.1)
+        sleep(0.15)
         local newNetID = getNetIDOfLastSpawnedVehicle()
         if newNetID ~= oldNetID then
             return
@@ -319,18 +319,18 @@ function setPedIntoVehicle(vehicleNetID, oldPos)
             end
             sleep(0.11)
         until (getVehicleForPlayerID() == vehicleNetID)
-        sleep(0.3)
-        if getVehicleForPlayerID() ~= vehicleNetID or not localplayer:is_in_vehicle() then
-            print("Couldn't enter vehicle")
-            --Assume entering the vehicle failed
-            local tries = 0
-            while (tries < 4) do
-                nativeTeleport(oldPos)
-                tries = tries + 1
-                sleep(0.1)
-            end
-            setPlayerRespawnState(getLocalplayerID(), 7) --setting respawn to 7 gives back player control after getting stuck, unable to enter a car
+    end
+    sleep(0.4)
+    if getVehicleForPlayerID() ~= vehicleNetID or not localplayer:is_in_vehicle() then
+        print("Couldn't enter vehicle")
+        --Assume entering the vehicle failed
+        local tries = 0
+        while (tries < 4) do
+            nativeTeleport(oldPos)
+            tries = tries + 1
+            sleep(0.1)
         end
+        setPlayerRespawnState(getLocalplayerID(), 7) --setting respawn to 7 gives back player control after getting stuck, unable to enter a car
     end
     localplayer:set_freeze_momentum(false)
     localplayer:set_no_ragdoll(false)
@@ -1029,5 +1029,12 @@ function nativeTeleport(vector, headingVec)
         globals.set_int(baseGlobals.teleport.baseGlobalVehTrigger + 1 + (getLocalplayerID() * 463) + 232, -1)
     end
     coords_is_setting = false
+end
+
+------------------------------------ Request Control Of Vehicle ---------------------------------------------
+baseGlobals.requestControl = {}
+baseGlobals.requestControl.baseGlobal = 1977896
+function requestControlOfCurrentVehicle()
+    globals.set_bool(baseGlobals.requestControl.baseGlobal + 2, true)
 end
 

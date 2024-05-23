@@ -226,9 +226,29 @@ local function rcSpamThread()
 end
 menu.register_callback("startRCSpamThread", rcSpamThread)
 
------------------------------- Vehicle TP Options -----------------------------
+------------------------------ Misc Options -----------------------------
 greyText(vehicleOptionsSub, "------------ Misc -----------")
+-----------------------------------
+--Open all car doors
+--------------------------------
+local openTypes = { [0]="Unlock All", "Lock All"}
+local openType = 0
+vehicleOptionsSub:add_array_item("Car Doors State:", openTypes, function() return openType end, function(value)
+    openType = value
+    for veh in replayinterface.get_vehicles() do
+        if openTypes[openType] == "Unlock All" then
+            veh:set_door_lock_state(1)
+        else
+            veh:set_door_lock_state(2)
+        end
+    end
+end)
+
 vehicleOptionsSub:add_action("TP into last spawned car", function()
     local vehicleNetID = getNetIDOfLastSpawnedVehicle()
     if vehicleNetID then setPedIntoVehicle(getNetIDOfLastSpawnedVehicle(), localplayer:get_position()) end
 end)
+
+vehicleOptionsSub:add_action("Request Control of Current Car", function()
+    requestControlOfCurrentVehicle()
+end, function() return localplayer:is_in_vehicle() end)

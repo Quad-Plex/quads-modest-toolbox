@@ -981,10 +981,10 @@ local function playerInfo(plyId, sub, plyName)
             localplayer:set_freeze_momentum(true)
             localplayer:set_no_ragdoll(true)
             localplayer:set_config_flag(292, true)
-            if not ply:is_in_vehicle() then
+            if not ply:is_in_vehicle() then --Assume the player is in a vehicle (determined before this through blip type) so we teleport closer first to make sure the vehicle is loaded correctly
                 tpToPlayer(ply, -5)
             end
-            sleep(0.1)
+            sleep(0.12)
             setPedIntoVehicle(getVehicleForPlayerID(plyId), oldPos)
             if offRadarToggled then
                 offRadar()
@@ -1744,7 +1744,7 @@ end
 menu.register_callback('autoPedSpam', autoPedSpamThread)
 
 local function cargoSpamThread()
-    local vehicles = { "Cargoplane", "Jet", "Kosatka", "CableCar" } -- add your vehicle types here
+    local vehicles = { "Cargoplane", "Jet", "Kosatka" } -- add your vehicle types here
 
     while auto_action_player_id and auto_cargo_spam do
         if player.get_player_name(auto_action_player_id) ~= auto_action_player_name then

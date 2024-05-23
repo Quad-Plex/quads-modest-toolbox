@@ -60,22 +60,6 @@ end, function(value)
 end)
 
 --------------------------------
---Open all car doors
---------------------------------
-local openTypes = { [0]="Unlock All", "Lock All"}
-local openType = 0
-vehicleOptionsSub:add_array_item("Car Doors State:", openTypes, function() return openType end, function(value)
-    openType = value
-    for veh in replayinterface.get_vehicles() do
-        if openTypes[openType] == "Unlock All" then
-            veh:set_door_lock_state(1)
-        else
-            veh:set_door_lock_state(2)
-        end
-    end
-end)
-
---------------------------------
 --functions for carboost
 local _, cars_data = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/KNOWN_BOOSTED_CARS.json")
 
