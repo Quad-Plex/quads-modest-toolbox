@@ -106,6 +106,7 @@ local function NoClip(toggle)
 			end
 			hotkeys = {}
 			displayHudBanner("SG_CLIP", "PIM_NCL_PRIV0", "", 108)
+			oldGrav = nil
 		end
 	end
 end
