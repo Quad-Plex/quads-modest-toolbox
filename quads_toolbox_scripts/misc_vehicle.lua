@@ -248,7 +248,3 @@ vehicleOptionsSub:add_action("TP into last spawned car", function()
     local vehicleNetID = getNetIDOfLastSpawnedVehicle()
     if vehicleNetID then setPedIntoVehicle(getNetIDOfLastSpawnedVehicle(), localplayer:get_position()) end
 end)
-
-vehicleOptionsSub:add_action("Request Control of Current Car", function()
-    requestControlOfCurrentVehicle()
-end, function() return localplayer:is_in_vehicle() end)

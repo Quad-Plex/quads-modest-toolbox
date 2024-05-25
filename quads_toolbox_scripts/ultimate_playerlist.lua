@@ -154,7 +154,7 @@ local function preciseSlam()
     if vel.z < 0 then
         vel.z = 0
     end
-    createVehicle(joaat("Dump"), (slamPly:get_position() + (vel * 1.28) + vector3(0, 0, 38)))
+    createVehicle(joaat("Dump"), (slamPly:get_position() + (vel * 1.26) + vector3(0, 0, 38)))
     local found = false
     local tries = 0
     while (not found and tries < 20) do
@@ -978,9 +978,6 @@ local function playerInfo(plyId, sub, plyName)
                 offRadar()
                 offRadarToggled = true
             end
-            localplayer:set_freeze_momentum(true)
-            localplayer:set_no_ragdoll(true)
-            localplayer:set_config_flag(292, true)
             if not ply:is_in_vehicle() then --Assume the player is in a vehicle (determined before this through blip type) so we teleport closer first to make sure the vehicle is loaded correctly
                 tpToPlayer(ply, -5)
             end

@@ -307,20 +307,17 @@ function setPedIntoVehicle(vehicleNetID, oldPos)
     if (vehicleNetID and (vehicleNetID ~= 0)) then
         local i = 0
         repeat
-            localplayer:set_freeze_momentum(true)
-            localplayer:set_no_ragdoll(true)
-            localplayer:set_config_flag(292, true)
             i = i + 1
             globals.set_int(baseGlobals.setIntoVehicle.forceControl + 3184, vehicleNetID) --Network request control of entity
             setPlayerRespawnState(getLocalplayerID(), 5)
             globals.set_int(baseGlobals.setIntoVehicle.forceControl + 614, 5) --ped:set_ped_into_vehicle set in #1
-            if (i == 5) then
+            if (i == 8) then
                 break
             end
             sleep(0.11)
         until (getVehicleForPlayerID() == vehicleNetID)
     end
-    sleep(0.4)
+    sleep(0.5)
     if getVehicleForPlayerID() ~= vehicleNetID or not localplayer:is_in_vehicle() then
         print("Couldn't enter vehicle")
         --Assume entering the vehicle failed
@@ -1030,11 +1027,3 @@ function nativeTeleport(vector, headingVec)
     end
     coords_is_setting = false
 end
-
------------------------------------- Request Control Of Vehicle ---------------------------------------------
-baseGlobals.requestControl = {}
-baseGlobals.requestControl.baseGlobal = 1977896
-function requestControlOfCurrentVehicle()
-    globals.set_bool(baseGlobals.requestControl.baseGlobal + 2, true)
-end
-
