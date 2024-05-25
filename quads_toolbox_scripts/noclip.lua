@@ -22,6 +22,7 @@ local function move(direction)
 		nativeTeleport(initialPos)
 	else
 		nativeTeleport(initialPos, vector3(initialYawAngle, 0, initialPitchAngle))
+		initialHeading = localplayer:get_heading()
 	end
 end
 
@@ -31,18 +32,18 @@ local function rotate(amount, pitch)
 	if not localplayer:is_in_vehicle() then
 		initialRotation = initialRotation + vector3(amount,0,0)
 		entity:set_rotation(initialRotation)
-		initialHeading = localplayer:get_heading()
+		initialHeading = entity:get_heading()
 	else
 		if not pitch then
 			nativeTeleport(initialPos, vector3(initialYawAngle + amount * 90, 0, initialPitchAngle))
 			initialYawAngle = initialYawAngle + amount * 90
-			initialHeading = localplayer:get_heading()
+			initialHeading = entity:get_heading()
 		else
 			initialPitchAngle = initialPitchAngle + amount * 90
 			if initialPitchAngle > 89 then initialPitchAngle = 89 end
 			if initialPitchAngle < -89 then initialPitchAngle = -89 end
 			nativeTeleport(initialPos, vector3(initialYawAngle, 0, initialPitchAngle))
-			initialHeading = localplayer:get_heading()
+			initialHeading = entity:get_heading()
 		end
 	end
 end
@@ -95,7 +96,7 @@ local function NoClip(toggle)
 			displayHudBanner("SG_CLIP", "PIM_NCL_PRIV1", "", 108)
 		else
 			speed = 2
-			if oldGrav then
+			if oldGrav and localplayer:is_in_vehicle() and localplayer:get_current_vehicle():get_gravity() == 0 then
 				localplayer:get_current_vehicle():set_gravity(oldGrav)
 			end
 			localplayer:set_freeze_momentum(false)
@@ -107,6 +108,8 @@ local function NoClip(toggle)
 			hotkeys = {}
 			displayHudBanner("SG_CLIP", "PIM_NCL_PRIV0", "", 108)
 			oldGrav = nil
+			sleep(0.5)
+			setPlayerRespawnState(getLocalplayerID(), 4) --fix the vehicle being stuck
 		end
 	end
 end
