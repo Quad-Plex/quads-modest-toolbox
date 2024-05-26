@@ -15,6 +15,7 @@
 --Useful gfx strings:
 --AMCH_KMHN             - number with 'km/h'
 --AMCH_MPHN             - number with 'mph'
+--FM_ISC_RAT1           - number with percent symbol
 --FM_AE_SORT_3          - 'Speed'
 --MBA_YES               - 'yes'
 --MBA_NO                - 'no'
@@ -23,7 +24,6 @@
 --PIM_NCL_PRIV1         - 'enabled'
 --CANNON_CAM_ACTIVE     - 'Active'
 --CANNON_CAM_INACTIVE   - 'Inactive'
---FM_ISC_RAT1           - number with percent symbol
 --FMMC_NO               - just the given number
 --CELL_840              - 'Default'
 --MO_CCONF_2            - 'Alternate'
@@ -55,3 +55,4 @@
 --PIM_TINVE             - 'Inventory'
 --CC_BLUSH_0            - 'Full'
 --PM_PANE_KEYS          - 'Key Bindings'
+--PIM_GS_13             - 'Developers'
