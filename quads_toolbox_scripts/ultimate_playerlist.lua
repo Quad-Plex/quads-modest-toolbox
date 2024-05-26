@@ -991,7 +991,7 @@ local function playerInfo(plyId, sub, plyName)
             end
         end
     end, function()
-        return ply:is_in_vehicle() or getPlayerBlipType(plyId) == "VEHICLE" or getPlayerBlipType(plyId) == "PLANE GHOST" or getPlayerBlipType(plyId) == "ULTRALIGHT GHOST"
+        return ply:is_in_vehicle() and not localplayer:is_in_vehicle() or getPlayerBlipType(plyId) == "VEHICLE" or getPlayerBlipType(plyId) == "PLANE GHOST" or getPlayerBlipType(plyId) == "ULTRALIGHT GHOST"
     end)
     --Player Stats
     greyText(sub, centeredText("------ Player Stats ------"))
