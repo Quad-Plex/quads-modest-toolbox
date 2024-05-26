@@ -109,7 +109,9 @@ local function NoClip(toggle)
 			displayHudBanner("SG_CLIP", "PIM_NCL_PRIV0", "", 108)
 			oldGrav = nil
 			sleep(0.5)
-			setPlayerRespawnState(getLocalplayerID(), 4) --fix the vehicle being stuck
+			if localplayer:is_in_vehicle() then
+				setPlayerRespawnState(getLocalplayerID(), 4) --fix the vehicle being stuck
+			end
 		end
 	end
 end
