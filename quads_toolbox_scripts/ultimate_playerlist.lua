@@ -979,6 +979,9 @@ local function playerInfo(plyId, sub, plyName)
                 offRadarToggled = true
             end
             if not ply:is_in_vehicle() then --Assume the player is in a vehicle (determined before this through blip type) so we teleport closer first to make sure the vehicle is loaded correctly
+                localplayer:set_freeze_momentum(true)
+                localplayer:set_no_ragdoll(true)
+                localplayer:set_config_flag(292, true)
                 tpToPlayer(ply, -5)
             end
             sleep(0.12)
@@ -1780,7 +1783,9 @@ menu.register_callback('autoLaunch', autoLaunchThread)
 local function checkObviousModder(ply, plyName, i)
     if ply and ply:get_max_health() <= 0 or hasDevDLC(i) ~= 0 then
         marked_modders[plyName] = "detected"
-        displayHudBanner(ply:get_max_health() <= 0 and "VVHUD_GHOST" or "PIM_GS_13", "GBC_STPASS_CHE", "", 90)
+        if not playerlistSettings.disableModdersWarning then
+            displayHudBanner(ply:get_max_health() <= 0 and "VVHUD_GHOST" or "PIM_GS_13", "GBC_STPASS_CHE", "", 90)
+        end
         return true
     end
     return false
@@ -1827,8 +1832,8 @@ local function modWatcher()
                     modders_cache[plyName] = 0
                 end
             end
+            :: continue ::
         end
-        :: continue ::
         sleep(5)
     end
 end

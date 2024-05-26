@@ -307,6 +307,9 @@ function setPedIntoVehicle(vehicleNetID, oldPos)
     if (vehicleNetID and (vehicleNetID ~= 0)) then
         local i = 0
         repeat
+            localplayer:set_freeze_momentum(true)
+            localplayer:set_no_ragdoll(true)
+            localplayer:set_config_flag(292, true)
             i = i + 1
             globals.set_int(baseGlobals.setIntoVehicle.forceControl + 3184, vehicleNetID) --Network request control of entity
             setPlayerRespawnState(getLocalplayerID(), 5)
