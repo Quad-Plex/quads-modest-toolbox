@@ -228,6 +228,13 @@ function addVehicleSpawnMenu(ply, sub)
     end, function(n)
         godmodeEnabledSpawn = n
     end)
+
+    greyText(sub, "---------------------------")
+
+    sub:add_action("TP into last spawned car", function()
+        local vehicleNetID = getNetIDOfLastSpawnedVehicle()
+        if vehicleNetID then setPedIntoVehicle(getNetIDOfLastSpawnedVehicle(), localplayer:get_position()) end
+    end)
 end
 
 -------------------------------------------------------------
