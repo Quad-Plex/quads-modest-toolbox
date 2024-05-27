@@ -1833,6 +1833,13 @@ local function modWatcher()
             end
             :: continue ::
         end
+        if not statsInitialized then
+            initializeStats()
+        end
+        if statsInitialized then
+            print("Checking stats...")
+            checkForChanges()
+        end
         sleep(5)
     end
 end
