@@ -76,14 +76,14 @@ local function NoClip(toggle)
 					if not localplayer:is_in_vehicle() then
 						move(vector3(0,0,speed))
 					else
-						rotate(0.2, true)
+						rotate(-0.2, true)
 					end
 				end),
 				menu.register_hotkey(keycodes.CTRL_KEY, function()
 					if not localplayer:is_in_vehicle() then
 						move(vector3(0,0,speed * -1))
 					else
-						rotate(-0.2, true)
+						rotate(0.2, true)
 					end
 				end),
 				menu.register_hotkey(keycodes.W_KEY, function() move(initialHeading * speed) end),
