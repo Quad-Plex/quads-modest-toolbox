@@ -900,12 +900,11 @@ local function playerInfo(plyId, sub, plyName)
         if getScriptHostPlayerID() == plyId then
             txt = txt .. "HOST "
         end
-        if ply:get_godmode() then
-            if isInInterior(ply, plyId) and blipType ~= "INTERIOR" then
-                txt = txt .. "INTERIOR "
-            else
-                txt = txt .. "GOD "
-            end
+        if isInInterior(ply, plyId) and blipType ~= "INTERIOR" then
+            txt = txt .. "INTERIOR "
+        end
+        if ply:get_godmode() and not isInInterior(ply, plyId) then --Don't show godmode for players in an interior
+            txt = txt .. "GOD "
         end
         if hasDevDLC(plyId) ~= 0 then
             txt = txt .. "!DEV! "
