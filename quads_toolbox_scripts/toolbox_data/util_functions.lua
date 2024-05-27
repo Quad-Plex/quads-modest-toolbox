@@ -69,11 +69,11 @@ local function addVehicleEntry(vehMenu, vehicle, ply)
     vehMenu:add_action("Spawn using Method #1", function()
         local spawnPos = ply:get_position() + ply:get_heading() * 7
         createVehicle(vehicle[1], spawnPos)
-        if enterOnSpawn or vehicle[4] then
+        if (vehicle[4] == nil and enterOnSpawn) or (vehicle[4] ~= nil and vehicle[4]) then
             sleep(0.1)
             setPedIntoVehicle(getNetIDOfLastSpawnedVehicle(), localplayer:get_position())
         end
-        if godmodeEnabledSpawn or vehicle[3] then
+        if (vehicle[3] == nil and godmodeEnabledSpawn) or (vehicle[3] ~= nil and vehicle[3]) then
             sleep(0.1)
             findAndEnableGodmodeForVehicle(vehicle[1], spawnPos)
         end
@@ -81,10 +81,10 @@ local function addVehicleEntry(vehMenu, vehicle, ply)
     vehMenu:add_action("Spawn using Method #2", function()
         local spawnPos = ply:get_position() + ply:get_heading() * 7
         local spawnedVehicle = createVehicle(vehicle[1], spawnPos, nil, nil, nil, true)
-        if enterOnSpawn or vehicle[4] then
+        if (vehicle[4] == nil and enterOnSpawn) or (vehicle[4] ~= nil and vehicle[4]) then
             setPedIntoVehicle(spawnedVehicle, localplayer:get_position())
         end
-        if godmodeEnabledSpawn or vehicle[3] then
+        if (vehicle[3] == nil and godmodeEnabledSpawn) or (vehicle[3] ~= nil and vehicle[3]) then
             sleep(0.1)
             findAndEnableGodmodeForVehicle(vehicle[1], spawnPos)
         end
