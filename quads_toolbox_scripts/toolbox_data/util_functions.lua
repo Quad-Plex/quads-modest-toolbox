@@ -152,11 +152,13 @@ local function addVehicleEntry(vehMenu, vehicle, ply)
     end)
     vehMenu:add_toggle("Mark " .. vehicle[2][1] .. " as favorite", function() return isInFavorites(vehicle[1]) ~= false end, function(add)
         if add then
-            vehicle[2][3] = nil
+            local oldModData = vehicle[2][3]
+            vehicle[2][3] = nil --Don't want the mod data to be copied into the favorited_vehicles json so we exclude it temporarily from the object
             vehicle[3]=godmodeEnabledSpawn
             vehicle[4]=enterOnSpawn
             table.insert(favoritedCars, vehicle)
             json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/FAVORITED_CARS.json", favoritedCars)
+            vehicle[2][3] = oldModData
         else
             local isFavorite = isInFavorites(vehicle[1])
             if isFavorite then
@@ -202,10 +204,12 @@ function addVehicleSpawnMenu(ply, sub)
     sub:add_action("Add current vehicle to favorites", function()
         local currentVeh = ply:get_current_vehicle()
         local vehData = VEHICLE[currentVeh:get_model_hash()]
+        local oldModData = vehData[3] --Don't want the mod data to be copied into the favorited_vehicles json so we exclude it temporarily from the object
         vehData[3] = nil
         local vehicle = { currentVeh:get_model_hash(), vehData, false, false }
         table.insert(favoritedCars, vehicle)
         json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/FAVORITED_CARS.json", favoritedCars)
+        vehData[3] = oldModData
     end, function() return ply:is_in_vehicle() and #favoritedCars > 0 and not table.contains(favoritedCars, ply:get_current_vehicle():get_model_hash()) end)
 
     greyText(sub, "---------------------------")
