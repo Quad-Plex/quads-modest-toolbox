@@ -54,6 +54,86 @@ end, function(n)
 	displayboxtype = n
 	displayHudBanner("EPS_CASH", "~s~", 0, n, true)
 end)
+local function saveClosestVehicleModData(lastSpawnedVehicleHash)
+	local currentMods = {}
+	for i = 1, globals.get_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 9) do
+		currentMods[i] = tostring(globals.get_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 9 + i))
+	end
+	local modsResultString = table.concat(currentMods, ", ")
+
+	local spawnedVehicle
+	repeat
+		local minDistance
+		for veh in replayinterface.get_vehicles() do
+			local lastDistance = distanceBetween(localplayer, veh)
+			if not minDistance then
+				minDistance = lastDistance
+				spawnedVehicle = veh
+			elseif lastDistance < minDistance then
+				minDistance = lastDistance
+				spawnedVehicle = veh
+			end
+		end
+	until spawnedVehicle ~= nil
+	local spawnedVehicleHash = spawnedVehicle:get_model_hash()
+	if not lastSpawnedVehicleHash or spawnedVehicleHash ~= lastSpawnedVehicleHash then
+		if not VEHICLE[spawnedVehicleHash] then
+			print("!!!!! UNKNOWN HASH: " .. spawnedVehicleHash .. "Mods: " .. "\", {" .. modsResultString .. "}}")
+		else
+			print("VEHICLE[" .. spawnedVehicleHash .."] = { \"" .. VEHICLE[spawnedVehicleHash][1] .. "\", \""  .. VEHICLE[spawnedVehicleHash][2] .. "\", {" .. modsResultString .. "}}")
+		end
+	end
+	return spawnedVehicleHash
+end
+
+local function getNextVehicle(lastSpawnedVehicleHash)
+	for _=1, 8 do --Go to spawn button
+		menu.send_key_press(keycodes.NUMERIC_KEYPAD_8)
+		sleep(0.04)
+	end
+
+	menu.send_key_press(keycodes.NUMERIC_KEYPAD_5) --Spawn the car
+	sleep(0.2)
+
+	local spawnedVehicleHash = saveClosestVehicleModData(lastSpawnedVehicleHash)
+
+	for _=1, 8 do --Go back to model selection
+		menu.send_key_press(keycodes.NUMERIC_KEYPAD_2)
+		sleep(0.04)
+	end
+
+	return spawnedVehicleHash
+end
+
+debugToolsSub:add_action("Print mod data for closest vehicle", function()
+	saveClosestVehicleModData()
+end)
+greyText(debugToolsSub, "Spawn with 'Anonymous (maxed)' before using")
+
+----------------- Automatic mod data gathering for an entire category of cars, start with the cursor on the 'Model' option all the way to the left
+--menu.register_hotkey(keycodes.PAGE_DOWN_KEY, function()
+--	local lastSpawnedVehicleHash
+--	stopOuter = false
+--	repeat
+--		local stopInner = false
+--		if not lastSpawnedVehicleHash then lastSpawnedVehicleHash = getNextVehicle() end
+--		menu.send_key_press(keycodes.NUMERIC_KEYPAD_6) --Next Car in Selection
+--		sleep(0.04)
+--		local newSpawnedVehicleHash = getNextVehicle(lastSpawnedVehicleHash)
+--		if newSpawnedVehicleHash == lastSpawnedVehicleHash then
+--			stopInner = true
+--		else
+--			lastSpawnedVehicleHash = newSpawnedVehicleHash
+--		end
+--	until stopInner
+--	lastSpawnedVehicleHash = nil
+--	menu.send_key_press(keycodes.NUMERIC_KEYPAD_8)
+--	sleep(0.04)
+--	menu.send_key_press(keycodes.NUMERIC_KEYPAD_6)
+--	sleep(0.04)
+--	menu.send_key_press(keycodes.NUMERIC_KEYPAD_2)
+--	sleep(0.04)
+--end)
 
 greyText(toolboxSub, "--------------------------------------")
 

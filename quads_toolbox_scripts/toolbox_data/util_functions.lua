@@ -61,6 +61,19 @@ local function isInFavorites(veh_hash)
     return false
 end
 
+function generateRandomMods(inputTable)
+    local newTable = {}
+    for i, value in ipairs(inputTable) do
+        if value == -1 then
+            -- If the value is -1, keep it unchanged
+            newTable[i] = value
+        else
+            newTable[i] = math.random(0, value)
+        end
+    end
+    return newTable
+end
+
 local godmodeEnabledSpawn = false
 local enterOnSpawn = false
 local function addVehicleEntry(vehMenu, vehicle, ply)
@@ -78,9 +91,31 @@ local function addVehicleEntry(vehMenu, vehicle, ply)
             findAndEnableGodmodeForVehicle(vehicle[1], spawnPos)
         end
     end)
-    vehMenu:add_action("Spawn using Method #2", function()
+    vehMenu:add_action("Spawn using Method #2 (no mods)", function()
         local spawnPos = ply:get_position() + ply:get_heading() * 7
-        local spawnedVehicle = createVehicle(vehicle[1], spawnPos, nil, nil, nil, true)
+        local spawnedVehicle = createVehicle(vehicle[1], spawnPos, nil, nil, nil, true, false, false)
+        if (vehicle[4] == nil and enterOnSpawn) or (vehicle[4] ~= nil and vehicle[4]) then
+            setPedIntoVehicle(spawnedVehicle, localplayer:get_position())
+        end
+        if (vehicle[3] == nil and godmodeEnabledSpawn) or (vehicle[3] ~= nil and vehicle[3]) then
+            sleep(0.1)
+            findAndEnableGodmodeForVehicle(vehicle[1], spawnPos)
+        end
+    end)
+    vehMenu:add_action("Spawn using Method #2 (MAX mods)", function()
+        local spawnPos = ply:get_position() + ply:get_heading() * 7
+        local spawnedVehicle = createVehicle(vehicle[1], spawnPos, nil, nil, VEHICLE[vehicle[1]][3], true, false, true)
+        if (vehicle[4] == nil and enterOnSpawn) or (vehicle[4] ~= nil and vehicle[4]) then
+            setPedIntoVehicle(spawnedVehicle, localplayer:get_position())
+        end
+        if (vehicle[3] == nil and godmodeEnabledSpawn) or (vehicle[3] ~= nil and vehicle[3]) then
+            sleep(0.1)
+            findAndEnableGodmodeForVehicle(vehicle[1], spawnPos)
+        end
+    end)
+    vehMenu:add_action("Spawn using Method #2 (RANDOM mods)", function()
+        local spawnPos = ply:get_position() + ply:get_heading() * 7
+        local spawnedVehicle = createVehicle(vehicle[1], spawnPos, nil, nil, generateRandomMods(VEHICLE[vehicle[1]][3]), true, true, false)
         if (vehicle[4] == nil and enterOnSpawn) or (vehicle[4] ~= nil and vehicle[4]) then
             setPedIntoVehicle(spawnedVehicle, localplayer:get_position())
         end
@@ -117,6 +152,7 @@ local function addVehicleEntry(vehMenu, vehicle, ply)
     end)
     vehMenu:add_toggle("Mark " .. vehicle[2][1] .. " as favorite", function() return isInFavorites(vehicle[1]) ~= false end, function(add)
         if add then
+            vehicle[2][3] = nil
             vehicle[3]=godmodeEnabledSpawn
             vehicle[4]=enterOnSpawn
             table.insert(favoritedCars, vehicle)
@@ -140,6 +176,16 @@ local function buildFavoriteVehiclesSub(ply, categorySub)
     end
 end
 
+local function countCategory(category)
+    local count = 0
+    for _, v in pairs(VEHICLE) do
+        if v[2] == category then
+            count = count + 1
+        end
+    end
+    return count
+end
+
 --Create Vehicle Spawn Menu
 function addVehicleSpawnMenu(ply, sub)
     sub:clear()
@@ -156,15 +202,34 @@ function addVehicleSpawnMenu(ply, sub)
     sub:add_action("Add current vehicle to favorites", function()
         local currentVeh = ply:get_current_vehicle()
         local vehData = VEHICLE[currentVeh:get_model_hash()]
+        vehData[3] = nil
         local vehicle = { currentVeh:get_model_hash(), vehData, false, false }
         table.insert(favoritedCars, vehicle)
         json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/FAVORITED_CARS.json", favoritedCars)
     end, function() return ply:is_in_vehicle() and #favoritedCars > 0 and not table.contains(favoritedCars, ply:get_current_vehicle():get_model_hash()) end)
+
     greyText(sub, "---------------------------")
     -- vehicle = { hash, { name, class} }
-    for _, vehicle in ipairs(sorted_vehicles) do
+    for index, vehicle in ipairs(sorted_vehicles) do --Populate sub with vehicle categories, and fill the categories with all cars belonging to that category
         if not vehSubs[vehicle[2][2]] then
             vehSubs[vehicle[2][2]] = sub:add_submenu(vehicle[2][2])
+            vehSubs[vehicle[2][2]]:add_action("Spawn randomized " .. vehicle[2][2] .. " vehicle", function()
+                local min_veh_number = index
+                local max_veh_number = min_veh_number + countCategory(vehicle[2][2])
+                local spawnPos = ply:get_position() + ply:get_heading() * 7
+                local selection = math.random(min_veh_number, max_veh_number)
+                createVehicle(sorted_vehicles[selection][1], spawnPos, nil, skip_remove, generateRandomMods(VEHICLE[sorted_vehicles[selection][1]][3]), true, true, false)
+                local spawnedModel = sorted_vehicles[selection][1]
+                if enterOnSpawn then
+                    sleep(0.1)
+                    setPedIntoVehicle(getNetIDOfLastSpawnedVehicle(), localplayer:get_position())
+                end
+                if godmodeEnabledSpawn and ply:is_in_vehicle() then
+                    sleep(0.1)
+                    findAndEnableGodmodeForVehicle(spawnedModel, spawnPos)
+                end
+            end)
+            greyText(vehSubs[vehicle[2][2]], "---------------------------")
         end
         local vehSub
         vehSub = vehSubs[vehicle[2][2]]:add_submenu(vehicle[2][1], function() addVehicleEntry(vehSub, vehicle, ply) end)
@@ -172,7 +237,7 @@ function addVehicleSpawnMenu(ply, sub)
 
     greyText(sub, "---------------------------")
 
-    sub:add_action("Spawn Random Vehicle", function()
+    sub:add_action("Spawn Randomized Vehicle", function()
         local spawnPos = ply:get_position() + ply:get_heading() * 7
         local spawnedModel = giveRandomVehicle(ply)
         if enterOnSpawn then
@@ -206,9 +271,43 @@ function addVehicleSpawnMenu(ply, sub)
             findAndEnableGodmodeForVehicle(minDistanceVeh:get_model_hash(), spawnPos)
         end
     end)
+    sub:add_action("Duplicate nearest Vehicle (MAXED)", function()
+        local minDistance = 5000
+        local minDistanceVeh
+        local ownVeh = ply:is_in_vehicle() and ply:get_current_vehicle()
+        for veh in replayinterface.get_vehicles() do
+            local distance = distanceBetween(ply, veh)
+            if distance < minDistance and (not ownVeh or (ownVeh:get_model_hash() ~= veh:get_model_hash())) then
+                minDistance = distance
+                minDistanceVeh = veh
+            end
+        end
+        local spawnPos = ply:get_position() + ply:get_heading() * 7
+        createVehicle(minDistanceVeh:get_model_hash(), spawnPos, math.deg(math.atan(ply:get_heading().y, ply:get_heading().x)), nil, VEHICLE[minDistanceVeh:get_model_hash()][3], true, false, true)
+        if enterOnSpawn then
+            sleep(0.1)
+            setPedIntoVehicle(getNetIDOfLastSpawnedVehicle(), localplayer:get_position())
+        end
+        if godmodeEnabledSpawn and ply:is_in_vehicle() then
+            sleep(0.1)
+            findAndEnableGodmodeForVehicle(minDistanceVeh:get_model_hash(), spawnPos)
+        end
+    end)
     sub:add_action("Duplicate current Vehicle", function()
         local spawnPos = ply:get_position() + ply:get_heading() * 7
         createVehicle(ply:get_current_vehicle():get_model_hash(), spawnPos, math.deg(math.atan(ply:get_heading().y, ply:get_heading().x)))
+        if enterOnSpawn then
+            sleep(0.1)
+            setPedIntoVehicle(getNetIDOfLastSpawnedVehicle(), localplayer:get_position())
+        end
+        if godmodeEnabledSpawn and ply:is_in_vehicle() then
+            sleep(0.1)
+            findAndEnableGodmodeForVehicle(ply:get_current_vehicle():get_model_hash(), spawnPos)
+        end
+    end, function() return ply:is_in_vehicle() end)
+    sub:add_action("Duplicate current Vehicle (MAXED)", function()
+        local spawnPos = ply:get_position() + ply:get_heading() * 7
+        createVehicle(ply:get_current_vehicle():get_model_hash(), spawnPos, math.deg(math.atan(ply:get_heading().y, ply:get_heading().x)), nil, VEHICLE[ply:get_current_vehicle():get_model_hash()][3], true, false, true)
         if enterOnSpawn then
             sleep(0.1)
             setPedIntoVehicle(getNetIDOfLastSpawnedVehicle(), localplayer:get_position())

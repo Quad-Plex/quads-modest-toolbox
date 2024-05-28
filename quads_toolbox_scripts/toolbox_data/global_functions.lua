@@ -92,6 +92,8 @@ menu.register_callback('OnScriptsLoaded', OnScriptsLoadedGlobal)
 
 -----------------------------------------------------------------------------
 ------------------------ Vehicle Spawners -----------------------------------
+local noMods = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}
+
 baseGlobals.vehicleSpawner = {}
 baseGlobals.vehicleSpawner.baseGlobal = 2640095
 baseGlobals.vehicleSpawner.testFunction = function()
@@ -117,7 +119,7 @@ function getNetIDOfLastSpawnedVehicle()
     return globals.get_int(baseGlobals.vehicleSpawnerNetID.vehNetIDGlobal + 6762)
 end
 
-function createVehicle(modelHash, pos, heading, skip_remove_current, mod, alternative_spawn_toggle)
+function createVehicle(modelHash, pos, heading, skip_remove_current, mod, alternative_spawn_toggle, random_details, max_details)
     if not type(modelHash):match("number") then
         modelHash = joaat(modelHash)
     end
@@ -142,123 +144,74 @@ function createVehicle(modelHash, pos, heading, skip_remove_current, mod, altern
     if not vehicle_is_creating then
         vehicle_is_creating = true
         if (not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 2) and not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 5)) then
-            globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 5, -1) --primary color selection
-            globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 6, -1) --secondary color selection
-            globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 7, -1) --pearlescent color selection
-            globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 8, -1) --wheel color selection
-            if type(mod):match("table") then
-                --Write each mod integer into the globals in an array
-                for i = 1, globals.get_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 9) do
-                    --see eVehicleModType
-                    globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 9 + i, mod[i])
-                end
+            local primaryColor = random_details and math.random(0, 160) or (max_details and 159 or 0)
+            globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 5, primaryColor) --primary color selection (see eVehicleColor)
+            local secondaryColor = random_details and math.random(0, 160) or (max_details and 159 or 0)
+            globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 6, secondaryColor) --secondary color selection
+            local pearlescentColor = random_details and math.random(0, 160) or (max_details and 159 or 0)
+            globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 7, pearlescentColor) --pearlescent color selection
+            local wheelColor = random_details and math.random(0, 160) or (max_details and 159 or 0)
+            globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 8, wheelColor) --wheel color selection
+            if not mod then
+                mod = noMods
+            end
+            --Write each mod integer into the globals in an array
+            for i = 1, globals.get_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 9) do
+                --see eVehicleModType
+                globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 9 + i, mod[i])
             end
             globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 62, math.random(0, 255)) --VEHICLE::SET_VEHICLE_TYRE_SMOKE_COLOR Red
             globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 63, math.random(0, 255)) --Green
             globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 64, math.random(0, 255)) --Blue
+            local windowTint = random_details and math.random(0, 4) or (max_details and 3 or 0)
+            globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 65, windowTint) --Window Tint
             globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 66, modelHash) --veh hash
-            globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 69, -1) --veh wheel type (category) see eVehicleWheelType
+            local vehWheelType = random_details and math.random(0, 12) or (max_details and 12 or 0)
+            globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 69, vehWheelType) --veh wheel type (category) see eVehicleWheelType
+            --globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 71, math.random(0, 255)) --Custom Primary/Secondary Color Red
+            --globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 72, math.random(0, 255)) --Green
+            --globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 73, math.random(0, 255)) --Blue (has to be enabled via flag in f_77)
             globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 74, math.random(0, 255)) --Neon color Red
             globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 75, math.random(0, 255)) --Green
             globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 76, math.random(0, 255)) --Blue
-            --globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 71, math.random(0, 255)) --Custom Primary/Secondary Color Red
-            --globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 72, math.random(0, 255)) --Green
-            --globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 73, math.random(0, 255)) --Blue (has to be enabled via flag)
             globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 77, -264240640) --Bit-Storage for veh flags 0-8: veh-specific, reserved, 9:bulletproof tires, 10: bool vehicle_is_stolen,  12: custom secondary color, 13: custom primary color, 27: bool IgnoredByQuickSave decor 28: Neon Front, 29: Neon Back, 30: Neon Left, 31: Neon Right
+            globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 79, 1) --custom Horn
+            local dirtLevel = random_details and math.random() or 0
+            globals.set_float(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 80, dirtLevel) --Dirt Level (Float between 0 and 1.0)
             globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 94, 4) --0: nil, 1: set decor player_vehicle, 2: set decor veh_modded_by_player
             globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 95, 15) --Bit-Storage for previous global (1111)
+            local interiorColor = random_details and math.random(0, 160) or (max_details and 159 or 0)
+            globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 97, interiorColor) --Interior Color
+            local dashboardColor = random_details and math.random(0, 160) or (max_details and 159 or 0)
+            globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 97, dashboardColor) --Dashboard Interior Color
+            local wheelType = random_details and math.random(1, 3) or (max_details and 1 or 2)
+            globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 102, wheelType) --Wheel Upgrade (2=Standard, 1=Bulletproof, 3=drift tyres)
             if not skip_remove_current then
                 globals.set_float(baseGlobals.vehicleSpawner2.baseGlobal2 + 7 + 0, pos.x) --Spawn location xyz
                 globals.set_float(baseGlobals.vehicleSpawner2.baseGlobal2 + 7 + 1, pos.y)
                 globals.set_float(baseGlobals.vehicleSpawner2.baseGlobal2 + 7 + 2, -255)
                 globals.set_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 2, true) --Spawn trigger #1
                 globals.set_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 5, true) --Spawn trigger #2
+                local counter = 0
                 repeat
-                until (not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 2) and not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 5)) --Wait for under-map spawn to complete
+                    counter = counter + 1
+                until (not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 2) and not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 5)) or counter > 420069 --Wait for under-map spawn to complete
             end
             globals.set_float(baseGlobals.vehicleSpawner2.baseGlobal2 + 7 + 0, pos.x)
             globals.set_float(baseGlobals.vehicleSpawner2.baseGlobal2 + 7 + 1, pos.y)
             globals.set_float(baseGlobals.vehicleSpawner2.baseGlobal2 + 7 + 2, pos.z)
             globals.set_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 2, true) --Spawn trigger #1
             globals.set_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 5, true) --Spawn trigger #2
+            local counter = 0
             repeat
-            until (not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 2) and not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 5)) --Spawn again at correct coords, removing any vehicle in the way
+                counter = counter + 1
+            until (not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 2) and not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 5)) or counter > 420069 --Spawn again at correct coords, removing any vehicle in the way
         end
         vehicle_is_creating = nil
         return getNetIDOfLastSpawnedVehicle()
     end
 end
 --thanks to @Alice2333 on UKC for showing me the second spawner code
-
---{5, 3, -1, 6, 3, 1, -1, -1, -1, -1, -1, 4, 3, 3, 58, 4, 5, 1, 1, 1, 1, 1, math.random(0, 14), 217, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 15}
-local eVehicleModType = {
-    VMT_SPOILER = 0,
-    VMT_BUMPER_F = 1,
-    VMT_BUMPER_R = 2,
-    VMT_SKIRT = 3,
-    VMT_EXHAUST = 4,
-    VMT_CHASSIS = 5,
-    VMT_GRILL = 6,
-    VMT_BONNET = 7,
-    VMT_WING_L = 8,
-    VMT_WING_R = 9,
-    VMT_ROOF = 10,
-    VMT_ENGINE = 11,
-    VMT_BRAKES = 12,
-    VMT_GEARBOX = 13,
-    VMT_HORN = 14,
-    VMT_SUSPENSION = 15,
-    VMT_ARMOUR = 16,
-    VMT_NITROUS = 17,
-    VMT_TURBO = 18,
-    VMT_SUBWOOFER = 19,
-    VMT_TYRE_SMOKE = 20,
-    VMT_HYDRAULICS = 21,
-    VMT_XENON_LIGHTS = 22,
-    VMT_WHEELS = 23,
-    VMT_WHEELS_REAR_OR_HYDRAULICS = 24,
-    VMT_PLTHOLDER = 25,
-    VMT_PLTVANITY = 26,
-    VMT_INTERIOR1 = 27,
-    VMT_INTERIOR2 = 28,
-    VMT_INTERIOR3 = 29,
-    VMT_INTERIOR4 = 30,
-    VMT_INTERIOR5 = 31,
-    VMT_SEATS = 32,
-    VMT_STEERING = 33,
-    VMT_KNOB = 34,
-    VMT_PLAQUE = 35,
-    VMT_ICE = 36,
-    VMT_TRUNK = 37,
-    VMT_HYDRO = 38,
-    VMT_ENGINEBAY1 = 39,
-    VMT_ENGINEBAY2 = 40,
-    VMT_ENGINEBAY3 = 41,
-    VMT_CHASSIS2 = 42,
-    VMT_CHASSIS3 = 43,
-    VMT_CHASSIS4 = 44,
-    VMT_CHASSIS5 = 45,
-    VMT_DOOR_L = 46,
-    VMT_DOOR_R = 47,
-    VMT_LIVERY_MOD = 48,
-    VMT_LIGHTBAR = 49,
-}
-
-local eVehicleWheelType = {
-    VWT_SPORT = 0,
-    VWT_MUSCLE = 1,
-    VWT_LOWRIDER = 2,
-    VWT_SUV = 3,
-    VWT_OFFROAD = 4,
-    VWT_TUNER = 5,
-    VWT_BIKE = 6,
-    VWT_HIEND = 7,
-    VWT_SUPERMOD1 = 8, --Benny's Original
-    VWT_SUPERMOD2 = 9, --Benny's Bespoke
-    VWT_SUPERMOD3 = 10, --Open Wheel
-    VWT_SUPERMOD4 = 11, --Street
-    VWT_SUPERMOD5 = 12, --Track
-}
 
 ------------------------------------------------------------------------------------------------
 ----------------------------------- set ped into vehicle ---------------------------------------

@@ -6,6 +6,9 @@ TODO:
 - More testing with the invisible MOC maybe
 
 DONE:
+- ~~Ability to Spawn cars with modifications (none, random or max mods)~~
+  - ~~Complete hardcoded max mods values for all car hashes + cleanup~~
+- ~~Detection/Notification for changed reports stats~~
 - ~~noclip updated for native vehicle tp using entity:set_entity_position and entity:set_entity_rotation~~
 - ~~Add native teleport with vehicle (BIG THANKS to Alice2333 on UKC)~~
 - ~~Add duplicate/clone/save near/current vehicle to favorites~~~~~~

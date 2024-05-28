@@ -473,22 +473,16 @@ local function giveRandomBike(ply)
 end
 
 function giveRandomVehicle(ply, pos, skip_remove)
-    if not ply or ply == nil then
-        return
-    end
+    if not ply or ply == nil then return end
 
     if not pos then
         pos = ply:get_position() + ply:get_heading() * 7
     end
 
-    local vector = ply:get_heading()
-    local angle = math.deg(math.atan(vector.y, vector.x))
-
     --             [1]    [2][1]  [2][2]
     -- vehicle = { hash, { name, class} }
     local selection = math.random(#sorted_vehicles)
-    print("Giving vehicle: " .. sorted_vehicles[selection][2][1])
-    createVehicle(sorted_vehicles[selection][1], pos, angle, skip_remove)
+    createVehicle(sorted_vehicles[selection][1], pos, nil, skip_remove, generateRandomMods(VEHICLE[sorted_vehicles[selection][1]][3]), true, true, false)
     return sorted_vehicles[selection][1]
 end
 
@@ -1837,7 +1831,6 @@ local function modWatcher()
             initializeStats()
         end
         if statsInitialized then
-            print("Checking stats...")
             checkForChanges()
         end
         sleep(5)

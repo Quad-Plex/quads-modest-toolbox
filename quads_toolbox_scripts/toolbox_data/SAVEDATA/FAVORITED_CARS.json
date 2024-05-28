@@ -1,14 +1,5 @@
 [
   [
-    777714999,
-    [
-      "Ruiner3",
-      "Sport"
-    ],
-    true,
-    true
-  ],
-  [
     -129283887,
     [
       "Phantom Christmas",
@@ -43,5 +34,14 @@
     ],
     true,
     true
+  ],
+  [
+    777714999,
+    [
+      "Ruined Ruiner",
+      "Muscle"
+    ],
+    false,
+    false
   ]
 ]
