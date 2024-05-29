@@ -5,6 +5,7 @@ TODO:
 - More testing with the invisible MOC maybe
 
 DONE:
+- ~~Figure out how to change vehicle light color during spawn FIXED~~
 - ~~Add disable traffic/player collision option~~
 - ~~Ability to Spawn cars with modifications (none, random or max mods)~~
   - ~~Complete hardcoded max mods values for all car hashes + cleanup~~
