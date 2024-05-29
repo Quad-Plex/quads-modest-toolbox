@@ -87,6 +87,9 @@ local function addVehicleEntry(vehMenu, vehicle, ply)
             setPedIntoVehicle(getNetIDOfLastSpawnedVehicle(), localplayer:get_position())
         end
         if (vehicle[3] == nil and godmodeEnabledSpawn) or (vehicle[3] ~= nil and vehicle[3]) then
+            if (vehicle[4] == nil and enterOnSpawn) or (vehicle[4] ~= nil and vehicle[4]) then
+                sleep(3) --there is a weird timeout after tping into a car where it will be godmoded, but lose godmode after ~3sec, so we need to wait for that long to re-apply gm so it sticks
+            end
             sleep(0.1)
             findAndEnableGodmodeForVehicle(vehicle[1], spawnPos)
         end
@@ -98,6 +101,9 @@ local function addVehicleEntry(vehMenu, vehicle, ply)
             setPedIntoVehicle(spawnedVehicle, localplayer:get_position())
         end
         if (vehicle[3] == nil and godmodeEnabledSpawn) or (vehicle[3] ~= nil and vehicle[3]) then
+            if (vehicle[4] == nil and enterOnSpawn) or (vehicle[4] ~= nil and vehicle[4]) then
+                sleep(3) --there is a weird timeout after tping into a car where it will be godmoded, but lose godmode after ~3sec, so we need to wait for that long to re-apply gm so it sticks
+            end
             sleep(0.1)
             findAndEnableGodmodeForVehicle(vehicle[1], spawnPos)
         end
@@ -109,6 +115,9 @@ local function addVehicleEntry(vehMenu, vehicle, ply)
             setPedIntoVehicle(spawnedVehicle, localplayer:get_position())
         end
         if (vehicle[3] == nil and godmodeEnabledSpawn) or (vehicle[3] ~= nil and vehicle[3]) then
+            if (vehicle[4] == nil and enterOnSpawn) or (vehicle[4] ~= nil and vehicle[4]) then
+                sleep(3) --there is a weird timeout after tping into a car where it will be godmoded, but lose godmode after ~3sec, so we need to wait for that long to re-apply gm so it sticks
+            end
             sleep(0.1)
             findAndEnableGodmodeForVehicle(vehicle[1], spawnPos)
         end
@@ -120,6 +129,9 @@ local function addVehicleEntry(vehMenu, vehicle, ply)
             setPedIntoVehicle(spawnedVehicle, localplayer:get_position())
         end
         if (vehicle[3] == nil and godmodeEnabledSpawn) or (vehicle[3] ~= nil and vehicle[3]) then
+            if (vehicle[4] == nil and enterOnSpawn) or (vehicle[4] ~= nil and vehicle[4]) then
+                sleep(3) --there is a weird timeout after tping into a car where it will be godmoded, but lose godmode after ~3sec, so we need to wait for that long to re-apply gm so it sticks
+            end
             sleep(0.1)
             findAndEnableGodmodeForVehicle(vehicle[1], spawnPos)
         end
@@ -228,10 +240,23 @@ function addVehicleSpawnMenu(ply, sub)
                     sleep(0.1)
                     setPedIntoVehicle(getNetIDOfLastSpawnedVehicle(), localplayer:get_position())
                 end
-                if godmodeEnabledSpawn and ply:is_in_vehicle() then
+                if godmodeEnabledSpawn then
+                    if enterOnSpawn then
+                        sleep(3) --there is a weird timeout after tping into a car where it will be godmoded, but lose godmode after ~3sec, so we need to wait for that long to re-apply gm so it sticks
+                    end
                     sleep(0.1)
                     findAndEnableGodmodeForVehicle(spawnedModel, spawnPos)
                 end
+            end)
+            vehSubs[vehicle[2][2]]:add_toggle("Immediately enter when spawning", function()
+                return enterOnSpawn
+            end, function(n)
+                enterOnSpawn = n
+            end)
+            vehSubs[vehicle[2][2]]:add_toggle("Spawn with Godmode enabled", function()
+                return godmodeEnabledSpawn
+            end, function(n)
+                godmodeEnabledSpawn = n
             end)
             greyText(vehSubs[vehicle[2][2]], "---------------------------")
         end
@@ -248,7 +273,10 @@ function addVehicleSpawnMenu(ply, sub)
             sleep(0.1)
             setPedIntoVehicle(getNetIDOfLastSpawnedVehicle(), localplayer:get_position())
         end
-        if godmodeEnabledSpawn and ply:is_in_vehicle() then
+        if godmodeEnabledSpawn then
+            if enterOnSpawn then
+                sleep(3) --there is a weird timeout after tping into a car where it will be godmoded, but lose godmode after ~3sec, so we need to wait for that long to re-apply gm so it sticks
+            end
             sleep(0.1)
             findAndEnableGodmodeForVehicle(spawnedModel, spawnPos)
         end
@@ -270,7 +298,10 @@ function addVehicleSpawnMenu(ply, sub)
             sleep(0.1)
             setPedIntoVehicle(getNetIDOfLastSpawnedVehicle(), localplayer:get_position())
         end
-        if godmodeEnabledSpawn and ply:is_in_vehicle() then
+        if godmodeEnabledSpawn then
+            if enterOnSpawn then
+                sleep(3) --there is a weird timeout after tping into a car where it will be godmoded, but lose godmode after ~3sec, so we need to wait for that long to re-apply gm so it sticks
+            end
             sleep(0.1)
             findAndEnableGodmodeForVehicle(minDistanceVeh:get_model_hash(), spawnPos)
         end
@@ -292,7 +323,10 @@ function addVehicleSpawnMenu(ply, sub)
             sleep(0.1)
             setPedIntoVehicle(getNetIDOfLastSpawnedVehicle(), localplayer:get_position())
         end
-        if godmodeEnabledSpawn and ply:is_in_vehicle() then
+        if godmodeEnabledSpawn then
+            if enterOnSpawn then
+                sleep(3) --there is a weird timeout after tping into a car where it will be godmoded, but lose godmode after ~3sec, so we need to wait for that long to re-apply gm so it sticks
+            end
             sleep(0.1)
             findAndEnableGodmodeForVehicle(minDistanceVeh:get_model_hash(), spawnPos)
         end
@@ -304,7 +338,10 @@ function addVehicleSpawnMenu(ply, sub)
             sleep(0.1)
             setPedIntoVehicle(getNetIDOfLastSpawnedVehicle(), localplayer:get_position())
         end
-        if godmodeEnabledSpawn and ply:is_in_vehicle() then
+        if godmodeEnabledSpawn then
+            if enterOnSpawn then
+                sleep(3) --there is a weird timeout after tping into a car where it will be godmoded, but lose godmode after ~3sec, so we need to wait for that long to re-apply gm so it sticks
+            end
             sleep(0.1)
             findAndEnableGodmodeForVehicle(ply:get_current_vehicle():get_model_hash(), spawnPos)
         end
@@ -316,7 +353,10 @@ function addVehicleSpawnMenu(ply, sub)
             sleep(0.1)
             setPedIntoVehicle(getNetIDOfLastSpawnedVehicle(), localplayer:get_position())
         end
-        if godmodeEnabledSpawn and ply:is_in_vehicle() then
+        if godmodeEnabledSpawn then
+            if enterOnSpawn then
+                sleep(3) --there is a weird timeout after tping into a car where it will be godmoded, but lose godmode after ~3sec, so we need to wait for that long to re-apply gm so it sticks
+            end
             sleep(0.1)
             findAndEnableGodmodeForVehicle(ply:get_current_vehicle():get_model_hash(), spawnPos)
         end
