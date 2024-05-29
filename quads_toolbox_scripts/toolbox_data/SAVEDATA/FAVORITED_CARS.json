@@ -51,7 +51,7 @@
       "Off-Road"
     ],
     true,
-    true
+    false
   ],
   [
     -654498607,
@@ -60,6 +60,6 @@
       "Muscle"
     ],
     false,
-    false
+    true
   ]
 ]
