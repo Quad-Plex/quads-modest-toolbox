@@ -219,7 +219,7 @@ function addVehicleSpawnMenu(ply, sub)
             vehSubs[vehicle[2][2]] = sub:add_submenu(vehicle[2][2])
             vehSubs[vehicle[2][2]]:add_action("Spawn randomized " .. vehicle[2][2] .. " vehicle", function()
                 local min_veh_number = index
-                local max_veh_number = min_veh_number + countCategory(vehicle[2][2])
+                local max_veh_number = min_veh_number + countCategory(vehicle[2][2]) - 1
                 local spawnPos = ply:get_position() + ply:get_heading() * 7
                 local selection = math.random(min_veh_number, max_veh_number)
                 createVehicle(sorted_vehicles[selection][1], spawnPos, nil, skip_remove, generateRandomMods(VEHICLE[sorted_vehicles[selection][1]][3]), true, true, false)
