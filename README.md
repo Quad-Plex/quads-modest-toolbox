@@ -1,11 +1,11 @@
 TODO:
-- Add vehicle mod options (LOT of work... idk)
 - See if GPS coordinates can be controlled through globals, then add a 'Track Player with GPS' option
   - Hmmm... Can't find it in globals or the scripts I've implemented in my scanner so far, might not be possible
 - Add Readme and FAQ description for unclear actions
 - More testing with the invisible MOC maybe
 
 DONE:
+- ~~Add disable traffic/player collision option~~
 - ~~Ability to Spawn cars with modifications (none, random or max mods)~~
   - ~~Complete hardcoded max mods values for all car hashes + cleanup~~
 - ~~Detection/Notification for changed reports stats~~

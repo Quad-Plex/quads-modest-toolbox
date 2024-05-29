@@ -1,4 +1,28 @@
 --------------------------------
+--traffic noclip
+--------------------------------
+local trafficNoclipToggle = false
+function vehicleNoclipThread()
+    if not localplayer:is_in_vehicle() then trafficNoclipToggle = false end
+    while trafficNoclipToggle do
+        if not localplayer:is_in_vehicle() or localplayer:get_health() == 0 then
+            trafficNoclipToggle = false
+            return
+        end
+        setPlayerRespawnState(getLocalplayerID(), 9)
+        sleep(3.2) --The effect sticks around a bit so we don't need to spam it that hard
+    end
+end
+menu.register_callback('vehicleNoclip', vehicleNoclipThread)
+
+vehicleOptionsSub:add_toggle("Disable Traffic/Player Collisions", function()
+    return trafficNoclipToggle
+end, function(value)
+    trafficNoclipToggle = value
+    menu.emit_event('vehicleNoclip')
+end)
+
+--------------------------------
 --remove traffic loop
 --------------------------------
 local removeTrafficToggle = false
