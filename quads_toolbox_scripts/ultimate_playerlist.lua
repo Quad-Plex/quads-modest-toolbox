@@ -1450,6 +1450,7 @@ local function addSessionOptions(sub)
             local ply = player.get_player_ped(i)
             if ply then
                 sendBounty(i, bounty_numbers[current_bounty_number], true)
+                sleep(0.3)
             end
         end
         resetOverrideBounty()
