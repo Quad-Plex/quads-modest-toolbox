@@ -184,18 +184,18 @@ function createVehicle(modelHash, pos, heading, skip_remove_current, mod, altern
             globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 97, interiorColor) --Interior Color
             local dashboardColor = random_details and math.random(0, 160) or (max_details and 159 or 0)
             globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 97, dashboardColor) --Dashboard Interior Color
-            local wheelType = random_details and math.random(1, 3) or (max_details and 1 or 2)
-            globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 102, wheelType) --Wheel Upgrade (2=Standard, 1=Bulletproof, 3=drift tyres)
+            --local wheelType = random_details and math.random(1, 3) or (max_details and 1 or 2)
+            globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 102, 1) --Wheel Upgrade (2=Standard, 1=Bulletproof, 3=drift tyres)
             if not skip_remove_current then
                 globals.set_float(baseGlobals.vehicleSpawner2.baseGlobal2 + 7 + 0, pos.x) --Spawn location xyz
                 globals.set_float(baseGlobals.vehicleSpawner2.baseGlobal2 + 7 + 1, pos.y)
-                globals.set_float(baseGlobals.vehicleSpawner2.baseGlobal2 + 7 + 2, -255)
+                globals.set_float(baseGlobals.vehicleSpawner2.baseGlobal2 + 7 + 2, -300)
                 globals.set_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 2, true) --Spawn trigger #1
                 globals.set_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 5, true) --Spawn trigger #2
                 local counter = 0
                 repeat
                     counter = counter + 1
-                until (not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 2) and not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 5)) or counter > 420069 --Wait for under-map spawn to complete
+                until (not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 2) and not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 5)) or counter > 426900 --Wait for under-map spawn to complete
             end
             globals.set_float(baseGlobals.vehicleSpawner2.baseGlobal2 + 7 + 0, pos.x)
             globals.set_float(baseGlobals.vehicleSpawner2.baseGlobal2 + 7 + 1, pos.y)
@@ -205,7 +205,7 @@ function createVehicle(modelHash, pos, heading, skip_remove_current, mod, altern
             local counter = 0
             repeat
                 counter = counter + 1
-            until (not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 2) and not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 5)) or counter > 420069 --Spawn again at correct coords, removing any vehicle in the way
+            until (not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 2) and not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 5)) or counter > 426900 --Spawn again at correct coords, removing any vehicle in the way
         end
         vehicle_is_creating = nil
         return getNetIDOfLastSpawnedVehicle()
@@ -257,6 +257,7 @@ function getVehicleForPlayerID(playerID)
 end
 
 function setPedIntoVehicle(vehicleNetID, oldPos)
+    if not vehicleNetID then return end
     if (vehicleNetID and (vehicleNetID ~= 0)) then
         local i = 0
         repeat
@@ -719,7 +720,7 @@ function isSpectatingMe(plyId)
     if not ply then return end
     local visibleState = getIsTrackedPedVisibleState(plyId)
     local isWatchingMe = checkBit(visibleState, getLocalplayerID())
-    return isWatchingMe and distanceBetween(player.get_player_ped(), ply) > 235
+    return isWatchingMe and distanceBetween(player.get_player_ped(), ply) > 238
 end
 
 function amISpectating(plyId)
@@ -729,7 +730,7 @@ function amISpectating(plyId)
     if not ply then return end
     local ownVisibleState = getIsTrackedPedVisibleState(getLocalplayerID())
     local amIWatching = checkBit(ownVisibleState, plyId)
-    return amIWatching and distanceBetween(player.get_player_ped(), ply) > 235
+    return amIWatching and distanceBetween(player.get_player_ped(), ply) > 238
 end
 
 ---------------------------------------------------------------------------
@@ -943,7 +944,6 @@ local coords_is_setting = false
 baseGlobals.teleport = {}
 baseGlobals.teleport.baseGlobalPed = 4521801
 baseGlobals.teleport.baseGlobalVeh = 2635562
-baseGlobals.teleport.baseGlobalVehTrigger = 2657921
 baseGlobals.teleport.testFunctionExplanation = "Teleport forward"
 baseGlobals.teleport.testFunction = function()
     nativeTeleport(localplayer:get_position() + localplayer:get_heading() * 2)
@@ -962,7 +962,7 @@ function nativeTeleport(vector, headingVec)
         globals.set_int(baseGlobals.teleport.baseGlobalPed + 943, 20) --Trigger Entity:set_entity_coords
         sleep(0.05)
         globals.set_int(baseGlobals.teleport.baseGlobalPed + 943, -1)
-    elseif localplayer:is_in_vehicle() then
+    elseif localplayer:is_in_vehicle() and not coords_is_setting then
         coords_is_setting = true
         globals.set_float(baseGlobals.teleport.baseGlobalVeh + 505 + 0, vector.x)
         globals.set_float(baseGlobals.teleport.baseGlobalVeh + 505 + 1, vector.y)
@@ -976,10 +976,10 @@ function nativeTeleport(vector, headingVec)
             globals.set_float(baseGlobals.teleport.baseGlobalVeh + 3207, pitchAngle)
             globals.set_float(baseGlobals.teleport.baseGlobalVeh + 508, yawAngle)
         end
-        globals.set_int(baseGlobals.teleport.baseGlobalVehTrigger + 1 + (getLocalplayerID() * 463) + 232, 7)
+        setPlayerRespawnState(getLocalplayerID(), 7)
         globals.set_int(baseGlobals.teleport.baseGlobalVeh + 45 + 65, 1)
-        sleep(0.05)
-        globals.set_int(baseGlobals.teleport.baseGlobalVehTrigger + 1 + (getLocalplayerID() * 463) + 232, -1)
+        --sleep(0.05)
+        --setPlayerRespawnState(getLocalplayerID(), -1)
     end
     coords_is_setting = false
 end
