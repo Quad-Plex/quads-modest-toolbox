@@ -9,21 +9,24 @@ MAX_INT = 2147483647
 --------------------Spawned Vehicle Godmode toggler-----------------------------------
 
 local function findAndEnableGodmodeForVehicle(vehicle_hash, checkPos)
-    print("Starting godmode search")
+    local foundVeh
     for _ = 0, 12 do
         for veh in replayinterface.get_vehicles() do
             if veh:get_model_hash() == vehicle_hash and distanceBetween(veh, checkPos, true) < 3 then
-                for _ = 0, 42 do
-                    --For some reason godmode gets enabled here but doesn't stick well so I just force it for a while
-                    veh:set_godmode(true)
-                    sleep(0.08)
-                end
-                return
+                foundVeh = veh
+                break
             end
         end
-        sleep(0.06)
+        sleep(0.08)
     end
+    for _ = 0, 42 do
+        --For some reason godmode gets enabled here but doesn't stick well so I just force it for a while
+        foundVeh:set_godmode(true)
+        sleep(0.08)
+    end
+    return
 end
+
 
 -------------------------------------------------------------
 -------------------- SORTED VEHICLE LIST --------------------
@@ -90,7 +93,7 @@ local function addVehicleEntry(vehMenu, vehicle, ply)
             if (vehicle[4] == nil and enterOnSpawn) or (vehicle[4] ~= nil and vehicle[4]) then
                 sleep(3) --there is a weird timeout after tping into a car where it will be godmoded, but lose godmode after ~3sec, so we need to wait for that long to re-apply gm so it sticks
             end
-            sleep(0.1)
+            sleep(0.2)
             findAndEnableGodmodeForVehicle(vehicle[1], spawnPos)
         end
     end)
@@ -104,7 +107,7 @@ local function addVehicleEntry(vehMenu, vehicle, ply)
             if (vehicle[4] == nil and enterOnSpawn) or (vehicle[4] ~= nil and vehicle[4]) then
                 sleep(3) --there is a weird timeout after tping into a car where it will be godmoded, but lose godmode after ~3sec, so we need to wait for that long to re-apply gm so it sticks
             end
-            sleep(0.1)
+            sleep(0.2)
             findAndEnableGodmodeForVehicle(vehicle[1], spawnPos)
         end
     end)
@@ -118,7 +121,7 @@ local function addVehicleEntry(vehMenu, vehicle, ply)
             if (vehicle[4] == nil and enterOnSpawn) or (vehicle[4] ~= nil and vehicle[4]) then
                 sleep(3) --there is a weird timeout after tping into a car where it will be godmoded, but lose godmode after ~3sec, so we need to wait for that long to re-apply gm so it sticks
             end
-            sleep(0.1)
+            sleep(0.2)
             findAndEnableGodmodeForVehicle(vehicle[1], spawnPos)
         end
     end)
@@ -132,7 +135,7 @@ local function addVehicleEntry(vehMenu, vehicle, ply)
             if (vehicle[4] == nil and enterOnSpawn) or (vehicle[4] ~= nil and vehicle[4]) then
                 sleep(3) --there is a weird timeout after tping into a car where it will be godmoded, but lose godmode after ~3sec, so we need to wait for that long to re-apply gm so it sticks
             end
-            sleep(0.1)
+            sleep(0.2)
             findAndEnableGodmodeForVehicle(vehicle[1], spawnPos)
         end
     end)
@@ -244,7 +247,7 @@ function addVehicleSpawnMenu(ply, sub)
                     if enterOnSpawn then
                         sleep(3) --there is a weird timeout after tping into a car where it will be godmoded, but lose godmode after ~3sec, so we need to wait for that long to re-apply gm so it sticks
                     end
-                    sleep(0.1)
+                    sleep(0.2)
                     findAndEnableGodmodeForVehicle(spawnedModel, spawnPos)
                 end
             end)
@@ -277,7 +280,7 @@ function addVehicleSpawnMenu(ply, sub)
             if enterOnSpawn then
                 sleep(3) --there is a weird timeout after tping into a car where it will be godmoded, but lose godmode after ~3sec, so we need to wait for that long to re-apply gm so it sticks
             end
-            sleep(0.1)
+            sleep(0.2)
             findAndEnableGodmodeForVehicle(spawnedModel, spawnPos)
         end
     end)
@@ -302,7 +305,7 @@ function addVehicleSpawnMenu(ply, sub)
             if enterOnSpawn then
                 sleep(3) --there is a weird timeout after tping into a car where it will be godmoded, but lose godmode after ~3sec, so we need to wait for that long to re-apply gm so it sticks
             end
-            sleep(0.1)
+            sleep(0.2)
             findAndEnableGodmodeForVehicle(minDistanceVeh:get_model_hash(), spawnPos)
         end
     end)
@@ -327,7 +330,7 @@ function addVehicleSpawnMenu(ply, sub)
             if enterOnSpawn then
                 sleep(3) --there is a weird timeout after tping into a car where it will be godmoded, but lose godmode after ~3sec, so we need to wait for that long to re-apply gm so it sticks
             end
-            sleep(0.1)
+            sleep(0.2)
             findAndEnableGodmodeForVehicle(minDistanceVeh:get_model_hash(), spawnPos)
         end
     end)
@@ -342,7 +345,7 @@ function addVehicleSpawnMenu(ply, sub)
             if enterOnSpawn then
                 sleep(3) --there is a weird timeout after tping into a car where it will be godmoded, but lose godmode after ~3sec, so we need to wait for that long to re-apply gm so it sticks
             end
-            sleep(0.1)
+            sleep(0.2)
             findAndEnableGodmodeForVehicle(ply:get_current_vehicle():get_model_hash(), spawnPos)
         end
     end, function() return ply:is_in_vehicle() end)
@@ -357,7 +360,7 @@ function addVehicleSpawnMenu(ply, sub)
             if enterOnSpawn then
                 sleep(3) --there is a weird timeout after tping into a car where it will be godmoded, but lose godmode after ~3sec, so we need to wait for that long to re-apply gm so it sticks
             end
-            sleep(0.1)
+            sleep(0.2)
             findAndEnableGodmodeForVehicle(ply:get_current_vehicle():get_model_hash(), spawnPos)
         end
     end, function() return ply:is_in_vehicle() end)
