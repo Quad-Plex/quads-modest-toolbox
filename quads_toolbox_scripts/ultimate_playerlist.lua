@@ -128,10 +128,11 @@ local function tpPedToPlayer(ply, tpType)
             ped:set_freeze_momentum(true)
             local pos
             if tpType == "in Front of Player" then
-                pos = ply:get_position() + ply:get_heading() * (math.random(40, 70) / 10)
+                pos = ply and ply:get_position() + ply:get_heading() * (math.random(40, 70) / 10) or nil
             else
-                pos = ply:get_position() + vector3((math.random(-10, 10) / 10), (math.random(-10, 10) / 10), (math.random(-10, 10) / 10))
+                pos = ply and ply:get_position() + vector3((math.random(-10, 10) / 10), (math.random(-10, 10) / 10), (math.random(-10, 10) / 10)) or nil
             end
+            if not pos then return end
             for _ = 0, 100 do
                 ped:set_position(pos)
             end
@@ -472,7 +473,7 @@ local function giveRandomBike(ply)
     createVehicle(joaat(BikeTypes[math.random(#BikeTypes)]), ply:get_position() + ply:get_heading() * 7, nil, true)
 end
 
-function giveRandomVehicle(ply, pos, skip_remove)
+function giveRandomVehicle(ply, pos, skip_remove, firstSpawner)
     if not ply or ply == nil then return end
 
     if not pos then
@@ -482,7 +483,7 @@ function giveRandomVehicle(ply, pos, skip_remove)
     --             [1]    [2][1]  [2][2]
     -- vehicle = { hash, { name, class} }
     local selection = math.random(#sorted_vehicles)
-    createVehicle(sorted_vehicles[selection][1], pos, nil, skip_remove, generateRandomMods(VEHICLE[sorted_vehicles[selection][1]][3]), true, true, false)
+    createVehicle(sorted_vehicles[selection][1], pos, nil, skip_remove, generateRandomMods(VEHICLE[sorted_vehicles[selection][1]][3]), not firstSpawner, true, false)
     return sorted_vehicles[selection][1]
 end
 
@@ -499,7 +500,7 @@ local function randomVehicleRain(ply)
     local random_dist = vector3(math.random(-4, 4), math.random(-4, 4), math.random(-2, 2))
     local rainDropPosition = plyPosition + plyHeading + plyVelocity + vector3(0, 0, 37) + random_dist
 
-    local spawned_vehicle_hash = giveRandomVehicle(ply, rainDropPosition, true)
+    local spawned_vehicle_hash = giveRandomVehicle(ply, rainDropPosition, true, true)
     local found = false
     while not found and rainTries < 9 do
         for veh in replayinterface.get_vehicles() do
@@ -954,7 +955,7 @@ local function playerInfo(plyId, sub, plyName)
         else
             local blipType = getPlayerBlipType(plyId)
             if blipType == "VEHICLE" or blipType == "PLANE GHOST" or blipType == "ULTRALIGHT GHOST" then
-                return centeredText(wpn_text .. " - " .. "Vehicle")
+                vehicle_name = "Vehicle"
             end
         end
         return wpn_text .. "|" .. vehicle_name .. " - " .. vehicle_class
@@ -963,7 +964,7 @@ local function playerInfo(plyId, sub, plyName)
     greyText(sub, centeredText("------ 🔫 Weapon / Vehicle 🚗------"))
     sub:add_bare_item("", wpn_veh, null, null, null)
 
-    sub:add_action("Try to enter " .. plyName .. "'s Vehicle", function()
+    sub:add_action("Force enter " .. plyName .. "'s Vehicle", function()
         if ply:is_in_vehicle() or getPlayerBlipType(plyId) == "VEHICLE" or getPlayerBlipType(plyId) == "PLANE GHOST" or getPlayerBlipType(plyId) == "ULTRALIGHT GHOST" then
             local oldPos = localplayer:get_position()
             local offRadarToggled = false
@@ -984,13 +985,13 @@ local function playerInfo(plyId, sub, plyName)
             end
         end
     end, function()
-        return ply:is_in_vehicle() and not localplayer:is_in_vehicle() or getPlayerBlipType(plyId) == "VEHICLE" or getPlayerBlipType(plyId) == "PLANE GHOST" or getPlayerBlipType(plyId) == "ULTRALIGHT GHOST"
+        return ply:is_in_vehicle() or getPlayerBlipType(plyId) == "VEHICLE" or getPlayerBlipType(plyId) == "PLANE GHOST"
     end)
     --Player Stats
     greyText(sub, centeredText("------ Player Stats ------"))
     sub:add_bare_item("", function()
-        local playerWallet = getPlayerWallet(plyId)
-        local bankAmount = math.max(0, getPlayerMoney(plyId) - playerWallet)
+        local playerWallet = getPlayerWalletAmount(plyId)
+        local bankAmount = math.max(0, getPlayerBankAmount(plyId) - playerWallet)
         local formattedWallet = formatNumberWithDots(playerWallet) .. "$"
         local formattedBank = formatNumberWithDots(bankAmount) .. "$"
         return "Wallet: " .. formattedWallet .. "|Bank: " .. formattedBank
@@ -1394,36 +1395,30 @@ function addSubActions(sub, plyName, plyId)
     end)
 end
 
+local function maxOrMin(value) return value == 1 and "Max" or "Min" end
+local statSelection = 1
 local function addSessionOptions(sub)
     sub:clear()
     sub:add_bare_item("", function()
         return "Players in Session: " .. #sortedPlayers
     end, null, null, null)
-    sub:add_bare_item("", function()
-        return "Highest Level: " .. getTopPlayer(getPlayerLevel, "name")
-    end, null, null, null)
-    sub:add_bare_item("               " .. "(" .. getTopPlayer(getPlayerLevel, "value") .. ")", null, null, null, null)
-    sub:add_bare_item("", function()
-        return "Most Money:    " .. getTopPlayer(getPlayerMoney, "name")
-    end, null, null, null)
-    sub:add_bare_item("               " .. formatNumberWithDots(getTopPlayer(getPlayerMoney, "value")) .. "$", null, null, null, null)
-    sub:add_bare_item("", function()
-        return "Highest K/D:   " .. getTopPlayer(getPlayerKd, "name")
-    end, null, null, null)
-    sub:add_bare_item("               " .. string.format("%1.2f", getTopPlayer(getPlayerKd, "value")) .. " K/D", null, null, null, null)
-    sub:add_bare_item("", function()
-        return "Most Kills:    " .. getTopPlayer(getPlayerKills, "name")
-    end, null, null, null)
-    sub:add_bare_item("               " .. getTopPlayer(getPlayerKills, "value") .. " Kills", null, null, null, null)
-    sub:add_bare_item("", function()
-        return "Most Deaths:   " .. getTopPlayer(getPlayerDeaths, "name")
-    end, null, null, null)
-    sub:add_bare_item("               " .. getTopPlayer(getPlayerDeaths, "value") .. " Deaths", null, null, null, null)
+    sub:add_array_item("Type of Stats: ", {"Highest", "Lowest"}, function() return statSelection end, function(value) statSelection = value end)
+    greyText(sub, "----------------------------")
+    sub:add_bare_item("", function() return maxOrMin(statSelection) .. " Level:   " .. getTopPlayer(getPlayerLevel, "name", statSelection == 2) end, null, null, null)
+    sub:add_bare_item("", function() return "              " .. "(" .. getTopPlayer(getPlayerLevel, "value", statSelection == 2) .. ")" end, null, null, null)
+    sub:add_bare_item("", function() return maxOrMin(statSelection) .. " Money:   " .. getTopPlayer(getPlayerBankAmount, "name", statSelection == 2) end, null, null, null)
+    sub:add_bare_item("", function() return "              " .. formatNumberWithDots(getTopPlayer(getPlayerBankAmount, "value", statSelection == 2)) .. "$" end, null, null, null)
+    sub:add_bare_item("", function() return maxOrMin(statSelection) .. " K/D:     " .. getTopPlayer(getPlayerKd, "name", statSelection == 2) end, null, null, null)
+    sub:add_bare_item("", function() return "              " .. string.format("%1.2f", getTopPlayer(getPlayerKd, "value", statSelection == 2)) .. " K/D" end, null, null, null)
+    sub:add_bare_item("", function() return maxOrMin(statSelection) .. " Kills:   " .. getTopPlayer(getPlayerKills, "name", statSelection == 2) end, null, null, null)
+    sub:add_bare_item("", function() return "              " .. getTopPlayer(getPlayerKills, "value", statSelection == 2) .. " Kills" end, null, null, null)
+    sub:add_bare_item("", function() return maxOrMin(statSelection) .. " Deaths:  " .. getTopPlayer(getPlayerDeaths, "name", statSelection == 2) end, null, null, null)
+    sub:add_bare_item("", function() return "              " .. getTopPlayer(getPlayerDeaths, "value", statSelection == 2) .. " Deaths" end, null, null, null)
 
     greyText(sub, "---------------------------")
 
     local ridSub
-    ridSub = sub:add_submenu("Show all Found RIDs", function() ridList(ridSub) end)
+    ridSub = sub:add_submenu("Show all found RIDs", function() ridList(ridSub) end)
 
     greyText(sub, "---------------------------")
     local numStars = 5
@@ -1666,7 +1661,7 @@ local function autoVehicleStormThread()
             return
         end
         TeleportVehiclesToPlayer(autoPly(), vehicleDistance, false, nil)
-        sleep(0.25)
+        sleep(0.26)
     end
 end
 menu.register_callback('autoVehicleStorm', autoVehicleStormThread)
@@ -1678,7 +1673,7 @@ local function autoBikeSpamThread()
             return
         end
         giveRandomBike(autoPly())
-        sleep(0.12)
+        sleep(0.13)
     end
 end
 menu.register_callback('autoBikeSpam', autoBikeSpamThread)
@@ -1691,7 +1686,7 @@ local function autoRandomCarSpamThread()
         end
         local pos = autoPly():get_position() + autoPly():get_heading() * 2 + autoPly():get_velocity() * 2
         local random_distance = vector3(math.random(-2, 2), math.random(2, 2), math.random(2, 2))
-        giveRandomVehicle(autoPly(), pos + random_distance, true)
+        giveRandomVehicle(autoPly(), pos + random_distance, true, true)
         sleep(0.2)
     end
 end
@@ -1732,7 +1727,7 @@ local function autoPedSpamThread()
             return
         end
         tpPedToPlayer(autoPly(), teleportType[teleportTypeSelection])
-        sleep(0.09)
+        sleep(0.1)
     end
 end
 menu.register_callback('autoPedSpam', autoPedSpamThread)
