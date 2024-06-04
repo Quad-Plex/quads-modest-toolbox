@@ -55,11 +55,13 @@ local function adjustSpeed(amount)
 end
 
 local oldGrav
+local oldGodmode
 local function NoClip(toggle)
 	if localplayer ~= nil then
 		if toggle then
 			if localplayer:is_in_vehicle() then
 				oldGrav = localplayer:get_current_vehicle():get_gravity()
+				oldGodmode = localplayer:get_current_vehicle():get_godmode()
 				localplayer:get_current_vehicle():set_gravity(0)
 			end
 			localplayer:set_freeze_momentum(true)
@@ -111,6 +113,14 @@ local function NoClip(toggle)
 			sleep(0.3)
 			if localplayer:is_in_vehicle() then
 				setPlayerRespawnState(getLocalplayerID(), 9) --fix the vehicle being stuck
+			end
+			if oldGodmode and localplayer:is_in_vehicle() then
+				local vehicle = localplayer:get_current_vehicle()
+				sleep(3) --the nativeteleport removes godmode, so we gotta wait for that to happen and re-enable
+				for _ = 0, 12 do
+					vehicle:set_godmode(oldGodmode)
+					sleep(0.08)
+				end
 			end
 		end
 	end
