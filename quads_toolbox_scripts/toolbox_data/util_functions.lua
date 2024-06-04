@@ -19,6 +19,7 @@ local function findAndEnableGodmodeForVehicle(vehicle_hash, checkPos)
         end
         sleep(0.08)
     end
+    if not foundVeh then print("Couldn't find veh to godmode!") return end
     for _ = 0, 42 do
         --For some reason godmode gets enabled here but doesn't stick well so I just force it for a while
         foundVeh:set_godmode(true)
@@ -26,7 +27,6 @@ local function findAndEnableGodmodeForVehicle(vehicle_hash, checkPos)
     end
     return
 end
-
 
 -------------------------------------------------------------
 -------------------- SORTED VEHICLE LIST --------------------
@@ -64,6 +64,119 @@ local function isInFavorites(veh_hash)
     return false
 end
 
+------------------------KEYBOARD ENTRY FOR FAV VEHICLES ----------------------------
+local selectedLetterPos = 1
+local lowercaseLetters = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' }
+local selectedNumberPos = 1
+local numbers = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' }
+local selectedSymbolPos = 1
+local symbols = { ' ', '!', '?', '.', ',', '/', '\\','_', '*', '-', '=', '+', ';', ':', "'", '"', '(', ')', '[', ']', '{', '}', '@', '#', '$', '€', '%', '^', '&', '<', '>', '|' }
+local uppercaseToggle = false
+local function showLettersForPosition(letterPos, table)
+    local result = ""
+    local start_index = letterPos - 4
+    local end_index = letterPos + 4
+    for i = start_index, end_index do
+        local index = i
+        if index == letterPos then
+            result = result .. "(" .. table[index] .. ") "
+        elseif i < 1 then
+            result = result .. "  "
+        elseif i > #table then
+            result = result .. "  "
+        else
+            result = result .. table[index] .. " "
+        end
+    end
+    if table == lowercaseLetters and uppercaseToggle then
+        result = result:upper()
+    end
+    return result
+end
+
+local function addLetterToString(letter, string)
+    if not uppercaseToggle then
+        return string .. letter
+    else
+        return string .. letter:upper()
+    end
+end
+
+local function stringChangerFavVehicle(sub, stringToChange, veh_data)
+    local oldName = stringToChange
+    local tempString = stringToChange
+    sub:clear()
+    if stringToChange then
+        sub:add_bare_item("", function()
+            if stringToChange ~= tempString then
+                local isFavorite = isInFavorites(veh_data[1])
+                if isFavorite then
+                    table.remove(favoritedCars, isFavorite)
+                    veh_data[2][1] = stringToChange
+                    table.insert(favoritedCars, veh_data)
+                    table.sort(favoritedCars, function(a, b)
+                        return a[2][1]:upper() < b[2][1]:upper()
+                    end)
+
+                    json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/FAVORITED_CARS.json", favoritedCars)
+                end
+                tempString = stringToChange
+            end
+            return "Rename " .. oldName .. " to " .. stringToChange
+        end, null, null, null)
+    end
+    greyText(sub, "----------------------------")
+    sub:add_action("|⌫ Backspace ⌫|", function()
+        stringToChange = string.sub(stringToChange, 1, -2)
+    end)
+    sub:add_toggle("Uppercase Letters", function() return uppercaseToggle end, function(toggle) uppercaseToggle = toggle end)
+    sub:add_bare_item("",
+            function()
+                return "Add Letter: ◀ " .. showLettersForPosition(selectedLetterPos, lowercaseLetters) .. " ▶"
+            end,
+            function()
+                stringToChange = addLetterToString(lowercaseLetters[selectedLetterPos], stringToChange)
+            end,
+            function()
+                if selectedLetterPos > 1 then selectedLetterPos = selectedLetterPos - 1 end
+                return "Add Letter: ◀ " .. showLettersForPosition(selectedLetterPos, lowercaseLetters) .. " ▶"
+            end,
+            function()
+                if selectedLetterPos < #lowercaseLetters then selectedLetterPos = selectedLetterPos + 1 end
+                return "Add Letter: ◀ " .. showLettersForPosition(selectedLetterPos, lowercaseLetters) .. " ▶"
+            end)
+    sub:add_bare_item("",
+            function()
+                return "Add Number: ◀ " .. showLettersForPosition(selectedNumberPos, numbers) .. " ▶"
+            end,
+            function()
+                stringToChange = addLetterToString(numbers[selectedNumberPos], stringToChange)
+            end,
+            function()
+                if selectedNumberPos > 1 then selectedNumberPos = selectedNumberPos - 1 end
+                return "Add Number: ◀ " .. showLettersForPosition(selectedNumberPos, numbers) .. " ▶"
+            end,
+            function()
+                if selectedNumberPos < #numbers then selectedNumberPos = selectedNumberPos + 1 end
+                return "Add Number: ◀ " .. showLettersForPosition(selectedNumberPos, numbers) .. " ▶"
+            end)
+    sub:add_bare_item("",
+            function()
+                return "Add Symbol: ◀ " .. showLettersForPosition(selectedSymbolPos, symbols) .. " ▶"
+            end,
+            function()
+                stringToChange = addLetterToString(symbols[selectedSymbolPos], stringToChange)
+            end,
+            function()
+                if selectedSymbolPos > 1 then selectedSymbolPos = selectedSymbolPos - 1 end
+                return "Add Symbol: ◀ " .. showLettersForPosition(selectedSymbolPos, symbols) .. " ▶"
+            end,
+            function()
+                if selectedSymbolPos < #symbols then selectedSymbolPos = selectedSymbolPos + 1 end
+                return "Add Symbol: ◀ " .. showLettersForPosition(selectedSymbolPos, symbols) .. " ▶"
+            end)
+end
+
 function generateRandomMods(inputTable)
     local newTable = {}
     for i, value in ipairs(inputTable) do
@@ -71,7 +184,13 @@ function generateRandomMods(inputTable)
             -- If the value is -1, keep it unchanged
             newTable[i] = value
         else
-            newTable[i] = math.random(0, value)
+            local lowerLimit
+            if value > 1 then
+                lowerLimit = 1
+            else
+                lowerLimit = 0
+            end
+            newTable[i] = math.random(lowerLimit, value)
         end
     end
     return newTable
@@ -82,6 +201,11 @@ local enterOnSpawn = false
 local function addVehicleEntry(vehMenu, vehicle, ply)
     vehMenu:clear()
     greyText(vehMenu, "|Spawning " .. vehicle[2][1] .. "...")
+    local favoriteVehicle = isInFavorites(vehicle[1])
+    if favoriteVehicle then
+        local renameSub
+        renameSub = vehMenu:add_submenu("Rename " .. vehicle[2][1], function() stringChangerFavVehicle(renameSub, vehicle[2][1], vehicle) end)
+    end
     vehMenu:add_action("Spawn using Method #1", function()
         local spawnPos = ply:get_position() + ply:get_heading() * 7
         createVehicle(vehicle[1], spawnPos)
@@ -147,6 +271,9 @@ local function addVehicleEntry(vehMenu, vehicle, ply)
     end, function(n)
         if vehicle[3] ~= nil then
             vehicle[3] = n
+            table.sort(favoritedCars, function(a, b)
+                return a[2][1]:upper() < b[2][1]:upper()
+            end)
             json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/FAVORITED_CARS.json", favoritedCars)
         else
             godmodeEnabledSpawn = n
@@ -160,6 +287,9 @@ local function addVehicleEntry(vehMenu, vehicle, ply)
     end, function(n)
         if vehicle[4] ~= nil then
             vehicle[4] = n
+            table.sort(favoritedCars, function(a, b)
+                return a[2][1]:upper() < b[2][1]:upper()
+            end)
             json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/FAVORITED_CARS.json", favoritedCars)
         else
             enterOnSpawn = n
@@ -172,24 +302,30 @@ local function addVehicleEntry(vehMenu, vehicle, ply)
             vehicle[3]=godmodeEnabledSpawn
             vehicle[4]=enterOnSpawn
             table.insert(favoritedCars, vehicle)
+            table.sort(favoritedCars, function(a, b)
+                return a[2][1]:upper() < b[2][1]:upper()
+            end)
             json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/FAVORITED_CARS.json", favoritedCars)
             vehicle[2][3] = oldModData
         else
-            local isFavorite = isInFavorites(vehicle[1])
-            if isFavorite then
-                table.remove(favoritedCars, isFavorite)
+            local favVehicle = isInFavorites(vehicle[1])
+            if favVehicle then
+                table.remove(favoritedCars, favVehicle)
+                table.sort(favoritedCars, function(a, b)
+                    return a[2][1]:upper() < b[2][1]:upper()
+                end)
                 json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/FAVORITED_CARS.json", favoritedCars)
             end
         end
     end)
 end
 
-local function buildFavoriteVehiclesSub(ply, categorySub)
+local function buildFavoriteVehiclesSub(player, categorySub)
     success, favoritedCars = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/FAVORITED_CARS.json")
     categorySub:clear()
     for _, favoriteVehicle in ipairs(favoritedCars) do
         local vehSub
-        vehSub = categorySub:add_submenu(favoriteVehicle[2][1], function() addVehicleEntry(vehSub, favoriteVehicle, ply) end)
+        vehSub = categorySub:add_submenu(favoriteVehicle[2][1], function() addVehicleEntry(vehSub, favoriteVehicle, player) end)
     end
 end
 
@@ -223,6 +359,9 @@ function addVehicleSpawnMenu(ply, sub)
         vehData[3] = nil
         local vehicle = { currentVeh:get_model_hash(), vehData, false, false }
         table.insert(favoritedCars, vehicle)
+        table.sort(favoritedCars, function(a, b)
+            return a[2][1]:upper() < b[2][1]:upper()
+        end)
         json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/FAVORITED_CARS.json", favoritedCars)
         vehData[3] = oldModData
     end, function() return ply:is_in_vehicle() and #favoritedCars > 0 and not table.contains(favoritedCars, ply:get_current_vehicle():get_model_hash()) end)
