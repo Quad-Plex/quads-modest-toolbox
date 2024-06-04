@@ -222,6 +222,9 @@ WEAPON[729375873] = "Limo Turret"
 WEAPON[738733437] = "Air Defence Gun"
 WEAPON[-1253095144] = "Boxville Turret"
 WEAPON[-335937730] = "Cannon Blazer"
+WEAPON[1970843883]="Conada2 Minigun"
+WEAPON[-683817471]="Bruiser 50cal"
+WEAPON[-346137590]="Brutus 50cal"
 
 --Environmental Deaths?...
 WEAPON[-544306709] = "Fire"
