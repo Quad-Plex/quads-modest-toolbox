@@ -1,5 +1,32 @@
 [
   [
+    -654498607,
+    [
+      "Brigham",
+      "Muscle"
+    ],
+    false,
+    true
+  ],
+  [
+    345756458,
+    [
+      "Festival Bus",
+      "Service"
+    ],
+    false,
+    false
+  ],
+  [
+    -1890996696,
+    [
+      "Future Brutus",
+      "Off-Road"
+    ],
+    true,
+    true
+  ],
+  [
     777714999,
     [
       "Ruined Ruiner",
@@ -9,21 +36,12 @@
     false
   ],
   [
-    -1890996696,
+    -102335483,
     [
-      "Brutus2",
-      "Off-Road"
-    ],
-    true,
-    false
-  ],
-  [
-    -654498607,
-    [
-      "Brigham",
-      "Muscle"
+      "Squaddie",
+      "SUV"
     ],
     false,
-    true
+    false
   ]
 ]
