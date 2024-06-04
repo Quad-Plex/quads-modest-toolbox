@@ -63,18 +63,51 @@ menu.register_callback('ToggleVehicleGodmodeHotkey', function()
     end
 end)
 
+local godmodeEnabled = false
+local godmodeRunning = false
+local function godmodeChecker()
+    while godmodeEnabled do
+        if not localplayer then
+            godmodeEnabled = false
+            godmodeRunning = false
+            return
+        end
+        godmodeRunning = true
+        if not localplayer:get_godmode() then
+            localplayer:set_godmode(true)
+            localplayer:set_no_ragdoll(true)
+            localplayer:set_infinite_ammo(true)
+            localplayer:set_infinite_clip(true)
+        end
+        sleep(2)
+    end
+    godmodeRunning = false
+    localplayer:set_godmode(false)
+    localplayer:set_no_ragdoll(false)
+    localplayer:set_infinite_ammo(false)
+    localplayer:set_infinite_clip(false)
+end
+
+menu.register_callback('GodmodeChecker', godmodeChecker)
+
 --F9, Godmode + No Ragdoll
 local godmodeRagdollHotkey
 menu.register_callback('ToggleGodmodeRagdollHotkey', function()
     if not godmodeRagdollHotkey then
         godmodeRagdollHotkey = menu.register_hotkey(find_keycode("ToggleGodmodeRagdollHotkey"), function()
-            localplayer:set_godmode(not localplayer:get_godmode())
-            if localplayer:get_godmode() then
+            if not localplayer:get_godmode() then
+                godmodeEnabled = true
+                localplayer:set_godmode(true)
                 localplayer:set_no_ragdoll(true)
                 localplayer:set_infinite_ammo(true)
                 localplayer:set_infinite_clip(true)
                 displayHudBanner("GREEN_LIV5", "PIM_NCL_PRIV1", "", 108)
+                if not godmodeRunning then
+                    menu.emit_event('GodmodeChecker')
+                end
             else
+                godmodeEnabled = false
+                localplayer:set_godmode(false)
                 localplayer:set_no_ragdoll(false)
                 localplayer:set_infinite_ammo(false)
                 localplayer:set_infinite_clip(false)
