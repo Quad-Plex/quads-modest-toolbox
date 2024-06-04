@@ -81,7 +81,7 @@ local lowercaseLetters = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k'
 local selectedNumberPos = 1
 local numbers = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' }
 local selectedSymbolPos = 1
-local symbols = { '!', '?', '.', ',', '/', '\\','_', '*', '-', '=', '+', ';', ':', "'", '"', '(', ')', '[', ']', '{', '}', '@', '#', '$', '€', '%', '^', '&', '<', '>', '|' }
+local symbols = { ' ', '!', '?', '.', ',', '/', '\\','_', '*', '-', '=', '+', ';', ':', "'", '"', '(', ')', '[', ']', '{', '}', '@', '#', '$', '€', '%', '^', '&', '<', '>', '|' }
 local uppercaseToggle = false
 local function showLettersForPosition(letterPos, table)
     local result = ""
