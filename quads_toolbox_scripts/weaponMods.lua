@@ -135,7 +135,7 @@ end, function(_)
     toggleSmokeGun()
 end)
 
-gunOptionsSub:add_array_item("Change Gun Impact to: ", ExplosionTypesNumbered, function() return localplayer and localplayer:get_current_weapon() and localplayer:get_current_weapon():get_explosion_type() end, function(new_expl_type)
+gunOptionsSub:add_array_item("Explosion Type: ", ExplosionTypesNumbered, function() return localplayer and localplayer:get_current_weapon() and localplayer:get_current_weapon():get_explosion_type() end, function(new_expl_type)
     if new_expl_type == -1 then
         ResetWeaponStats()
         return
