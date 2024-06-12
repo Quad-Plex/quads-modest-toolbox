@@ -20,7 +20,9 @@ toolboxSub:add_bare_item(centeredText("--__--¯¯-- 100% loaded --¯¯--__--"), 
 require("scripts/quads_toolbox_scripts/ultimate_playerlist")
 require("scripts/quads_toolbox_scripts/ambientPickupSuite")
 
-vehicleSpawnMenu = toolboxSub:add_submenu("     ★🚗 Vehicle Spawner: ★🚗", function() addVehicleSpawnMenu(localplayer, vehicleSpawnMenu) end)
+vehicleSpawnMenu = toolboxSub:add_submenu("     ★🚗 Vehicle Spawner ★🚗", function() addVehicleSpawnMenu(localplayer, vehicleSpawnMenu) end)
+
+require("scripts/quads_toolbox_scripts/carMeetHelper")
 
 vehicleOptionsSub = toolboxSub:add_submenu(centeredText("   🔧 Vehicle Tools 🔧"))
 greyText(vehicleOptionsSub, centeredText(" ----- 🚗 Vehicle Options 🚗 -----"))
@@ -143,7 +145,6 @@ addText(creditsSub, "(No particular order)")
 addText(creditsSub, "!!!Major thanks to Kiddion!!!")
 addText(creditsSub, "AppleVegass for lua script support")
 addText(creditsSub, "Alice2333 (spawner/lua stuff)")
-addText(creditsSub, "Alice2333 again for TP into veh")
 addText(creditsSub, "Slon for lua stuff on UKC")
 addText(creditsSub, "AdventureBox the wise man")
 addText(creditsSub, "Yimura for YIMMenu as documentation")
@@ -156,10 +157,10 @@ addText(creditsSub, "---------------------------------------")
 addText(creditsSub, "Surely others I've forgotten, please")
 addText(creditsSub, "contact me if you feel that your")
 addText(creditsSub, "name belongs here <3")
-addText(creditsSub, "        Peace, Quad_Plex")
 local secretMenu
-secretMenu = creditsSub:add_submenu("Secret Menu...")
-secretMenu:add_action("Don't press this button!", function() displayHudBanner("FGTXT_F_F3", "RESPAWN_W", "", 108) end)
+secretMenu = creditsSub:add_submenu("        Peace, Quad_Plex")
+greyText(secretMenu, "   === SECRET MENU ===")
+secretMenu:add_action("Don't press this button!", function() menu.suicide_player() sleep(0.3) displayHudBanner("FGTXT_F_F3", "RESPAWN_W", "", 108) end)
 
 finishedLoading = true
 
