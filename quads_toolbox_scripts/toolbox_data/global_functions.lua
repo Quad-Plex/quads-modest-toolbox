@@ -256,39 +256,48 @@ function getVehicleForPlayerID(playerID)
     end
 end
 
-function setPedIntoVehicle(vehicleNetID, oldPos)
-    if not vehicleNetID then return end
-    if (vehicleNetID and (vehicleNetID ~= 0)) then
-        local i = 0
-        repeat
+function setPedIntoVehicle(vehicleNetID, oldPos, nofreeze)
+    local oldVeh
+    if localplayer:is_in_vehicle() then
+        oldVeh = localplayer:get_current_vehicle()
+    end
+    if not vehicleNetID or vehicleNetID == 0 then return end
+    local i = 0
+    repeat
+        if not nofreeze then
             localplayer:set_freeze_momentum(true)
             localplayer:set_no_ragdoll(true)
             localplayer:set_config_flag(292, true)
-            i = i + 1
-            globals.set_int(baseGlobals.setIntoVehicle.forceControl + 3184, vehicleNetID) --Network request control of entity
-            setPlayerRespawnState(getLocalplayerID(), 5)
-            globals.set_int(baseGlobals.setIntoVehicle.forceControl + 614, 5) --ped:set_ped_into_vehicle set in #1
-            if (i == 8) then
-                break
-            end
-            sleep(0.11)
-        until (getVehicleForPlayerID() == vehicleNetID)
-    end
-    sleep(0.5)
-    if getVehicleForPlayerID() ~= vehicleNetID or not localplayer:is_in_vehicle() then
-        print("Couldn't enter vehicle")
-        --Assume entering the vehicle failed
-        local tries = 0
-        while (tries < 4) do
-            nativeTeleport(oldPos)
-            tries = tries + 1
-            sleep(0.1)
         end
-        setPlayerRespawnState(getLocalplayerID(), 7) --setting respawn to 7 gives back player control after getting stuck, unable to enter a car
+        globals.set_int(baseGlobals.setIntoVehicle.forceControl + 3184, vehicleNetID) --Network request control of entity
+        setPlayerRespawnState(getLocalplayerID(), 5)
+        globals.set_int(baseGlobals.setIntoVehicle.forceControl + 614, 5) --ped:set_ped_into_vehicle set in #1
+        if (i == 8) then
+            break
+        end
+        i = i+1
+        sleep(0.1)
+    until (getVehicleForPlayerID() == vehicleNetID)
+    sleep(0.5)
+    if oldPos and (not localplayer:is_in_vehicle() or (localplayer:get_current_vehicle() == oldVeh)) then
+        --Assume entering the vehicle failed
+        if distanceBetween(localplayer, oldPos, true) > 10 then
+            local tries = 0
+            while (tries < 4) do
+                nativeTeleport(oldPos)
+                tries = tries + 1
+                sleep(0.1)
+            end
+        end
     end
-    localplayer:set_freeze_momentum(false)
-    localplayer:set_no_ragdoll(false)
-    localplayer:set_config_flag(292, false)
+    setPlayerRespawnState(getLocalplayerID(), 9) --setting respawn to 9 gives back player control
+    if not nofreeze then
+        localplayer:set_freeze_momentum(false)
+        localplayer:set_no_ragdoll(false)
+        localplayer:set_config_flag(292, false)
+    end
+    globals.set_int(baseGlobals.setIntoVehicle.forceControl + 3184, -1) --Network request control of entity
+    globals.set_int(baseGlobals.setIntoVehicle.forceControl + 614, -1) --ped:set_ped_into_vehicle set in #1
 end
 
 ----------------------Pickup Spawner--------------------------
@@ -327,11 +336,11 @@ getPlayerLevel = function(plyId)
     return globals.get_int(baseGlobals.playerLevel.baseGlobal + 1 + (plyId * 877) + 205 + 6)
 end
 
-getPlayerWallet = function(plyId)
+getPlayerWalletAmount = function(plyId)
     return globals.get_int(baseGlobals.playerLevel.baseGlobal + 1 + (plyId * 877) + 205 + 3)
 end
 
-getPlayerMoney = function(plyId)
+getPlayerBankAmount = function(plyId)
     return globals.get_int(baseGlobals.playerLevel.baseGlobal + 1 + (plyId * 877) + 205 + 56)
 end
 
@@ -352,33 +361,45 @@ getPlayerDeaths = function(plyId)
     return globals.get_int(baseGlobals.playerLevel.baseGlobal + 1 + (plyId * 877) + 205 + 29)
 end
 
-function getTopPlayer(getPlayerAttribute, nameOrId)
-    local maxAttribute = 0
+function getTopPlayer(getPlayerAttribute, nameOrId, findMin)
+    local topAttribute
     local topPlayer
+
+    if findMin then
+        topAttribute = math.huge  -- Use a very high initial value to find the minimum
+    else
+        topAttribute = -math.huge  -- Use a very low initial value to find the maximum
+    end
 
     for i = 0, 31 do
         local ply = player.get_player_ped(i)
         if ply then
+            if getPlayerBlipType(i) == "LOADING" then goto skip end
             local attribute = getPlayerAttribute(i)
-            if attribute and attribute > maxAttribute then
-                maxAttribute = attribute
-                topPlayer = i
+            if attribute then
+                if ((findMin and attribute < topAttribute) or (not findMin and attribute > topAttribute)) and attribute > 0 then
+                    topAttribute = attribute
+                    topPlayer = i
+                end
             end
+            ::skip::
         end
     end
-    if not topPlayer then 
-		if nameOrId == "name" then
-			return "/"
-		else
-			return "-1"
-		end
-	end
+
+    if not topPlayer then
+        if nameOrId == "name" then
+            return "/"
+        else
+            return "-1"
+        end
+    end
+
     if nameOrId == "name" then
         return player.get_player_name(topPlayer) or ""
     elseif nameOrId == "id" then
         return topPlayer
     else
-        return maxAttribute
+        return topAttribute
     end
 end
 
@@ -474,33 +495,44 @@ end
 --Global_2657921[player /*463*/].f_73.f_3
 interiorBlips = {
     ["INTERIOR"] = true,
-    ["LS CUSTOMS"] = true,
-    ["CAR_MEET_MODSHOP"] = true,
+    ["LS_CUSTOMS"] = true,
     ["KOSATKA"] = true,
-    ["AMMO NATION"] = true,
+    ["AMMO_NATION"] = true,
     ["LOADING"] = true,
-    ["CAR MEET"] = true,
-    ["AUTO SHOP"] = true,
-    ["CLOTHES"] = true
+    ["CAR_MEET"] = true,
+    ["MOD_SHOP"] = true,
+    ["CLOTHES_SHOP"] = true,
+    ["SHOP"] = true,
+    ["CASHIER"] = true,
+    ["HEIST_BOARD"] = true
+}
+
+vehicleBlips = {
+    ["VEHICLE"] = true,
+    ["PLANE_GHOST"] = true,
+    ["ULTRALIGHT_GHOST"] = true,
+    ["JUNK_BIKE"] = true
 }
 -- Create a lookup table for playerBlipTypes
 shortformBlips = {
     ["LOADING"] = "LOAD",
-    ["LS CUSTOMS"] = "LSC",
-    ["PLANE GHOST"] = "FLY_GHO",
-    ["ULTRALIGHT GHOST"] = "UL_GHO",
-    ["AMMO NATION"] = "AMMO",
+    ["LS_CUSTOMS"] = "LSC",
+    ["PLANE_GHOST"] = "FLY_GHO",
+    ["ULTRALIGHT_GHOST"] = "UL_GHO",
+    ["AMMO_NATION"] = "AMMO",
     ["KOSATKA"] = "SUBM",
-    ["HEIST BOARD"] = "HEIST",
+    ["HEIST_BOARD"] = "HEIST",
     ["DELIVERY_MISSION"] = "DELIV",
     ["BEAST"] = "BEAST",
     ["CASHIER"] = "STORE",
-    ["CAR MEET"] = "LSCM",
-    ["AUTO SHOP"] = "AUTO",
-    ["JUNK PARACHUTE"] = "PRCH",
+    ["CAR_MEET"] = "LSCM",
+    ["MOD_SHOP"] = "MOD_SHP",
+    ["JUNK_PARACHUTE"] = "JPRCH",
+    ["JUNK_BIKE"] = "JBIKE",
     ["SHOP"] = "SHOP",
-    ["BALLISTIC ARMOR"] = "ARMR",
-    ["PREP_MISSION"] = "PREP"
+    ["BALLISTIC_ARMOR"] = "ARMR",
+    ["PREP_MISSION"] = "PREP",
+    ["CLOTHES_SHOP"] = "CLOTH"
 }
 baseGlobals.blipType = {}
 baseGlobals.blipType.baseGlobal = 2657921
@@ -512,22 +544,24 @@ local vehicle_blips = utils_Set({ 262144, 262145, 262148, 262149, 262156, 262164
 local plane_ghost_blips = utils_Set({ 8388612, 8650884, 8651332, 8651396, 8651397, 8650756, 8650757, 8650820, 8651268, 8651269 })
 local ultralight_ghost_blips = utils_Set({ 262676, 262740 })
 local ls_customs_blip = utils_Set({ 2097280, 2359330, 2359458, 262178 })
-local interior_blips = utils_Set({ 262274, 262656, 262272, 192, 64, 128, 196, 576, 512, 517, 640, 708, 1 })
-local normal_blips = utils_Set({ 4, 5, 68, 132, 140, 516, 580, 644 })
+local interior_blips = utils_Set({ 20, 262274, 262656, 262272, 192, 128, 196, 576, 512, 517, 640, 708, 1 })
+local normal_blips = utils_Set({ 4, 5, 68, 132, 133, 140, 516, 580, 644 })
 local ls_car_meet = utils_Set({ 2359334, 2359426, 2359296, 262146 })
 local cashier_blip = utils_Set({ 2097152 })
+local clothes_shop_blip = utils_Set( { 130 } )
 local auto_shop = utils_Set({ 2359298, 2359302 })
 local beast_blips = utils_Set({ 1048580, 1049092, 1310724, 1310788, 1311236, 1572868, 1835012, 1835524 })
 local kosatka_blip = utils_Set({ 262213, 262341, 262336, 262337, 262340, 262720 })
 local ammo_nation_blip = utils_Set({ 2 })
 local junk_parachute_blip = utils_Set({ 2097156, 2097220 })
 local unsure_blips = utils_Set({ 2622788, 262656, 2359299, 524416, 524420 })
-local delivery_mission_blips = utils_Set({ 786432, 786436, 786437, 786500, 786560, 786948, 787076, 524256, 524292, 524288, 524293 })
+local delivery_mission_blips = utils_Set({ 786432, 786436, 786437, 786500, 786560, 786948, 787076, 524256, 524292, 524288, 524293, 9175045, 9175044 })
 local ballistic_armor_blip = utils_Set({ 16777220, 16777216, 16777348, 17039364, 17039876 })
 local shop_blips = utils_Set({ 2097282, 2097154 })
 local heist_planning_board = utils_Set({ 704 })
-local loading_blips = utils_Set({ 0, 6 })
+local loading_blips = utils_Set({ 0, 6, 64, 65 })
 local prep_mission_blips = utils_Set({524804})
+local junk_bike_blips = utils_Set({ 2359424, 2359428 })
 
 getPlayerBlipType = function(plyId)
     local plyBlip = globals.get_int(baseGlobals.blipType.baseGlobal + (plyId * 463) + 73 + 3)
@@ -537,13 +571,15 @@ getPlayerBlipType = function(plyId)
     elseif interior_blips[plyBlip] then
         return "INTERIOR"
     elseif plane_ghost_blips[plyBlip] then
-        return "PLANE GHOST"
+        return "PLANE_GHOST"
     elseif ultralight_ghost_blips[plyBlip] then
-        return "ULTRALIGHT GHOST"
+        return "ULTRALIGHT_GHOST"
     elseif beast_blips[plyBlip] then
         return "BEAST"
     elseif ls_customs_blip[plyBlip] then
-        return "LS CUSTOMS"
+        return "LS_CUSTOMS"
+    elseif clothes_shop_blip[plyBlip] then
+        return "CLOTHES_SHOP"
     elseif shop_blips[plyBlip] then
         return "SHOP"
     elseif normal_blips[plyBlip] then
@@ -553,21 +589,23 @@ getPlayerBlipType = function(plyId)
     elseif loading_blips[plyBlip] then
         return "LOADING"
     elseif ls_car_meet[plyBlip] then
-        return "CAR MEET"
+        return "CAR_MEET"
     elseif junk_parachute_blip[plyBlip] then
-        return "JUNK PARACHUTE"
+        return "JUNK_PARACHUTE"
+    elseif junk_bike_blips[plyBlip] then
+        return "JUNK_BIKE"
     elseif auto_shop[plyBlip] then
-        return "AUTO SHOP"
+        return "MOD_SHOP"
     elseif delivery_mission_blips[plyBlip] then
         return "DELIVERY_MISSION"
     elseif kosatka_blip[plyBlip] then
         return "KOSATKA"
     elseif ammo_nation_blip[plyBlip] then
-        return "AMMO NATION"
+        return "AMMO_NATION"
     elseif ballistic_armor_blip[plyBlip] then
-        return "BALLISTIC ARMOR"
+        return "BALLISTIC_ARMOR"
     elseif heist_planning_board[plyBlip] then
-        return "HEIST BOARD"
+        return "HEIST_BOARD"
     elseif unsure_blips[plyBlip] then
         return "UNSURE: " .. plyBlip
     elseif prep_mission_blips[plyBlip] then
@@ -654,7 +692,7 @@ function sendBounty(id, amount, skipOverride)
     globals.set_int(baseGlobals.bountyGlobals.bounty_base + 4571, id)
     globals.set_int(baseGlobals.bountyGlobals.bounty_base + 4571 + 1, 1)
     globals.set_bool(baseGlobals.bountyGlobals.bounty_base + 4571 + 2 + 1, true)
-    sleep(0.5)
+    sleep(0.4)
     if not skipOverride then
         resetOverrideBounty()
     end
@@ -720,7 +758,7 @@ function isSpectatingMe(plyId)
     if not ply then return end
     local visibleState = getIsTrackedPedVisibleState(plyId)
     local isWatchingMe = checkBit(visibleState, getLocalplayerID())
-    return isWatchingMe and distanceBetween(player.get_player_ped(), ply) > 240
+    return isWatchingMe and distanceBetween(player.get_player_ped(), ply) > 270
 end
 
 function amISpectating(plyId)
@@ -730,7 +768,7 @@ function amISpectating(plyId)
     if not ply then return end
     local ownVisibleState = getIsTrackedPedVisibleState(getLocalplayerID())
     local amIWatching = checkBit(ownVisibleState, plyId)
-    return amIWatching and distanceBetween(player.get_player_ped(), ply) > 240
+    return amIWatching and distanceBetween(player.get_player_ped(), ply) > 270
 end
 
 ---------------------------------------------------------------------------
@@ -851,8 +889,7 @@ function triggerRidLookupTableRefresh(plyname)
             end
         end
     end
-    --Couldn't find the correct offset, exit
-    if baseGlobals.ridLookup.freemode_base_local == -1 then return end
+    if baseGlobals.ridLookup.freemode_base_local == -1 then return end     --Couldn't find the correct offset, exit
     for i = 0, 100 do
         local shortenedPlyName = freemode_script:get_string(baseGlobals.ridLookup.freemode_base_local + (i * 526) + 3, 30)
         local rid = freemode_script:get_int(baseGlobals.ridLookup.freemode_base_local + (i * 526))
@@ -978,8 +1015,42 @@ function nativeTeleport(vector, headingVec)
         end
         setPlayerRespawnState(getLocalplayerID(), 7)
         globals.set_int(baseGlobals.teleport.baseGlobalVeh + 45 + 65, 1)
-        --sleep(0.05)
-        --setPlayerRespawnState(getLocalplayerID(), -1)
     end
     coords_is_setting = false
+end
+
+------------------------------------ Playername/Blip Hider -------------------------------------
+baseGlobals.hideGlobal = {}
+baseGlobals.hideGlobal.baseGlobal = 1845263 + 1 + (getLocalplayerID() * 877) + 205
+baseGlobals.hideGlobal.testFunctionExplanation = "Toggle Hide"
+baseGlobals.hideGlobal.testFunction = function()
+    hidePlayer(not isHidden())
+end
+
+local hideRunnerEnabled = false
+local hideRunnerRunning = false
+local function hideRunner()
+    while hideRunnerEnabled do
+        hideRunnerRunning = true
+        globals.set_int(baseGlobals.hideGlobal.baseGlobal, 8)
+        sleep(1)
+    end
+    globals.set_int(baseGlobals.hideGlobal.baseGlobal, 9)
+    hideRunnerRunning = false
+end
+menu.register_callback('hideRunner', hideRunner)
+
+function hidePlayer(hideToggle)
+    if hideToggle then
+        hideRunnerEnabled = true
+        if not hideRunnerRunning then
+            menu.emit_event('hideRunner')
+        end
+    else
+        hideRunnerEnabled = false
+    end
+end
+
+function isHidden()
+    return globals.get_int(baseGlobals.hideGlobal.baseGlobal) == 8
 end
