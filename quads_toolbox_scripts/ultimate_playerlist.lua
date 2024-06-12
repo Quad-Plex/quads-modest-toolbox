@@ -155,7 +155,7 @@ local function preciseSlam()
     if vel.z < 0 then
         vel.z = 0
     end
-    createVehicle(joaat("Dump"), (slamPly:get_position() + (vel * 1.26) + vector3(0, 0, 38)))
+    createVehicle(joaat("Dump"), (slamPly:get_position() + (vel * 1.26) + vector3(0, 0, 38)), nil, nil, generateRandomMods(VEHICLE[joaat("Dump")][3]))
     local found = false
     local tries = 0
     while (not found and tries < 20) do
@@ -702,7 +702,7 @@ local function modelIcon(ply, plyId)
         return "err"
     elseif (blipType == "VEHICLE") then
         return "\u{1F697}"
-    elseif (blipType == "PLANE GHOST") or (blipType == "ULTRALIGHT GHOST") then
+    elseif (blipType == "PLANE_GHOST") or (blipType == "ULTRALIGHT_GHOST") then
         return "\u{2708}"
     else
         --On foot, default
@@ -954,7 +954,7 @@ local function playerInfo(plyId, sub, plyName)
             end
         else
             local blipType = getPlayerBlipType(plyId)
-            if blipType == "VEHICLE" or blipType == "PLANE GHOST" or blipType == "ULTRALIGHT GHOST" then
+            if vehicleBlips[blipType] then
                 vehicle_name = "Vehicle"
             end
         end
@@ -965,7 +965,7 @@ local function playerInfo(plyId, sub, plyName)
     sub:add_bare_item("", wpn_veh, null, null, null)
 
     sub:add_action("Force enter " .. plyName .. "'s Vehicle", function()
-        if ply:is_in_vehicle() or getPlayerBlipType(plyId) == "VEHICLE" or getPlayerBlipType(plyId) == "PLANE GHOST" or getPlayerBlipType(plyId) == "ULTRALIGHT GHOST" then
+        if ply:is_in_vehicle() or interiorBlips[getPlayerBlipType(plyId)] then
             local oldPos = localplayer:get_position()
             local offRadarToggled = false
             if localplayer:get_max_health() > 100 then --Do the TP into vehicle while in offradar so other people don't see us jumping around on the minimap if it fails
@@ -985,7 +985,7 @@ local function playerInfo(plyId, sub, plyName)
             end
         end
     end, function()
-        return ply:is_in_vehicle() or getPlayerBlipType(plyId) == "VEHICLE" or getPlayerBlipType(plyId) == "PLANE GHOST"
+        return ply:is_in_vehicle() or getPlayerBlipType(plyId) == "VEHICLE" or getPlayerBlipType(plyId) == "PLANE_GHOST"
     end)
     --Player Stats
     greyText(sub, centeredText("------ Player Stats ------"))
@@ -1160,8 +1160,6 @@ local function refreshPlayer(plyName, plyId)
 end
 
 --Instantiates Player List that has SubMenus with Player names and general info about the player.
-local savePositionType = { "Adjusted", "Actual" }
-local savePositionSelection = 1
 function addSubActions(sub, plyName, plyId)
     sub:clear()
     local ply = player.get_player_ped(plyId)
@@ -1381,17 +1379,8 @@ function addSubActions(sub, plyName, plyId)
     pedFlagSub = sub:add_submenu("(DEBUG) Show Active Ped Flags", function()
         pedFlags(ply, pedFlagSub)
     end)
-    sub:add_array_item("+++ Save Pos as Interior : +++", savePositionType, function()
-        return savePositionSelection
-    end, function(value)
-        savePositionSelection = value
-        if savePositionSelection == 1 then
-            local pos = ply:get_position()
-            local adjustedPos = vector3(pos.x, pos.y, pos.z - 14.9)
-            saveNewInterior(adjustedPos)
-        else
-            saveNewInterior(ply:get_position())
-        end
+    sub:add_action("+++ Save current Pos as Interior +++", function()
+        saveNewInterior(ply:get_position())
     end)
 end
 
@@ -1445,7 +1434,7 @@ local function addSessionOptions(sub)
             local ply = player.get_player_ped(i)
             if ply then
                 sendBounty(i, bounty_numbers[current_bounty_number], true)
-                sleep(0.3)
+                sleep(0.2)
             end
         end
         resetOverrideBounty()
