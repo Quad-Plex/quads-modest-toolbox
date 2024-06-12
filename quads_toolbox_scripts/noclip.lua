@@ -49,8 +49,8 @@ local function rotate(amount, pitch)
 end
 
 local function adjustSpeed(amount)
-	if speed + amount > 0 then
-		speed = speed + amount
+	if speed * amount > 0 then
+		speed = speed * amount
 	end
 end
 
@@ -92,8 +92,8 @@ local function NoClip(toggle)
 				menu.register_hotkey(keycodes.S_KEY, function() move(initialHeading * speed * -1) end),
 				menu.register_hotkey(keycodes.A_KEY, function() rotate(0.25) end),
 				menu.register_hotkey(keycodes.D_KEY, function() rotate(0.25 * -1) end),
-				menu.register_hotkey(keycodes.ADD_KEY, function() adjustSpeed(1) end),
-				menu.register_hotkey(keycodes.SUBTRACT_KEY, function() adjustSpeed(-1) end)
+				menu.register_hotkey(keycodes.ADD_KEY, function() adjustSpeed(2) end),
+				menu.register_hotkey(keycodes.SUBTRACT_KEY, function() adjustSpeed(0.5) end)
 			}
 			displayHudBanner("SG_CLIP", "PIM_NCL_PRIV1", "", 108)
 		else
@@ -112,7 +112,7 @@ local function NoClip(toggle)
 			oldGrav = nil
 			sleep(0.3)
 			if localplayer:is_in_vehicle() then
-				setPlayerRespawnState(getLocalplayerID(), 9) --fix the vehicle being stuck
+				setPlayerRespawnState(getLocalplayerID(), 7) --fix the vehicle being stuck
 			end
 			if oldGodmode and localplayer:is_in_vehicle() then
 				local vehicle = localplayer:get_current_vehicle()
