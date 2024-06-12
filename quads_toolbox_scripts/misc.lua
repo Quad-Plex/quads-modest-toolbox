@@ -1,21 +1,21 @@
 --------------------------------
---UNDEAD OFFRADAR
+--HIDE NAME FROM LIST AND BLIP
 --------------------------------
 greyText(miscOptionsSub, "-------- Player Options --------")
 function offRadar()
 	if localplayer ~= nil then
-		if localplayer:get_max_health() > 100 then
-			localplayer:set_max_health(0.0)
+		if not isHidden() then
 			displayHudBanner("PM_UCON_T32", "CANNON_CAM_ACTIVE", "", 108)
+			hidePlayer(true)
 		else
-			localplayer:set_max_health(328.0)
 			displayHudBanner("PM_UCON_T32", "CANNON_CAM_INACTIVE", "", 108)
+			hidePlayer(false)
 		end
 	end
 end
 
-miscOptionsSub:add_toggle("Undead Offradar:  |👻", function()
-	return localplayer and localplayer:get_max_health() == 0.0
+miscOptionsSub:add_toggle("Hide Name/Blip from Map:  |👻", function()
+	return isHidden()
 end, function(_)
 	offRadar()
 end)
