@@ -5,6 +5,10 @@ TODO:
 - More testing with the invisible MOC maybe
 
 DONE:
+- ~~weaponmods menu with all interesting weapon setters to try out on the current weapon~~
+- ~~add ped model changer~~
+  - ~~add ability to add specific ped models as favorites~~ 
+- ~~implement the hide from map/list feature~~
 - ~~Figure out how to change vehicle light color during spawn FIXED~~
 - ~~Add disable traffic/player collision option~~
 - ~~Ability to Spawn cars with modifications (none, random or max mods)~~
@@ -29,7 +33,7 @@ DONE:
   - ~~Added easy updater in case of unknown offset~~
 - ~~Save godmode spawner status for favorited cars in vehicle spawner~~
 - ~~Add all ExplosionTypes with an array item~~
-- ~~Improve displayMessage timeout for multiple calls to it~~
+- ~~Improve displayMessage timeout for multiple calls to it
 - ~~Add displayMessages for hotkey toggles~~
 - ~~add ability to turn on/off modder/spectator notifications (playerlist settings maybe)~~
 - ~~More testing with the speedometer (find displayboxtype without fade-in maybe?)~~ Nope.
