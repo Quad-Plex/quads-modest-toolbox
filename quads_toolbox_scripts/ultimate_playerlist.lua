@@ -18,6 +18,7 @@ if not settingsLoadingSuccess then
     playerlistSettings.stringFormat = 0
     playerlistSettings.defaultBoostStrength = 70
     playerlistSettings.speedDisplaySelection = "Banner"
+    playerlistSettings.pedChangerSleepTimeout = 0.08
     json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/PLAYERLIST_SETTINGS.json", playerlistSettings)
 end
 
@@ -631,7 +632,7 @@ local function isExcludedVehicle(vehicle_model)
     return false
 end
 
-local function modCheck(ply, plyName, plyId)
+local function modCheck(ply, plyName, plyId, skipVehCheck)
     if not ply then return false end
     if (plyName and marked_modders[plyName] == "detected") or hasDevDLC(plyId) ~= 0 or ply:get_max_health() < 100 then
         return true
@@ -647,7 +648,12 @@ local function modCheck(ply, plyName, plyId)
             return true
         end
     end
-    if ply:is_in_vehicle() and (ply:get_current_vehicle():get_godmode() or ply:get_seatbelt()) and not interior_bool then
+    if not skipVehCheck then
+        if ply:is_in_vehicle() and (ply:get_current_vehicle():get_godmode()) and not interior_bool then
+            return true
+        end
+    end
+    if ply:is_in_vehicle() and ply:get_seatbelt() and not interior_bool then
         return true
     end
     return false
@@ -1530,7 +1536,7 @@ local function SubMenus(playerList)
     updateable = true
 
     local settingsMenuSub
-    settingsMenuSub = playerList:add_submenu("     ⚙️ Playerlist Settings ⚙️", function() addSettingsMenu(settingsMenuSub) end)
+    settingsMenuSub = playerList:add_submenu("      ⚙️ Playerlist Settings ⚙️", function() addSettingsMenu(settingsMenuSub) end)
 end
 
 
@@ -1797,7 +1803,7 @@ local function modWatcher()
                     goto continue
                 end
                 modders_cache[plyName] = modders_cache[plyName] or 0
-                if modCheck(ply, plyName, i) and not ((getPlayerRespawnState(i) ~= 99) or (getPlayerBlipType(i) == "LOADING")) then
+                if modCheck(ply, plyName, i, true) and not ((getPlayerRespawnState(i) ~= 99) or (getPlayerBlipType(i) == "LOADING")) then
                     modders_cache[plyName] = modders_cache[plyName] + 1
                     if modders_cache[plyName] >= 10 then
                         modders_cache[plyName] = nil

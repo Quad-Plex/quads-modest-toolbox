@@ -544,7 +544,7 @@ local vehicle_blips = utils_Set({ 262144, 262145, 262148, 262149, 262156, 262164
 local plane_ghost_blips = utils_Set({ 8388612, 8650884, 8651332, 8651396, 8651397, 8650756, 8650757, 8650820, 8651268, 8651269 })
 local ultralight_ghost_blips = utils_Set({ 262676, 262740 })
 local ls_customs_blip = utils_Set({ 2097280, 2359330, 2359458, 262178 })
-local interior_blips = utils_Set({ 20, 262274, 262656, 262272, 192, 128, 196, 576, 512, 517, 640, 708, 1 })
+local interior_blips = utils_Set({ 12, 20, 262274, 262656, 262272, 192, 128, 196, 576, 512, 517, 640, 708, 1 })
 local normal_blips = utils_Set({ 4, 5, 68, 132, 133, 140, 516, 580, 644 })
 local ls_car_meet = utils_Set({ 2359334, 2359426, 2359296, 262146 })
 local cashier_blip = utils_Set({ 2097152 })
@@ -554,7 +554,7 @@ local beast_blips = utils_Set({ 1048580, 1049092, 1310724, 1310788, 1311236, 157
 local kosatka_blip = utils_Set({ 262213, 262341, 262336, 262337, 262340, 262720 })
 local ammo_nation_blip = utils_Set({ 2 })
 local junk_parachute_blip = utils_Set({ 2097156, 2097220 })
-local unsure_blips = utils_Set({ 2622788, 262656, 2359299, 524416, 524420 })
+local unsure_blips = utils_Set({ 2622788, 262656, 2359299, 2359812, 524416, 524420 })
 local delivery_mission_blips = utils_Set({ 786432, 786436, 786437, 786500, 786560, 786948, 787076, 524256, 524292, 524288, 524293, 9175045, 9175044 })
 local ballistic_armor_blip = utils_Set({ 16777220, 16777216, 16777348, 17039364, 17039876 })
 local shop_blips = utils_Set({ 2097282, 2097154 })
@@ -943,10 +943,6 @@ vehicleStates = {
     ["hydraulics_rear"] = 20,
 }
 
---0=driver, 1=passenger, 2=left back, 3=right back
-doorTypes = {
-}
-
 function getCurrentVehicleState(stateName)
     return checkBit(globals.get_int(baseGlobals.vehicleOptions.base_global), vehicleStates[stateName])
 end
@@ -1053,4 +1049,56 @@ end
 
 function isHidden()
     return globals.get_int(baseGlobals.hideGlobal.baseGlobal) == 8
+end
+
+
+
+----------------------------- MODEL CHANGER ----------------------------------
+---Big thanks to Alice2333
+---
+baseGlobals.pedChanger = {}
+baseGlobals.pedChanger.hashGlobal1 = 153045
+baseGlobals.pedChanger.hashGlobal2 = 2640095
+baseGlobals.pedChanger.pedTrigger = 2707706
+baseGlobals.pedChanger.testFunctionExplanation = "Turn into a Dog"
+baseGlobals.pedChanger.testFunction = function()
+    setPlayerModel(joaat("a_c_shepherd"))
+end
+
+function getGender()
+    return stats.get_masked_int("mp"..stats.get_int("mpply_last_mp_char").."_pstat_int0", 16, 1)
+end
+
+pedChangerTimeout = 0.008
+default_models = { [0]="mp_m_freemode_01", "mp_f_freemode_01"}
+local ped_is_setting = false
+function setPlayerModel(hash)
+    local gender = getGender()
+    if not gender or not hash or (localplayer and localplayer:get_model_hash() == hash) then return end
+    if (type(hash) == "number") then
+        hash = hash
+    else
+        hash = joaat(hash)
+    end
+    if not ped_is_setting then
+        local tries = 0
+        while (localplayer:get_model_hash() ~= hash and tries < 30) do
+            ped_is_setting = true
+            --globals.set_int(baseGlobals.pedChanger.hashGlobal1 + 7 + gender, hash)
+            globals.set_int(baseGlobals.pedChanger.hashGlobal2 + 49, hash)
+            globals.set_bool(baseGlobals.pedChanger.hashGlobal2 + 62, true)
+            sleep(pedChangerTimeout) -- short sleep to interrupt the ped changer function with next call, prevents it from changing back to base model
+            globals.set_bool(baseGlobals.pedChanger.hashGlobal2 + 62, false)
+            if (hash ~= joaat("mp_m_freemode_01") and hash ~= joaat("mp_f_freemode_01")) then
+                sleep(pedChangerTimeout)
+                globals.set_int(baseGlobals.pedChanger.pedTrigger + 278, getOrSetPlayerPedID())
+                globals.set_bool(baseGlobals.pedChanger.pedTrigger + 226 + 1, true)
+            end
+            globals.set_int(baseGlobals.pedChanger.hashGlobal1 + 7 + gender, joaat(default_models[gender]))
+            sleep(pedChangerTimeout)
+            tries = tries + 1
+        end
+        ped_is_setting = nil
+    end
+    menu.max_all_ammo()
 end

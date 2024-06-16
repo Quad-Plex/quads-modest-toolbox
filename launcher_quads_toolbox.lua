@@ -4,6 +4,7 @@ finishedLoading = false
 require("scripts/quads_toolbox_scripts/toolbox_data/enums/VEHICLES")
 require("scripts/quads_toolbox_scripts/toolbox_data/enums/WEAPONS")
 require("scripts/quads_toolbox_scripts/toolbox_data/enums/PED_FLAGS")
+require("scripts/quads_toolbox_scripts/toolbox_data/enums/PED_MODELS")
 require("scripts/quads_toolbox_scripts/toolbox_data/enums/KEYCODE_CONSTANTS")
 require("scripts/quads_toolbox_scripts/toolbox_data/enums/MODEL_HASHES")
 require("scripts/quads_toolbox_scripts/toolbox_data/enums/PICKUP_HASHES")
@@ -24,7 +25,7 @@ vehicleSpawnMenu = toolboxSub:add_submenu("     ★🚗 Vehicle Spawner ★🚗"
 
 require("scripts/quads_toolbox_scripts/carMeetHelper")
 
-vehicleOptionsSub = toolboxSub:add_submenu(centeredText("   🔧 Vehicle Tools 🔧"))
+vehicleOptionsSub = toolboxSub:add_submenu(centeredText("  🔧 Vehicle Tools 🔧"))
 greyText(vehicleOptionsSub, centeredText(" ----- 🚗 Vehicle Options 🚗 -----"))
 require("scripts/quads_toolbox_scripts/trafficremover")
 require("scripts/quads_toolbox_scripts/carCheats")
@@ -36,7 +37,9 @@ greyText(gunOptionsSub, centeredText(" 🔫 Gun Options 🔫"))
 require("scripts/quads_toolbox_scripts/gunmenu")
 require("scripts/quads_toolbox_scripts/weaponMods")
 require("scripts/quads_toolbox_scripts/car-a-pult")
-require("scripts/quads_toolbox_scripts/weaponMods")
+
+pedChangerSub = toolboxSub:add_submenu(centeredText("    ★🏃 Ped Changer 🏃★"))
+require("scripts/quads_toolbox_scripts/pedchanger")
 
 miscOptionsSub = toolboxSub:add_submenu(centeredText("❓ Misc Options ❓"))
 greyText(miscOptionsSub, centeredText(" ❓ Misc Options ❓"))
