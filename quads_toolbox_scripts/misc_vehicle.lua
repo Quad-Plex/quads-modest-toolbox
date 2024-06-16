@@ -229,8 +229,20 @@ menu.register_callback("startRCSpamThread", rcSpamThread)
 ------------------------------ Misc Options -----------------------------
 greyText(vehicleOptionsSub, "------------ Misc -----------")
 -----------------------------------
---Open all car doors
+--Unlock all car doors
 --------------------------------
+---From: https://github.com/flotwig/GTAV-Motion/blob/master/GTAV-Motion/inc/enums.h
+---enum eVehicleLockStatus
+--{
+--	VehicleLockStatusNone = 0,
+--	VehicleLockStatusUnlocked = 1,
+--	VehicleLockStatusLocked = 2,
+--	VehicleLockStatusLockedForPlayer = 3,
+--	VehicleLockStatusStickPlayerInside = 4,
+--	VehicleLockStatusCanBeBrokenInto = 7,
+--	VehicleLockStatusCanBeBrokenIntoPersist = 8,
+--	VehicleLockStatusCannotBeTriedToEnter = 10
+--};
 local openTypes = { [0]="Unlock All", "Lock All"}
 local openType = 0
 vehicleOptionsSub:add_array_item("Car Doors State:", openTypes, function() return openType end, function(value)

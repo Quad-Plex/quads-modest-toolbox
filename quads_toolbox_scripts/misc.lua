@@ -101,7 +101,7 @@ end)
 ---------------------- Sessanta Options ----------------------
 greyText(miscOptionsSub, "-------- Sessanta Options --------")
 
-miscOptionsSub:add_action("New Sessanta Vehicle", function() newSessantaVehicle() end , function()
+miscOptionsSub:add_action("Trigger Sessanta Vehicle Delivery", function() newSessantaVehicle() end , function()
 	return script("shop_controller"):is_active()
 end)
 

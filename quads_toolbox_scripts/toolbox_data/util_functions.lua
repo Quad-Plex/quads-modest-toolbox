@@ -423,7 +423,7 @@ function addVehicleSpawnMenu(ply, sub)
             findAndEnableGodmodeForVehicle(spawnedModel, spawnPos)
         end
     end)
-    sub:add_action("Duplicate nearest Vehicle", function()
+    sub:add_action("Copy nearest Vehicle (no mods)", function()
         local minDistance = 5000
         local minDistanceVeh
         local ownVeh = ply:is_in_vehicle() and ply:get_current_vehicle()
@@ -448,7 +448,7 @@ function addVehicleSpawnMenu(ply, sub)
             findAndEnableGodmodeForVehicle(minDistanceVeh:get_model_hash(), spawnPos)
         end
     end)
-    sub:add_action("Duplicate nearest Vehicle (MAXED)", function()
+    sub:add_action("Copy nearest Vehicle (MAXED)", function()
         local minDistance = 5000
         local minDistanceVeh
         local ownVeh = ply:is_in_vehicle() and ply:get_current_vehicle()
@@ -473,7 +473,7 @@ function addVehicleSpawnMenu(ply, sub)
             findAndEnableGodmodeForVehicle(minDistanceVeh:get_model_hash(), spawnPos)
         end
     end)
-    sub:add_action("Duplicate current Vehicle", function()
+    sub:add_action("Copy current Vehicle (no mods)", function()
         local spawnPos = ply:get_position() + ply:get_heading() * 7
         createVehicle(ply:get_current_vehicle():get_model_hash(), spawnPos, math.deg(math.atan(ply:get_heading().y, ply:get_heading().x)))
         if enterOnSpawn then
@@ -488,7 +488,7 @@ function addVehicleSpawnMenu(ply, sub)
             findAndEnableGodmodeForVehicle(ply:get_current_vehicle():get_model_hash(), spawnPos)
         end
     end, function() return ply:is_in_vehicle() end)
-    sub:add_action("Duplicate current Vehicle (MAXED)", function()
+    sub:add_action("Copy current Vehicle (MAXED)", function()
         local spawnPos = ply:get_position() + ply:get_heading() * 7
         createVehicle(ply:get_current_vehicle():get_model_hash(), spawnPos, math.deg(math.atan(ply:get_heading().y, ply:get_heading().x)), nil, VEHICLE[ply:get_current_vehicle():get_model_hash()][3], true, false, true)
         if enterOnSpawn then
@@ -685,6 +685,7 @@ function addText(sub, string)
 end
 
 function greyText(sub, string)
+    if not sub then error("Missing sub in greyText!") end
     sub:add_bare_item(string, null, null, null, null)
 end
 
