@@ -235,7 +235,7 @@ local function initializePickups(sub)
 	if freemode_script:is_active() then
 		greyText(sub, "------- Quick Pickup Actions: -------")
 		sub:add_action("Gimme $ome Money", function() createCustomPickupWithCustomModel("PICKUP_MONEY_VARIABLE", "prop_cash_pile_01", math.random(1500, 2000)) end)
-		sub:add_action("Give Random Figurine", function() createCustomPickupWithCustomModel("PICKUP_CUSTOM_SCRIPT", figurines[math.random(#figurines)], 0) end)
+		sub:add_action("Give Random Collectible", function() createCustomPickupWithCustomModel("PICKUP_CUSTOM_SCRIPT", figurines[math.random(#figurines)], 0) end)
 		--sub:add_action("Debug Pickup", function() local pos = localplayer:get_position()+localplayer:get_heading()*3 pos.z = pos.z + 1 createPickup(pos, 69) end)
 		sub:add_action("Give Fireworks Launcher", function() createCustomPickupWithCustomModel("PICKUP_WEAPON_FIREWORK", nil, 6969) end)
 		sub:add_action("Give All Weapons", function() menu.emit_event('getAllWeapons') end)
