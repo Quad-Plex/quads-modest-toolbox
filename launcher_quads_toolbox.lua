@@ -33,6 +33,8 @@ require("scripts/quads_toolbox_scripts/misc_vehicle")
 
 gunOptionsSub = toolboxSub:add_submenu(centeredText(" 🔫 Gun Scripts 🔫"))
 greyText(gunOptionsSub, centeredText(" 🔫 Gun Options 🔫"))
+require("scripts/quads_toolbox_scripts/gunmenu")
+require("scripts/quads_toolbox_scripts/weaponMods")
 require("scripts/quads_toolbox_scripts/car-a-pult")
 require("scripts/quads_toolbox_scripts/weaponMods")
 
@@ -88,54 +90,10 @@ local function saveClosestVehicleModData(lastSpawnedVehicleHash)
 	return spawnedVehicleHash
 end
 
-local function getNextVehicle(lastSpawnedVehicleHash)
-	for _=1, 8 do --Go to spawn button
-		menu.send_key_press(keycodes.NUMERIC_KEYPAD_8)
-		sleep(0.04)
-	end
-
-	menu.send_key_press(keycodes.NUMERIC_KEYPAD_5) --Spawn the car
-	sleep(0.2)
-
-	local spawnedVehicleHash = saveClosestVehicleModData(lastSpawnedVehicleHash)
-
-	for _=1, 8 do --Go back to model selection
-		menu.send_key_press(keycodes.NUMERIC_KEYPAD_2)
-		sleep(0.04)
-	end
-
-	return spawnedVehicleHash
-end
-
 debugToolsSub:add_action("Print mod data for closest vehicle", function()
 	saveClosestVehicleModData()
 end)
 greyText(debugToolsSub, "Spawn with 'Anonymous (maxed)' before using")
-
------------------ Automatic mod data gathering for an entire category of cars, start with the cursor on the 'Model' option all the way to the left
---menu.register_hotkey(keycodes.PAGE_DOWN_KEY, function()
---	local lastSpawnedVehicleHash
---	stopOuter = false
---	repeat
---		local stopInner = false
---		if not lastSpawnedVehicleHash then lastSpawnedVehicleHash = getNextVehicle() end
---		menu.send_key_press(keycodes.NUMERIC_KEYPAD_6) --Next Car in Selection
---		sleep(0.04)
---		local newSpawnedVehicleHash = getNextVehicle(lastSpawnedVehicleHash)
---		if newSpawnedVehicleHash == lastSpawnedVehicleHash then
---			stopInner = true
---		else
---			lastSpawnedVehicleHash = newSpawnedVehicleHash
---		end
---	until stopInner
---	lastSpawnedVehicleHash = nil
---	menu.send_key_press(keycodes.NUMERIC_KEYPAD_8)
---	sleep(0.04)
---	menu.send_key_press(keycodes.NUMERIC_KEYPAD_6)
---	sleep(0.04)
---	menu.send_key_press(keycodes.NUMERIC_KEYPAD_2)
---	sleep(0.04)
---end)
 
 greyText(toolboxSub, "--------------------------------------")
 
