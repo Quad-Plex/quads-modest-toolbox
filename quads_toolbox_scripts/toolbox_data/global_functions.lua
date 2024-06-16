@@ -1069,7 +1069,6 @@ function getGender()
     return stats.get_masked_int("mp"..stats.get_int("mpply_last_mp_char").."_pstat_int0", 16, 1)
 end
 
-pedChangerTimeout = 0.008
 default_models = { [0]="mp_m_freemode_01", "mp_f_freemode_01"}
 local ped_is_setting = false
 function setPlayerModel(hash)
@@ -1082,20 +1081,20 @@ function setPlayerModel(hash)
     end
     if not ped_is_setting then
         local tries = 0
-        while (localplayer:get_model_hash() ~= hash and tries < 30) do
+        while (localplayer:get_model_hash() ~= hash and tries < 42) do
             ped_is_setting = true
             --globals.set_int(baseGlobals.pedChanger.hashGlobal1 + 7 + gender, hash)
             globals.set_int(baseGlobals.pedChanger.hashGlobal2 + 49, hash)
             globals.set_bool(baseGlobals.pedChanger.hashGlobal2 + 62, true)
-            sleep(pedChangerTimeout) -- short sleep to interrupt the ped changer function with next call, prevents it from changing back to base model
+            sleep(playerlistSettings.pedChangerSleepTimeout) -- short sleep to interrupt the ped changer function with next call, prevents it from changing back to base model
             globals.set_bool(baseGlobals.pedChanger.hashGlobal2 + 62, false)
             if (hash ~= joaat("mp_m_freemode_01") and hash ~= joaat("mp_f_freemode_01")) then
-                sleep(pedChangerTimeout)
+                sleep(playerlistSettings.pedChangerSleepTimeout)
                 globals.set_int(baseGlobals.pedChanger.pedTrigger + 278, getOrSetPlayerPedID())
                 globals.set_bool(baseGlobals.pedChanger.pedTrigger + 226 + 1, true)
             end
             globals.set_int(baseGlobals.pedChanger.hashGlobal1 + 7 + gender, joaat(default_models[gender]))
-            sleep(pedChangerTimeout)
+            sleep(playerlistSettings.pedChangerSleepTimeout)
             tries = tries + 1
         end
         ped_is_setting = nil

@@ -111,7 +111,6 @@ end, null, null)
 pedChangerSub:add_action("Turn into nearest Ped", function() setPlayerModel(findNearestPedModelHash()) end)
 pedChangerSub:add_action("Turn into random Ped", function()
     local random_selection = tbl_PedList[math.random(1, #tbl_PedList)][2]
-    print("Selection: " .. random_selection)
     setPlayerModel(joaat(random_selection))
 end)
 pedChangerSub:add_bare_item("", function() return "|Sleep: ◀ " .. playerlistSettings.pedChangerSleepTimeout .. " ▶" end, null, function()
