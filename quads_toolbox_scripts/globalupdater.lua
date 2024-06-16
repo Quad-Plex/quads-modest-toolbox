@@ -5,6 +5,7 @@ end
 table.sort(sortedGlobals)
 
 local function launchGlobalUpdater(sub)
+    sub:clear()
     addText(sub, "!!WARNING!! DON'T CHANGE THESE")
     addText(sub, "VALUES IF YOU DON'T KNOW WHAT")
     addText(sub, "YOU'RE DOING!")
