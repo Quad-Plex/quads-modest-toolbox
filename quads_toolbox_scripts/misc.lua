@@ -122,7 +122,7 @@ local function buildSpecialExportSubmenu(sub)
 			local vector = localplayer:get_heading()
 			local angle = math.deg(math.atan(vector.y, vector.x))
 			local oldNetID = getNetIDOfLastSpawnedVehicle()
-			createVehicle(hash, localplayer:get_position() + localplayer:get_heading() * 7, angle)
+			createVehicle(hash, localplayer:get_position() + localplayer:get_heading() * 7, angle, false, generateRandomMods(VEHICLE[hash][3]), true)
 			sleep(0.1)
 			local newNetID = getNetIDOfLastSpawnedVehicle()
 			if newNetID ~= oldNetID then
