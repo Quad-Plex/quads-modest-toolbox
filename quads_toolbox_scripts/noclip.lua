@@ -127,6 +127,7 @@ local function NoClip(toggle)
 end
 
 miscOptionsSub:add_toggle("Noclip:|🚀", function() return noclipToggle end, function(n) noclipToggle = n NoClip(noclipToggle)  end)
+miscOptionsSub:add_int_range("|Noclip Speed: ", 1, 0, 100, function() return speed end, function(v) speed=v end)
 
 
 --Numpad Divide Key
