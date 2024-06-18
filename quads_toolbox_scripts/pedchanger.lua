@@ -2,12 +2,13 @@ local _, favPeds = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_d
 
 greyText(pedChangerSub, centeredText("     ★🏃 Ped Changer 🏃★"))
 
-local function findPedDataFromHash(hash)
+function findPedDataFromHash(hash)
+    if not hash then return {"", "", ""} end
     for _, pedModelData in ipairs(tbl_PedList) do
         if joaat(pedModelData[2]) == hash then return pedModelData end
     end
 
-    return "Unknown: " .. hash
+    return {"Unknown: " .. hash, hash, "Unknown: " .. hash}
 end
 
 local function isInFavoritePeds(pedModel)
@@ -94,8 +95,8 @@ pedChangerSub:add_bare_item("", function() return "Current Ped: " .. findPedData
 pedChangerSub:add_bare_item("", function()
     _, favPeds = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/FAVORITED_PEDS.json")
     local currentPedData = findPedDataFromHash(localplayer and localplayer:get_model_hash())
-    local shouldAdd = not isInFavoritePeds(currentPedData[2]) and not (localplayer:get_model_hash() == joaat(default_models[getGender()]))
-    return shouldAdd and "+ Add " .. currentPedData[3] .. " to favorites +" or currentPedData[3] .. " is already in favorites!"
+    local shouldAdd = not isInFavoritePeds(currentPedData[2]) and not (localplayer and (localplayer:get_model_hash() == joaat(default_models[getGender()]))) and not (currentPedData[2] == "")
+    return shouldAdd and "+ Add " .. currentPedData[3] .. " to favorites +" or ""
 end, function()
     _, favPeds = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/FAVORITED_PEDS.json")
     local currentPedData = findPedDataFromHash(localplayer and localplayer:get_model_hash())
