@@ -1073,7 +1073,7 @@ default_models = { [0]="mp_m_freemode_01", "mp_f_freemode_01"}
 local ped_is_setting = false
 function setPlayerModel(hash)
     local gender = getGender()
-    if not gender or not hash or (localplayer and localplayer:get_model_hash() == hash) then return end
+    if not localplayer or not gender or not hash or (localplayer:get_model_hash() == hash) then return end
     if (type(hash) == "number") then
         hash = hash
     else
