@@ -180,7 +180,7 @@ local function addHotkeyToggles(hotkeyMenu)
         end, function(toggle)
             hotkeyData.toggleVar = toggle
             hotkeysData[i]=hotkeyData
-            json.savefile("scripts/quads_toolbox_scripts/toolbox_data/HOTKEY_CONFIG.json", hotkeysData)
+            json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/HOTKEY_CONFIG.json", hotkeysData)
             if hotkeyData.toggleVar then
                 displayHudBanner("PM_PANE_KEYS", "CANNON_CAM_ACTIVE", "", 108)
             else
@@ -193,7 +193,7 @@ local function addHotkeyToggles(hotkeyMenu)
         end, function(value)
             hotkeyData.keycode = value
             hotkeysData[i]=hotkeyData
-            json.savefile("scripts/quads_toolbox_scripts/toolbox_data/HOTKEY_CONFIG.json", hotkeysData)
+            json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/HOTKEY_CONFIG.json", hotkeysData)
             if hotkeyData.toggleVar then
                 displayHudBanner("PM_PANE_KEYS", "HEIST_IB_NAV2", "", 108)
                 --Hotkey is already enabled, so to toggle it twice to un-set it and then set it to the new keycode
