@@ -1086,7 +1086,7 @@ local function playerInfo(plyId, sub, plyName)
     end
 
     --Debug Stuff
-    greyText(sub, centeredText("------ DEBUGGING INFOS ------"))
+    greyText(sub, centeredText("------ ADVANCED INFOS ------"))
     sub:add_bare_item("", function() return "Ped Model: " .. findPedDataFromHash(ply:get_model_hash())[3] end, null, null, null)
     sub:add_bare_item("", function() return "RespawnState: " .. getPlayerRespawnState(plyId) end, null, null, null)
     sub:add_bare_item("", function()
@@ -1789,7 +1789,7 @@ local function modWatcher()
     while true do
         for i = 0, 31 do
             local ply = player.get_player_ped(i)
-            if not ply or ply == localplayer then goto continue end
+            if not ply or (ply == localplayer) then goto continue end
             local plyName = player.get_player_name(i)
             --Warn about spectating players with a "Warning! Spectator" label
             --Save their names to a table, as not to warn again for the same player
