@@ -5,6 +5,7 @@ TODO:
 - More testing with the invisible MOC maybe
 
 DONE:
+- ~~modder detection based on modified ped model~~
 - ~~weaponmods menu with all interesting weapon setters to try out on the current weapon~~
 - ~~add ped model changer~~
   - ~~add ability to add specific ped models as favorites~~ 
