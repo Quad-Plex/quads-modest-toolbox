@@ -3,7 +3,7 @@
   "defaultSortingMethod": 0,
   "disableModdersWarning": false,
   "disableSpectatorWarning": false,
-  "pedChangerSleepTimeout": 0.006000,
+  "pedChangerSleepTimeout": 0.010000,
   "speedDisplaySelection": "Banner",
   "stringFormat": 0
 }

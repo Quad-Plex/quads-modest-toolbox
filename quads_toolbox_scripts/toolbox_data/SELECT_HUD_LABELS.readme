@@ -56,5 +56,6 @@
 --CC_BLUSH_0            - 'Full'
 --PM_PANE_KEYS          - 'Key Bindings'
 --PIM_GS_13             - 'Developers'
-CM_REPORT               - 'Report'
-EF_RECEIVED             - 'Received'
+--CM_REPORT             - 'Report'
+--EF_RECEIVED           - 'Received'
+--OVHEAD_PED            - 'Ped'
