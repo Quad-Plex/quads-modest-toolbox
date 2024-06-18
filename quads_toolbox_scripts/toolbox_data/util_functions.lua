@@ -12,7 +12,7 @@ local function findAndEnableGodmodeForVehicle(vehicle_hash, checkPos)
     local foundVeh
     for _ = 0, 12 do
         for veh in replayinterface.get_vehicles() do
-            if veh:get_model_hash() == vehicle_hash and distanceBetween(veh, checkPos, true) < 3 then
+            if veh:get_model_hash() == vehicle_hash and distanceBetween(veh, checkPos, true) < 4 then
                 foundVeh = veh
                 break
             end
@@ -23,7 +23,7 @@ local function findAndEnableGodmodeForVehicle(vehicle_hash, checkPos)
     for _ = 0, 42 do
         --For some reason godmode gets enabled here but doesn't stick well so I just force it for a while
         foundVeh:set_godmode(true)
-        sleep(0.08)
+        sleep(0.1)
     end
     return
 end
