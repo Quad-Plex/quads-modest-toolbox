@@ -527,6 +527,10 @@ local function getPlayerStateText(ply, plyId)
         return ""
     end
 
+    if ply:get_model_hash() ~= joaat("mp_m_freemode_01") and ply:get_model_hash() ~= joaat("mp_f_freemode_01") then
+        return "PED "
+    end
+
     if ply:get_max_health() <= 0 then
         return "MOD "
     end
@@ -654,6 +658,9 @@ local function modCheck(ply, plyName, plyId, skipVehCheck)
         end
     end
     if ply:is_in_vehicle() and ply:get_seatbelt() and not interior_bool then
+        return true
+    end
+    if ply:get_model_hash() ~= joaat("mp_m_freemode_01") and ply:get_model_hash() ~= joaat("mp_f_freemode_01") then
         return true
     end
     return false
@@ -888,12 +895,15 @@ local function playerInfo(plyId, sub, plyName)
     greyText(sub, "======== ⇩ 🛈 PLAYER INFO 🛈 ⇩ ========")
 
     --Display player state
-    local function playerState()
+    sub:add_bare_item("", function()
         local txt = ""
         local blipType = getPlayerBlipType(plyId)
 
         if ply ~= localplayer and amISpectating(plyId) then
             txt = txt .. "SPEC "
+        end
+        if ply:get_model_hash() ~= joaat("mp_m_freemode_01") and ply:get_model_hash() ~= joaat("mp_f_freemode_01") then
+            txt = txt .. "MODDED_PED "
         end
         if ply ~= localplayer and isSpectatingMe(plyId) then
             txt = txt .. "!WATCHING YOU! "
@@ -919,11 +929,11 @@ local function playerInfo(plyId, sub, plyName)
 
         --Add the blip type to the info
         return centeredText(txt .. blipType)
-    end
-    sub:add_bare_item("", playerState, null, null, null)
+    end, null, null, null)
 
     --health/armor/wanted level
-    local function health_and_armor()
+    greyText(sub, centeredText("------ Health/Armor/Wanted Level ------"))
+    sub:add_bare_item("", function()
         local healthPercent = (ply:get_health() / ply:get_max_health()) * 100
         local respawnState = getPlayerRespawnState(plyId)
 
@@ -940,13 +950,11 @@ local function playerInfo(plyId, sub, plyName)
         local vehicle_health = ply:is_in_vehicle() and math.floor(ply:get_current_vehicle():get_health()) or 0
 
         return " " .. healthPercent .. "    " .. armor .. "\u{1F6E1}    " .. wanted .. "|" .. "\u{1F697}" .. vehicle_health .. "\u{2665}"
-    end
-
-    greyText(sub, centeredText("------ Health/Armor/Wanted Level ------"))
-    sub:add_bare_item("", health_and_armor, null, null, null)
+    end, null, null, null)
 
     --Weapon/Vehicle
-    local function wpn_veh()
+    greyText(sub, centeredText("------ 🔫 Weapon / Vehicle 🚗------"))
+    sub:add_bare_item("", function()
         local wpn_text = getWpn(ply)
         local vehicle_name, vehicle_class = "On Foot", ""
 
@@ -965,10 +973,7 @@ local function playerInfo(plyId, sub, plyName)
             end
         end
         return wpn_text .. "|" .. vehicle_name .. " - " .. vehicle_class
-    end
-
-    greyText(sub, centeredText("------ 🔫 Weapon / Vehicle 🚗------"))
-    sub:add_bare_item("", wpn_veh, null, null, null)
+    end, null, null, null)
 
     sub:add_action("Force enter " .. plyName .. "'s Vehicle", function()
         if ply:is_in_vehicle() or interiorBlips[getPlayerBlipType(plyId)] then
@@ -1003,18 +1008,16 @@ local function playerInfo(plyId, sub, plyName)
         return "Wallet: " .. formattedWallet .. "|Bank: " .. formattedBank
     end, null, null, null)
 
-    local playerKdAndBounty = function()
+    sub:add_bare_item("", function()
         local bountyAmount = getPlayerBountyAmount(plyId)
         bountyAmount = (bountyAmount == 0) and "None" or bountyAmount
         return "K/D: " .. string.format("%1.2f", getPlayerKd(plyId)) .. " (" .. getPlayerKills(plyId) .. ":" .. getPlayerDeaths(plyId) .. ")" .. "|\u{1F480} Bounty: " .. bountyAmount
-    end
-    sub:add_bare_item("", playerKdAndBounty, null, null, null)
-
+    end, null, null, null)
 
     --Player Org
     greyText(sub, centeredText("------ Player Organisation------"))
 
-    local playerOrg = function()
+    sub:add_bare_item("", function()
         local plyOrgID = getPlayerOrgID(plyId)
         if plyOrgID == -1 then
             return "No Organisation"
@@ -1022,8 +1025,7 @@ local function playerInfo(plyId, sub, plyName)
         local playerOrgType = getPlayerOrgType(plyId) or "Employee in"
         local playerOrgName = getPlayerOrgName(plyId)
         return playerOrgType .. (playerOrgType == "Employee in" and " " or " of ") .. "\'" .. playerOrgName .. "\'"
-    end
-    sub:add_bare_item("", playerOrg, null, null, null)
+    end, null, null, null)
 
     sub:add_action("\u{26A0} Force Join " .. getPlayerOrgName(plyId) .. " \u{26A0}", function()
         joinPlayerOrg(plyId)
@@ -1085,19 +1087,16 @@ local function playerInfo(plyId, sub, plyName)
 
     --Debug Stuff
     greyText(sub, centeredText("------ DEBUGGING INFOS ------"))
-    local respawnState = function()
-        return "RespawnState: " .. getPlayerRespawnState(plyId)
-    end
-    sub:add_bare_item("", respawnState, null, null, null)
-    local debugBlipType = function()
+    sub:add_bare_item("", function() return "Ped Model: " .. findPedDataFromHash(ply:get_model_hash())[3] end, null, null, null)
+    sub:add_bare_item("", function() return "RespawnState: " .. getPlayerRespawnState(plyId) end, null, null, null)
+    sub:add_bare_item("", function()
         local playerBlip = getPlayerBlip(plyId)
         local playerBlipType = getPlayerBlipType(plyId)
         if string.find(playerBlipType, "Blip:") or string.find(playerBlipType, "UNSURE:") then
             playerBlipType = "Unknown"
         end
         return "Blip ID: " .. playerBlip .. " (" .. playerBlipType .. ")"
-    end
-    sub:add_bare_item("", debugBlipType, null, null, null)
+    end, null, null, null)
     sub:add_bare_item("", function()
         return "PlyId: " .. plyId
     end, null, null, null)
@@ -1455,7 +1454,7 @@ local function addSettingsMenu(sub)
         playerlistSettings.disableSpectatorWarning =  value
         json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/PLAYERLIST_SETTINGS.json", playerlistSettings)
     end)
-    sub:add_toggle("|Disable Modder Warning ", function() return playerlistSettings.disableModdersWarning end, function(value)
+    sub:add_toggle("|Disable Modder Warnings ", function() return playerlistSettings.disableModdersWarning end, function(value)
         playerlistSettings.disableModdersWarning =  value
         json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/PLAYERLIST_SETTINGS.json", playerlistSettings)
     end)
@@ -1765,10 +1764,18 @@ end
 menu.register_callback('autoLaunch', autoLaunchThread)
 
 local function checkObviousModder(ply, plyName, i)
-    if ply and ply:get_max_health() <= 0 or hasDevDLC(i) ~= 0 then
+    if not ply then return end
+    if ply:get_max_health() <= 0 or hasDevDLC(i) ~= 0 then
         marked_modders[plyName] = "detected"
         if not playerlistSettings.disableModdersWarning then
             displayHudBanner(ply:get_max_health() <= 0 and "VVHUD_GHOST" or "PIM_GS_13", "GBC_STPASS_CHE", "", 90)
+        end
+        return true
+    end
+    if ply:get_model_hash() ~= joaat("mp_m_freemode_01") and ply:get_model_hash() ~= joaat("mp_f_freemode_01") then
+        marked_modders[plyName] = "detected"
+        if not playerlistSettings.disableModdersWarning then
+            displayHudBanner("OVHEAD_PED", "GBC_STPASS_CHE", "", 90)
         end
         return true
     end
@@ -1782,7 +1789,7 @@ local function modWatcher()
     while true do
         for i = 0, 31 do
             local ply = player.get_player_ped(i)
-            if not ply then goto continue end
+            if not ply or ply == localplayer then goto continue end
             local plyName = player.get_player_name(i)
             --Warn about spectating players with a "Warning! Spectator" label
             --Save their names to a table, as not to warn again for the same player
@@ -1798,7 +1805,7 @@ local function modWatcher()
                     spectators_cache[plyName] = nil
                 end
             end
-            if not (localplayer == ply) and not (marked_modders[plyName] == "detected") then
+            if not (marked_modders[plyName] == "detected") then
                 if checkObviousModder(ply, plyName, i) then
                     goto continue
                 end
