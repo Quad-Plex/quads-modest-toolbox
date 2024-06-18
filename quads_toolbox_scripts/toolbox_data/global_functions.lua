@@ -554,8 +554,8 @@ local beast_blips = utils_Set({ 1048580, 1049092, 1310724, 1310788, 1311236, 157
 local kosatka_blip = utils_Set({ 262213, 262341, 262336, 262337, 262340, 262720 })
 local ammo_nation_blip = utils_Set({ 2 })
 local junk_parachute_blip = utils_Set({ 2097156, 2097220 })
-local unsure_blips = utils_Set({ 2622788, 262656, 2359299, 2359812, 524416, 524420 })
-local delivery_mission_blips = utils_Set({ 786432, 786436, 786437, 786500, 786560, 786948, 787076, 524256, 524292, 524288, 524293, 9175045, 9175044 })
+local unsure_blips = utils_Set({ 2622788, 262656, 2359299, 2359812 })
+local delivery_mission_blips = utils_Set({ 524256, 524292, 524288, 524293, 524416, 524420, 786432, 786436, 786437, 786500, 786560, 786948, 787076, 9175045, 9175044 })
 local ballistic_armor_blip = utils_Set({ 16777220, 16777216, 16777348, 17039364, 17039876 })
 local shop_blips = utils_Set({ 2097282, 2097154 })
 local heist_planning_board = utils_Set({ 704 })
@@ -1017,7 +1017,7 @@ end
 
 ------------------------------------ Playername/Blip Hider -------------------------------------
 baseGlobals.hideGlobal = {}
-baseGlobals.hideGlobal.baseGlobal = 1845263 + 1 + (getLocalplayerID() * 877) + 205
+baseGlobals.hideGlobal.baseGlobal = 1845263
 baseGlobals.hideGlobal.testFunctionExplanation = "Toggle Hide"
 baseGlobals.hideGlobal.testFunction = function()
     hidePlayer(not isHidden())
@@ -1028,10 +1028,10 @@ local hideRunnerRunning = false
 local function hideRunner()
     while hideRunnerEnabled do
         hideRunnerRunning = true
-        globals.set_int(baseGlobals.hideGlobal.baseGlobal, 8)
+        globals.set_int(baseGlobals.hideGlobal.baseGlobal + 1 + (getLocalplayerID() * 877) + 205, 8)
         sleep(1)
     end
-    globals.set_int(baseGlobals.hideGlobal.baseGlobal, 9)
+    globals.set_int(baseGlobals.hideGlobal.baseGlobal + 1 + (getLocalplayerID() * 877) + 205, 9)
     hideRunnerRunning = false
 end
 menu.register_callback('hideRunner', hideRunner)
@@ -1048,7 +1048,7 @@ function hidePlayer(hideToggle)
 end
 
 function isHidden()
-    return globals.get_int(baseGlobals.hideGlobal.baseGlobal) == 8
+    return globals.get_int(baseGlobals.hideGlobal.baseGlobal + 1 + (getLocalplayerID() * 877) + 205) == 8
 end
 
 
