@@ -758,7 +758,7 @@ function isSpectatingMe(plyId)
     if not ply then return end
     local visibleState = getIsTrackedPedVisibleState(plyId)
     local isWatchingMe = checkBit(visibleState, getLocalplayerID())
-    return isWatchingMe and distanceBetween(player.get_player_ped(), ply) > 270
+    return isWatchingMe and distanceBetween(player.get_player_ped(), ply) > 280
 end
 
 function amISpectating(plyId)
@@ -768,7 +768,7 @@ function amISpectating(plyId)
     if not ply then return end
     local ownVisibleState = getIsTrackedPedVisibleState(getLocalplayerID())
     local amIWatching = checkBit(ownVisibleState, plyId)
-    return amIWatching and distanceBetween(player.get_player_ped(), ply) > 270
+    return amIWatching and distanceBetween(player.get_player_ped(), ply) > 280
 end
 
 ---------------------------------------------------------------------------
