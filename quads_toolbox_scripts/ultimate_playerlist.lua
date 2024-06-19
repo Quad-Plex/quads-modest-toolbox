@@ -388,7 +388,7 @@ local function cagePlayer(ply, type)
     elseif type == "CableCar" then
         local rot = ply:get_rotation()
         local angle = math.deg(math.atan(rot.y, rot.x + (math.pi / 4)))
-        createVehicle(joaat("CableCar"), ply:get_position(), angle, true, nil, true)
+        createVehicle(joaat("CableCar"), ply:get_position(), angle, false, nil, true)
     end
 end
 
