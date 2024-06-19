@@ -270,11 +270,14 @@ local function addVehicleEntry(vehMenu, vehicle, ply)
         return godmodeEnabledSpawn
     end, function(n)
         if vehicle[3] ~= nil then
+            local oldModData = vehicle[2][3]
+            vehicle[2][3] = nil --Don't want the mod data to be copied into the favorited_vehicles json so we exclude it temporarily from the object
             vehicle[3] = n
             table.sort(favoritedCars, function(a, b)
                 return a[2][1]:upper() < b[2][1]:upper()
             end)
             json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/FAVORITED_CARS.json", favoritedCars)
+            vehicle[2][3] = oldModData
         else
             godmodeEnabledSpawn = n
         end
@@ -286,11 +289,14 @@ local function addVehicleEntry(vehMenu, vehicle, ply)
         return enterOnSpawn
     end, function(n)
         if vehicle[4] ~= nil then
+            local oldModData = vehicle[2][3]
+            vehicle[2][3] = nil --Don't want the mod data to be copied into the favorited_vehicles json so we exclude it temporarily from the object
             vehicle[4] = n
             table.sort(favoritedCars, function(a, b)
                 return a[2][1]:upper() < b[2][1]:upper()
             end)
             json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/FAVORITED_CARS.json", favoritedCars)
+            vehicle[2][3] = oldModData
         else
             enterOnSpawn = n
         end
