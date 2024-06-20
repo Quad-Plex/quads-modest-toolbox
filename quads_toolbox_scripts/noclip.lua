@@ -112,16 +112,17 @@ local function NoClip(toggle)
 			oldGrav = nil
 			sleep(0.3)
 			if localplayer:is_in_vehicle() then
-				setPlayerRespawnState(getLocalplayerID(), 7) --fix the vehicle being stuck
-			end
-			if oldGodmode and localplayer:is_in_vehicle() then
-				local vehicle = localplayer:get_current_vehicle()
-				sleep(3) --the nativeteleport removes godmode, so we gotta wait for that to happen and re-enable
-				for _ = 0, 12 do
-					vehicle:set_godmode(oldGodmode)
-					sleep(0.08)
+				setPlayerRespawnState(getLocalplayerID(), 9) --fix the vehicle being stuck
+				if oldGodmode then
+					local vehicle = localplayer:get_current_vehicle()
+					sleep(3) --the nativeteleport removes godmode, so we gotta wait for that to happen and re-enable
+					for _ = 0, 12 do
+						vehicle:set_godmode(oldGodmode)
+						sleep(0.08)
+					end
 				end
 			end
+			turnOffVehTeleporter()
 		end
 	end
 end

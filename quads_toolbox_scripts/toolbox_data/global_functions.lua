@@ -987,7 +987,7 @@ baseGlobals.teleport.testFunction = function()
     nativeTeleport(localplayer:get_position() + localplayer:get_heading() * 2)
 end
 function nativeTeleport(vector, headingVec)
-    if ((localplayer:get_pedtype() == 2) and not localplayer:is_in_vehicle() and not coords_is_setting) then -- localplayer is netplayer and not in vehicle
+    if (localplayer and (localplayer:get_pedtype() == 2) and not localplayer:is_in_vehicle() and not coords_is_setting) then -- localplayer is netplayer and not in vehicle
         coords_is_setting = true
         globals.set_float(baseGlobals.teleport.baseGlobalPed + 946 + 0, vector.x)
         globals.set_float(baseGlobals.teleport.baseGlobalPed + 946 + 1, vector.y)
@@ -1018,6 +1018,10 @@ function nativeTeleport(vector, headingVec)
         globals.set_int(baseGlobals.teleport.baseGlobalVeh + 45 + 65, 1)
     end
     coords_is_setting = false
+end
+
+function turnOffVehTeleporter()
+    globals.set_int(baseGlobals.teleport.baseGlobalVeh + 45 + 65, 0)
 end
 
 ------------------------------------ Playername/Blip Hider -------------------------------------
