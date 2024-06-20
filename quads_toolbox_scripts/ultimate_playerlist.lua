@@ -205,8 +205,6 @@ local function TeleportVehiclesToPlayer(ply, distance, explode, vector_switch)
 
     local nonPlayerVehicles = getNonPlayerVehicles()
 
-    vehicleDistance = distance
-
     local pos = vector_switch and ply or ply:get_position()
 
     for _, veh in pairs(nonPlayerVehicles) do
@@ -1339,11 +1337,13 @@ function addSubActions(sub, plyName, plyId)
     trollSub:add_int_range("TP Vehicles to " .. plyName .. " |Range:", 1, 0, 10, function()
         return vehicleDistance
     end, function(n)
+        vehicleDistance = n
         TeleportVehiclesToPlayer(ply(), n, false)
     end)
     trollSub:add_int_range("EXPLODE " .. plyName .. " |Range:", 1, 0, 10, function()
         return vehicleDistance
     end, function(n)
+        vehicleDistance = n
         TeleportVehiclesToPlayer(ply():get_position(), n, true, true)
     end)
     trollSub:add_action("\u{26A0} EMERGENCY STOP ALL LOOPS \u{26A0}", emergencyStop)
@@ -1697,7 +1697,7 @@ menu.register_callback('trackGPS', gpsTrackerThread)
 local function autoExplodeThread()
     while auto_action_player_id and auto_explode do
         if checkAndPerformEmergencyStop() then return end
-        TeleportVehiclesToPlayer(autoPly():get_position(), vehicleDistance, true, true)
+        TeleportVehiclesToPlayer(autoPly():get_position(), 2, true, true)
         sleep(0.35)
     end
 end
@@ -1706,7 +1706,7 @@ menu.register_callback('startAutoExplode', autoExplodeThread)
 local function autoVehicleStormThread()
     while auto_action_player_id and auto_storm do
         if checkAndPerformEmergencyStop() then return end
-        TeleportVehiclesToPlayer(autoPly(), vehicleDistance, false)
+        TeleportVehiclesToPlayer(autoPly(), 2, false)
         sleep(0.26)
     end
 end
