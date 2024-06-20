@@ -49,7 +49,7 @@ local function rotate(amount, pitch)
 end
 
 local function adjustSpeed(amount)
-	if speed * amount > 0 then
+	if speed * amount > 1 then
 		speed = speed * amount
 	end
 end

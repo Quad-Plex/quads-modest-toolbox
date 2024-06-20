@@ -1,4 +1,5 @@
 finishedLoading = false
+require_game_build(3179) -- GTA Online v1.68 (build 3179)
 
 --Load all required constants
 require("scripts/quads_toolbox_scripts/toolbox_data/enums/VEHICLES")
