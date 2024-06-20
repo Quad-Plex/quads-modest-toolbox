@@ -261,48 +261,44 @@ function getVehicleForPlayerID(playerID)
     end
 end
 
-function setPedIntoVehicle(vehicleNetID, oldPos, nofreeze)
+function setPedIntoVehicle(vehicleNetID, oldPos, noFreeze)
     local oldVeh
     if localplayer:is_in_vehicle() then
         oldVeh = localplayer:get_current_vehicle()
     end
-    if not vehicleNetID or vehicleNetID == 0 then return end
-    local i = 0
-    repeat
-        if not nofreeze then
-            localplayer:set_freeze_momentum(true)
-            localplayer:set_no_ragdoll(true)
-            localplayer:set_config_flag(292, true)
-        end
-        globals.set_int(baseGlobals.setIntoVehicle.forceControl + 3184, vehicleNetID) --Network request control of entity
-        setPlayerRespawnState(getLocalplayerID(), 5)
-        globals.set_int(baseGlobals.setIntoVehicle.forceControl + 614, 5) --ped:set_ped_into_vehicle set in #1
-        if (i == 8) then
-            break
-        end
-        i = i+1
-        sleep(0.1)
-    until (getVehicleForPlayerID() == vehicleNetID)
-    sleep(0.5)
+    if vehicleNetID and vehicleNetID ~= 0 then
+        local i = 0
+        repeat
+            if not noFreeze then
+                localplayer:set_freeze_momentum(true)
+                localplayer:set_no_ragdoll(true)
+                localplayer:set_config_flag(292, true)
+            end
+            globals.set_int(baseGlobals.setIntoVehicle.forceControl + 3184, vehicleNetID) --Network request control of entity
+            setPlayerRespawnState(getLocalplayerID(), 5)
+            globals.set_int(baseGlobals.setIntoVehicle.forceControl + 614, 5) --ped:set_ped_into_vehicle set in #1
+            if (i == 5) then
+                break
+            end
+            i = i+1
+            sleep(0.1)
+        until (getVehicleForPlayerID() == vehicleNetID)
+        sleep(0.2)
+    end
+    setPlayerRespawnState(getLocalplayerID(), 9) --setting respawn to 9 gives back player control
+    globals.set_int(baseGlobals.setIntoVehicle.forceControl + 3184, -1) --Network request control of entity
+    globals.set_int(baseGlobals.setIntoVehicle.forceControl + 614, -1) --ped:set_ped_into_vehicle set in #1
     if oldPos and (not localplayer:is_in_vehicle() or (localplayer:get_current_vehicle() == oldVeh)) then
         --Assume entering the vehicle failed
         if distanceBetween(localplayer, oldPos, true) > 10 then
-            local tries = 0
-            while (tries < 4) do
-                nativeTeleport(oldPos)
-                tries = tries + 1
-                sleep(0.1)
-            end
+            nativeTeleport(oldPos)
         end
     end
-    setPlayerRespawnState(getLocalplayerID(), 9) --setting respawn to 9 gives back player control
-    if not nofreeze then
+    if not noFreeze then
         localplayer:set_freeze_momentum(false)
         localplayer:set_no_ragdoll(false)
         localplayer:set_config_flag(292, false)
     end
-    globals.set_int(baseGlobals.setIntoVehicle.forceControl + 3184, -1) --Network request control of entity
-    globals.set_int(baseGlobals.setIntoVehicle.forceControl + 614, -1) --ped:set_ped_into_vehicle set in #1
 end
 
 ----------------------Pickup Spawner--------------------------
@@ -435,8 +431,8 @@ end
 
 -- -1/1 repair vehicle, 11 flip vehicle, 2-6 are respawn triggers
 --Only seem to work on oneself
-setPlayerRespawnState = function(plyId, value)
-    globals.set_int(baseGlobals.respawnState.baseGlobal + 1 + (plyId * 463) + 232, value)
+setPlayerRespawnState = function(plyId, respawnState)
+    globals.set_int(baseGlobals.respawnState.baseGlobal + 1 + (plyId * 463) + 232, respawnState)
 end
 
 ---------------------Player Org---------------------------------
@@ -1000,6 +996,7 @@ function nativeTeleport(vector, headingVec)
         globals.set_int(baseGlobals.teleport.baseGlobalPed + 943, 20) --Trigger Entity:set_entity_coords
         sleep(0.05)
         globals.set_int(baseGlobals.teleport.baseGlobalPed + 943, -1)
+        setPlayerRespawnState(getLocalplayerID(), 0)
     elseif localplayer:is_in_vehicle() and not coords_is_setting then
         coords_is_setting = true
         globals.set_float(baseGlobals.teleport.baseGlobalVeh + 505 + 0, vector.x)
@@ -1127,7 +1124,7 @@ function setWayPoint(x, y)
     globals.set_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 3, true) --Pegasus Spawn trigger
     globals.set_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 5, true) --Spawn trigger #2
     sleep(0.1)
-    globals.set_int(baseGlobals.waypointGlobal.baseGlobal, 512) -- Set some wild bits in some random global idfk
+    globals.set_int(baseGlobals.waypointGlobal.baseGlobal, 512) -- 9th bit sets quick gps to pegasus vehicle
     x = 2 ^ 8 + 2 ^ 10
     for _ = 1, 100 do
         if globals.get_int(baseGlobals.waypointGlobal.baseGlobal) & x == x then
@@ -1136,6 +1133,6 @@ function setWayPoint(x, y)
         sleep(0.01)
     end
     sleep(0.4)
-    globals.set_int(baseGlobals.waypointGlobal.baseGlobal, 2 ^ 15)
+    globals.set_int(baseGlobals.waypointGlobal.baseGlobal, 2 ^ 15) --bit 15 removes pegasus blip from vehicle
     globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 66, oldHash)
 end

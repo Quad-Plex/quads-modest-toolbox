@@ -112,9 +112,7 @@ end
 local current_me
 local teleportHeight = 0
 local function tpToPlayer(ply, height, auto_localplayer)
-    if not ply or ply == nil then
-        return
-    end
+    if not ply or ply == nil then return end
 
     if auto_localplayer then
         current_me = auto_localplayer
@@ -991,7 +989,7 @@ local function playerInfo(plyId, sub, plyName)
     end, null, null, null)
 
     sub:add_action("Force enter " .. plyName .. "'s Vehicle", function()
-        if ply():is_in_vehicle() or interiorBlips[getPlayerBlipType(plyId)] then
+        if ply():is_in_vehicle() or vehicleBlips[getPlayerBlipType(plyId)] then
             local oldPos = localplayer:get_position()
             local offRadarToggled = false
             if localplayer:get_max_health() > 100 then --Do the TP into vehicle while in offradar so other people don't see us jumping around on the minimap if it fails
@@ -1002,9 +1000,12 @@ local function playerInfo(plyId, sub, plyName)
                 localplayer:set_freeze_momentum(true)
                 localplayer:set_no_ragdoll(true)
                 localplayer:set_config_flag(292, true)
-                tpToPlayer(ply(), -5)
+                tpToPlayer(ply(), -5, nil)
+                local counter = 0
+                repeat
+                    counter = counter + 1
+                until ply():is_in_vehicle() or counter == 40000
             end
-            sleep(0.12)
             setPedIntoVehicle(getVehicleForPlayerID(plyId), oldPos)
             if offRadarToggled then
                 offRadar()
