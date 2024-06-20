@@ -61,7 +61,7 @@ end)
 
 ----------------------Respawn State changer----------------------
 local stateToSet = 7
-miscOptionsSub:add_int_range("Trigger Respawn (Unstuck) |🔁", 1, -10, 10, function() return stateToSet end, function(n)
+miscOptionsSub:add_int_range("Trigger Respawn (Unstuck) |🔁", 1, -10, 100, function() return stateToSet end, function(n)
 	displayHudBanner("TRI_WARP", "", "", 108)
 	sleep(0.3)
 	stateToSet = n
