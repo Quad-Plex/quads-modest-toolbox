@@ -195,6 +195,11 @@ function generateRandomMods(inputTable)
     return newTable
 end
 
+--Create Vehicle Spawn Menu
+local spawnTypes = { [0]="No Mods", "Random Mods", "Max Mods"}
+local spawnTypeSelectionNearest = 0
+local spawnTypeSelectionCurrent = 0
+local spawnTypeSelectionStandard = 0
 local godmodeEnabledSpawn = false
 local enterOnSpawn = false
 local function addVehicleEntry(vehMenu, vehicle, ply)
@@ -224,40 +229,20 @@ local function addVehicleEntry(vehMenu, vehicle, ply)
             findAndEnableGodmodeForVehicle(vehicle[1], spawnPos)
         end
     end)
-    vehMenu:add_action("Spawn using Method #2 (no mods)", function()
+    vehMenu:add_array_item("Spawn using Method #2", spawnTypes, function() return spawnTypeSelectionStandard end, function(selection)
+        spawnTypeSelectionStandard = selection
         local oldVehNetId = getNetIDOfLastSpawnedVehicle()
         local spawnPos = ply:get_position() + ply:get_heading() * 7
-        local spawnedVehicle = createVehicle(vehicle[1], spawnPos, nil, nil, nil, true, false, false)
-        if (vehicle[4] == nil and enterOnSpawn) or (vehicle[4] ~= nil and vehicle[4]) and spawnedVehicle ~= oldVehNetId then
-            setPedIntoVehicle(spawnedVehicle, localplayer:get_position())
+
+        local spawnedVehicle
+        if spawnTypes[selection] == "No Mods" then
+            spawnedVehicle = createVehicle(vehicle[1], spawnPos, nil, nil, nil, true, false, false)
+        elseif spawnTypes[selection] == "Random Mods" then
+            spawnedVehicle = createVehicle(vehicle[1], spawnPos, nil, nil, generateRandomMods(VEHICLE[vehicle[1]][3]), true, true, false)
+        elseif spawnTypes[selection] == "Max Mods" then
+            spawnedVehicle = createVehicle(vehicle[1], spawnPos, nil, nil, VEHICLE[vehicle[1]][3], true, false, true)
         end
-        if (vehicle[3] == nil and godmodeEnabledSpawn) or (vehicle[3] ~= nil and vehicle[3]) then
-            if (vehicle[4] == nil and enterOnSpawn) or (vehicle[4] ~= nil and vehicle[4]) then
-                sleep(3) --there is a weird timeout after tping into a car where it will be godmoded, but lose godmode after ~3sec, so we need to wait for that long to re-apply gm so it sticks
-            end
-            sleep(0.2)
-            findAndEnableGodmodeForVehicle(vehicle[1], spawnPos)
-        end
-    end)
-    vehMenu:add_action("Spawn using Method #2 (MAX mods)", function()
-        local oldVehNetId = getNetIDOfLastSpawnedVehicle()
-        local spawnPos = ply:get_position() + ply:get_heading() * 7
-        local spawnedVehicle = createVehicle(vehicle[1], spawnPos, nil, nil, VEHICLE[vehicle[1]][3], true, false, true)
-        if (vehicle[4] == nil and enterOnSpawn) or (vehicle[4] ~= nil and vehicle[4]) and spawnedVehicle ~= oldVehNetId then
-            setPedIntoVehicle(spawnedVehicle, localplayer:get_position())
-        end
-        if (vehicle[3] == nil and godmodeEnabledSpawn) or (vehicle[3] ~= nil and vehicle[3]) then
-            if (vehicle[4] == nil and enterOnSpawn) or (vehicle[4] ~= nil and vehicle[4]) then
-                sleep(3) --there is a weird timeout after tping into a car where it will be godmoded, but lose godmode after ~3sec, so we need to wait for that long to re-apply gm so it sticks
-            end
-            sleep(0.2)
-            findAndEnableGodmodeForVehicle(vehicle[1], spawnPos)
-        end
-    end)
-    vehMenu:add_action("Spawn using Method #2 (RANDOM mods)", function()
-        local oldVehNetId = getNetIDOfLastSpawnedVehicle()
-        local spawnPos = ply:get_position() + ply:get_heading() * 7
-        local spawnedVehicle = createVehicle(vehicle[1], spawnPos, nil, nil, generateRandomMods(VEHICLE[vehicle[1]][3]), true, true, false)
+
         if (vehicle[4] == nil and enterOnSpawn) or (vehicle[4] ~= nil and vehicle[4]) and spawnedVehicle ~= oldVehNetId then
             setPedIntoVehicle(spawnedVehicle, localplayer:get_position())
         end
@@ -351,10 +336,6 @@ local function countCategory(category)
     return count
 end
 
---Create Vehicle Spawn Menu
-local spawnTypes = { [0]="No Mods", "Random Mods", "Max Mods"}
-local spawnTypeSelectionNearest = 0
-local spawnTypeSelectionCurrent = 0
 function addVehicleSpawnMenu(ply, sub)
     sub:clear()
     success, favoritedCars = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/FAVORITED_CARS.json")
