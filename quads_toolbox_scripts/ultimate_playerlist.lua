@@ -202,28 +202,25 @@ local function dropVehicleOnPlayer(ply, model)
 end
 
 local vehicleDistance = 3
-local function TeleportVehiclesToPlayer(ply, distance, explode, veh_switch)
-    if not ply then
-        return
-    end
+local function TeleportVehiclesToPlayer(ply, distance, explode, vector_switch)
+    if not ply then return end
 
     local nonPlayerVehicles = getNonPlayerVehicles()
 
-    ply = veh_switch or ply
     vehicleDistance = distance
 
-    local pos = ply:get_position()
+    local pos = vector_switch and ply or ply:get_position()
 
     for _, veh in pairs(nonPlayerVehicles) do
         local random_distance = vector3(math.random(-distance, distance), math.random(-distance, distance), math.random(-distance, distance))
         veh:set_godmode(true)
         veh:set_acceleration(0)
-        local tpPos = pos + ply:get_heading() + random_distance
-        for _ = 0, 100 do
+        local tpPos = pos + random_distance
+        for _ = 0, 69 do
             veh:set_position(tpPos)
-        end
-        if explode and distanceBetween(ply, veh) < 50 then
             veh:set_rotation(vector3(math.random(0, 360), math.random(0, 360), math.random(0, 360)))
+        end
+        if explode and distanceBetween(veh, ply, vector_switch) < random_distance+1 then
             veh:set_godmode(false)
             veh:set_health(-1)
         end
@@ -368,16 +365,15 @@ local function cagePlayer(ply, type)
                 moc:set_health(1000)
 
                 if not prepared then
-                    moc:set_position(ply:get_position() + vector3(0, 0, -69))
+                    local mocPosition = ply:get_position()
+                    mocPosition.z = -200
+                    moc:set_position(mocPosition)
                     sleep(0.2)
-                    moc:set_health(-100)
-                    TeleportVehiclesToPlayer(ply, 0, true, moc)
+                    moc:set_health(1000)
+                    TeleportVehiclesToPlayer(mocPosition, 0, false, true)
                 end
-
                 moc:set_rotation(ply:get_rotation())
                 moc:set_position(ply:get_position() + ply:get_heading() * 2.25 + vector3(0, 0, -0.88))
-                moc:set_rotation(ply:get_rotation())
-
             end
         end
     elseif type == "Remove Cages" then
@@ -1342,12 +1338,12 @@ function addSubActions(sub, plyName, plyId)
     trollSub:add_int_range("TP Vehicles to " .. plyName .. " |Range:", 1, 0, 10, function()
         return vehicleDistance
     end, function(n)
-        TeleportVehiclesToPlayer(ply(), n, false, nil)
+        TeleportVehiclesToPlayer(ply(), n, false)
     end)
     trollSub:add_int_range("EXPLODE " .. plyName .. " |Range:", 1, 0, 10, function()
         return vehicleDistance
     end, function(n)
-        TeleportVehiclesToPlayer(ply(), n, true, nil)
+        TeleportVehiclesToPlayer(ply(), n, true)
     end)
     trollSub:add_action("\u{26A0} EMERGENCY STOP ALL LOOPS \u{26A0}", emergencyStop)
     greyText(trollSub, centeredText("--------Loop Actions--------"))
@@ -1700,7 +1696,7 @@ menu.register_callback('trackGPS', gpsTrackerThread)
 local function autoExplodeThread()
     while auto_action_player_id and auto_explode do
         if checkAndPerformEmergencyStop() then return end
-        TeleportVehiclesToPlayer(autoPly(), vehicleDistance, true, nil)
+        TeleportVehiclesToPlayer(autoPly(), vehicleDistance, true)
         sleep(0.35)
     end
 end
@@ -1709,7 +1705,7 @@ menu.register_callback('startAutoExplode', autoExplodeThread)
 local function autoVehicleStormThread()
     while auto_action_player_id and auto_storm do
         if checkAndPerformEmergencyStop() then return end
-        TeleportVehiclesToPlayer(autoPly(), vehicleDistance, false, nil)
+        TeleportVehiclesToPlayer(autoPly(), vehicleDistance, false)
         sleep(0.26)
     end
 end
