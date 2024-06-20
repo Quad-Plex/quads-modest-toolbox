@@ -352,6 +352,9 @@ local function countCategory(category)
 end
 
 --Create Vehicle Spawn Menu
+local spawnTypes = { [0]="No Mods", "Random Mods", "Max Mods"}
+local spawnTypeSelectionNearest = 0
+local spawnTypeSelectionCurrent = 0
 function addVehicleSpawnMenu(ply, sub)
     sub:clear()
     success, favoritedCars = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/FAVORITED_CARS.json")
@@ -435,7 +438,8 @@ function addVehicleSpawnMenu(ply, sub)
             findAndEnableGodmodeForVehicle(spawnedModel, spawnPos)
         end
     end)
-    sub:add_action("Copy nearest Vehicle (no mods)", function()
+    sub:add_array_item("Copy nearest Vehicle", spawnTypes, function() return spawnTypeSelectionNearest end, function(selection)
+        spawnTypeSelectionNearest = selection
         local minDistance = 5000
         local minDistanceVeh
         local ownVeh = ply:is_in_vehicle() and ply:get_current_vehicle()
@@ -447,7 +451,13 @@ function addVehicleSpawnMenu(ply, sub)
             end
         end
         local spawnPos = ply:get_position() + ply:get_heading() * 7
-        createVehicle(minDistanceVeh:get_model_hash(), spawnPos, math.deg(math.atan(ply:get_heading().y, ply:get_heading().x)))
+        if spawnTypes[selection] == "No Mods" then
+            createVehicle(minDistanceVeh:get_model_hash(), spawnPos, math.deg(math.atan(ply:get_heading().y, ply:get_heading().x)))
+        elseif spawnTypes[selection] == "Random Mods" then
+            createVehicle(minDistanceVeh:get_model_hash(), spawnPos, math.deg(math.atan(ply:get_heading().y, ply:get_heading().x)), nil, generateRandomMods(VEHICLE[minDistanceVeh:get_model_hash()][3]), true, true, false)
+        elseif spawnTypes[selection] == "Max Mods" then
+            createVehicle(minDistanceVeh:get_model_hash(), spawnPos, math.deg(math.atan(ply:get_heading().y, ply:get_heading().x)), nil, VEHICLE[minDistanceVeh:get_model_hash()][3], true, false, true)
+        end
         if enterOnSpawn then
             sleep(0.1)
             setPedIntoVehicle(getNetIDOfLastSpawnedVehicle(), localplayer:get_position())
@@ -460,19 +470,18 @@ function addVehicleSpawnMenu(ply, sub)
             findAndEnableGodmodeForVehicle(minDistanceVeh:get_model_hash(), spawnPos)
         end
     end)
-    sub:add_action("Copy nearest Vehicle (MAXED)", function()
-        local minDistance = 5000
-        local minDistanceVeh
-        local ownVeh = ply:is_in_vehicle() and ply:get_current_vehicle()
-        for veh in replayinterface.get_vehicles() do
-            local distance = distanceBetween(ply, veh)
-            if distance < minDistance and (not ownVeh or (ownVeh:get_model_hash() ~= veh:get_model_hash())) then
-                minDistance = distance
-                minDistanceVeh = veh
-            end
-        end
+    sub:add_array_item("Copy current Vehicle" , spawnTypes, function() return spawnTypeSelectionCurrent end, function(selection)
+        spawnTypeSelectionCurrent = selection
+        local currentVeh = ply:get_current_vehicle()
+        if not currentVeh then return end
         local spawnPos = ply:get_position() + ply:get_heading() * 7
-        createVehicle(minDistanceVeh:get_model_hash(), spawnPos, math.deg(math.atan(ply:get_heading().y, ply:get_heading().x)), nil, VEHICLE[minDistanceVeh:get_model_hash()][3], true, false, true)
+        if spawnTypes[selection] == "No Mods" then
+            createVehicle(currentVeh:get_model_hash(), spawnPos, math.deg(math.atan(ply:get_heading().y, ply:get_heading().x)))
+        elseif spawnTypes[selection] == "Random Mods" then
+            createVehicle(currentVeh:get_model_hash(), spawnPos, math.deg(math.atan(ply:get_heading().y, ply:get_heading().x)), nil, generateRandomMods(VEHICLE[currentVeh:get_model_hash()][3]), true, true, false)
+        elseif spawnTypes[selection] == "Max Mods" then
+            createVehicle(currentVeh:get_model_hash(), spawnPos, math.deg(math.atan(ply:get_heading().y, ply:get_heading().x)), nil, VEHICLE[currentVeh:get_model_hash()][3], true, false, true)
+        end
         if enterOnSpawn then
             sleep(0.1)
             setPedIntoVehicle(getNetIDOfLastSpawnedVehicle(), localplayer:get_position())
@@ -482,48 +491,8 @@ function addVehicleSpawnMenu(ply, sub)
                 sleep(3) --there is a weird timeout after tping into a car where it will be godmoded, but lose godmode after ~3sec, so we need to wait for that long to re-apply gm so it sticks
             end
             sleep(0.2)
-            findAndEnableGodmodeForVehicle(minDistanceVeh:get_model_hash(), spawnPos)
+            findAndEnableGodmodeForVehicle(currentVeh:get_model_hash(), spawnPos)
         end
-    end)
-    sub:add_action("Copy current Vehicle (no mods)", function()
-        local spawnPos = ply:get_position() + ply:get_heading() * 7
-        createVehicle(ply:get_current_vehicle():get_model_hash(), spawnPos, math.deg(math.atan(ply:get_heading().y, ply:get_heading().x)))
-        if enterOnSpawn then
-            sleep(0.1)
-            setPedIntoVehicle(getNetIDOfLastSpawnedVehicle(), localplayer:get_position())
-        end
-        if godmodeEnabledSpawn then
-            if enterOnSpawn then
-                sleep(3) --there is a weird timeout after tping into a car where it will be godmoded, but lose godmode after ~3sec, so we need to wait for that long to re-apply gm so it sticks
-            end
-            sleep(0.2)
-            findAndEnableGodmodeForVehicle(ply:get_current_vehicle():get_model_hash(), spawnPos)
-        end
-    end, function() return ply:is_in_vehicle() end)
-    sub:add_action("Copy current Vehicle (MAXED)", function()
-        local spawnPos = ply:get_position() + ply:get_heading() * 7
-        createVehicle(ply:get_current_vehicle():get_model_hash(), spawnPos, math.deg(math.atan(ply:get_heading().y, ply:get_heading().x)), nil, VEHICLE[ply:get_current_vehicle():get_model_hash()][3], true, false, true)
-        if enterOnSpawn then
-            sleep(0.1)
-            setPedIntoVehicle(getNetIDOfLastSpawnedVehicle(), localplayer:get_position())
-        end
-        if godmodeEnabledSpawn then
-            if enterOnSpawn then
-                sleep(3) --there is a weird timeout after tping into a car where it will be godmoded, but lose godmode after ~3sec, so we need to wait for that long to re-apply gm so it sticks
-            end
-            sleep(0.2)
-            findAndEnableGodmodeForVehicle(ply:get_current_vehicle():get_model_hash(), spawnPos)
-        end
-    end, function() return ply:is_in_vehicle() end)
-    sub:add_toggle("Immediately enter when spawning", function()
-        return enterOnSpawn
-    end, function(n)
-        enterOnSpawn = n
-    end)
-    sub:add_toggle("Spawn with Godmode enabled", function()
-        return godmodeEnabledSpawn
-    end, function(n)
-        godmodeEnabledSpawn = n
     end)
 
     greyText(sub, "---------------------------")
