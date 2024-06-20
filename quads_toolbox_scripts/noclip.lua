@@ -19,7 +19,7 @@ local function move(direction)
 	if not noclipToggle then return end
 	initialPos = initialPos + direction
 	if not localplayer:is_in_vehicle() then
-		nativeTeleport(initialPos)
+		nativeTeleport(initialPos, initialHeading)
 	else
 		nativeTeleport(initialPos, vector3(initialYawAngle, 0, initialPitchAngle))
 		initialHeading = localplayer:get_heading()
