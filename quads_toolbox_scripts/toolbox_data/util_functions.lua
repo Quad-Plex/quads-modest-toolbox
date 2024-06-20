@@ -103,7 +103,6 @@ local function addLetterToString(letter, string)
 end
 
 local function stringChangerFavVehicle(sub, stringToChange, veh_data)
-    local oldName = stringToChange
     local tempString = stringToChange
     sub:clear()
     if stringToChange then
@@ -122,7 +121,7 @@ local function stringChangerFavVehicle(sub, stringToChange, veh_data)
                 end
                 tempString = stringToChange
             end
-            return "Rename " .. oldName .. " to " .. stringToChange
+            return "Rename to " .. stringToChange
         end, null, null, null)
     end
     greyText(sub, "----------------------------")
