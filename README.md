@@ -1,10 +1,10 @@
 TODO:
-- See if GPS coordinates can be controlled through globals, then add a 'Track Player with GPS' option
-  - Hmmm... Can't find it in globals or the scripts I've implemented in my scanner so far, might not be possible
 - Add Readme and FAQ description for unclear actions
-- More testing with the invisible MOC maybe
+- More testing with the invisible MOC 
 
 DONE:
+- ~~Fix noclip causing under-map respawn~~
+- ~~add a 'Track Player with GPS' option~~
 - ~~modder detection based on modified ped model~~
 - ~~weaponmods menu with all interesting weapon setters to try out on the current weapon~~
 - ~~add ped model changer~~
