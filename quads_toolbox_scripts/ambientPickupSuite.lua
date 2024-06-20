@@ -77,6 +77,8 @@ local function collectPickups(singlePickup)
 		end
 	end
 
+	sleep(0.3)
+
 	nativeTeleport(oldPos)
 
 	localplayer:set_godmode(oldGodmode)
@@ -192,6 +194,7 @@ end
 local function pickupOptions(sub, pickup)
 	sub:clear()
 	greyText(sub, "------ Pickup Actions ------")
+	sub:add_action("📍 Set GPS to Pickup 📍", function() setWayPoint(pickup[1]:get_position().x, pickup[1]:get_position().y) end)
 	sub:add_action("Quick Collect Pickup", function() collectPickup(pickup[1]) end)
 	sub:add_action("Teleport close to Pickup", function() teleportCloseToPickup(pickup[1]) end)
 

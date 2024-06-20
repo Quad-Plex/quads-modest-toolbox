@@ -207,11 +207,15 @@ local function addVehicleEntry(vehMenu, vehicle, ply)
         renameSub = vehMenu:add_submenu("Rename " .. vehicle[2][1], function() stringChangerFavVehicle(renameSub, vehicle[2][1], vehicle) end)
     end
     vehMenu:add_action("Spawn using Method #1", function()
+        local oldVehNetId = getNetIDOfLastSpawnedVehicle()
         local spawnPos = ply:get_position() + ply:get_heading() * 7
         createVehicle(vehicle[1], spawnPos)
         if (vehicle[4] == nil and enterOnSpawn) or (vehicle[4] ~= nil and vehicle[4]) then
             sleep(0.1)
-            setPedIntoVehicle(getNetIDOfLastSpawnedVehicle(), localplayer:get_position())
+            local newVehNetID = getNetIDOfLastSpawnedVehicle()
+            if newVehNetID ~= oldVehNetId then
+                setPedIntoVehicle(getNetIDOfLastSpawnedVehicle(), localplayer:get_position())
+            end
         end
         if (vehicle[3] == nil and godmodeEnabledSpawn) or (vehicle[3] ~= nil and vehicle[3]) then
             if (vehicle[4] == nil and enterOnSpawn) or (vehicle[4] ~= nil and vehicle[4]) then
@@ -222,9 +226,10 @@ local function addVehicleEntry(vehMenu, vehicle, ply)
         end
     end)
     vehMenu:add_action("Spawn using Method #2 (no mods)", function()
+        local oldVehNetId = getNetIDOfLastSpawnedVehicle()
         local spawnPos = ply:get_position() + ply:get_heading() * 7
         local spawnedVehicle = createVehicle(vehicle[1], spawnPos, nil, nil, nil, true, false, false)
-        if (vehicle[4] == nil and enterOnSpawn) or (vehicle[4] ~= nil and vehicle[4]) then
+        if (vehicle[4] == nil and enterOnSpawn) or (vehicle[4] ~= nil and vehicle[4]) and spawnedVehicle ~= oldVehNetId then
             setPedIntoVehicle(spawnedVehicle, localplayer:get_position())
         end
         if (vehicle[3] == nil and godmodeEnabledSpawn) or (vehicle[3] ~= nil and vehicle[3]) then
@@ -236,9 +241,10 @@ local function addVehicleEntry(vehMenu, vehicle, ply)
         end
     end)
     vehMenu:add_action("Spawn using Method #2 (MAX mods)", function()
+        local oldVehNetId = getNetIDOfLastSpawnedVehicle()
         local spawnPos = ply:get_position() + ply:get_heading() * 7
         local spawnedVehicle = createVehicle(vehicle[1], spawnPos, nil, nil, VEHICLE[vehicle[1]][3], true, false, true)
-        if (vehicle[4] == nil and enterOnSpawn) or (vehicle[4] ~= nil and vehicle[4]) then
+        if (vehicle[4] == nil and enterOnSpawn) or (vehicle[4] ~= nil and vehicle[4]) and spawnedVehicle ~= oldVehNetId then
             setPedIntoVehicle(spawnedVehicle, localplayer:get_position())
         end
         if (vehicle[3] == nil and godmodeEnabledSpawn) or (vehicle[3] ~= nil and vehicle[3]) then
@@ -250,9 +256,10 @@ local function addVehicleEntry(vehMenu, vehicle, ply)
         end
     end)
     vehMenu:add_action("Spawn using Method #2 (RANDOM mods)", function()
+        local oldVehNetId = getNetIDOfLastSpawnedVehicle()
         local spawnPos = ply:get_position() + ply:get_heading() * 7
         local spawnedVehicle = createVehicle(vehicle[1], spawnPos, nil, nil, generateRandomMods(VEHICLE[vehicle[1]][3]), true, true, false)
-        if (vehicle[4] == nil and enterOnSpawn) or (vehicle[4] ~= nil and vehicle[4]) then
+        if (vehicle[4] == nil and enterOnSpawn) or (vehicle[4] ~= nil and vehicle[4]) and spawnedVehicle ~= oldVehNetId then
             setPedIntoVehicle(spawnedVehicle, localplayer:get_position())
         end
         if (vehicle[3] == nil and godmodeEnabledSpawn) or (vehicle[3] ~= nil and vehicle[3]) then

@@ -206,7 +206,7 @@ local function addHotkeyToggles(hotkeyMenu)
 end
 
 local hotkeyMenu
-hotkeyMenu = toolboxSub:add_submenu(centeredText("     ⚙️ Hotkey Configuration ⚙️"), function()
+hotkeyMenu = toolboxSub:add_submenu(centeredText("    ⚙️ Hotkey Configuration ⚙️"), function()
     if finishedLoading then
         addHotkeyToggles(hotkeyMenu)
     end

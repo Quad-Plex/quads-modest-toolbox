@@ -36,6 +36,7 @@ local auto_vehicle_spam = false
 local auto_yeet = false
 local auto_cable_spam = false
 local auto_train_spam = false
+local auto_gps = false
 local auto_action_player_id
 local auto_action_player_name
 
@@ -53,6 +54,15 @@ local function emergencyStop()
     auto_yeet = false
     auto_cable_spam = false
     auto_train_spam = false
+    auto_gps = false
+end
+
+local function checkAndPerformEmergencyStop()
+    if player.get_player_name(auto_action_player_id) ~= auto_action_player_name then
+        emergencyStop()
+        return true
+    end
+    return false
 end
 
 local bounty_numbers = { [0] = 1, 42, 69, 420, 4200, 6969, 9999 }
@@ -888,8 +898,17 @@ end
 
 --Generates specific info about the player
 local function playerInfo(plyId, sub, plyName)
-    local ply = player.get_player_ped(plyId)
-    if not ply then
+    local oldPly
+    local function ply()
+        local newPly = player.get_player_ped(plyId)
+        if newPly then
+            oldPly = newPly
+            return newPly
+        else
+            return oldPly
+        end
+    end
+    if not ply() then
         return
     end
     greyText(sub, "======== ⇩ 🛈 PLAYER INFO 🛈 ⇩ ========")
@@ -899,31 +918,31 @@ local function playerInfo(plyId, sub, plyName)
         local txt = ""
         local blipType = getPlayerBlipType(plyId)
 
-        if ply ~= localplayer and amISpectating(plyId) then
+        if ply() ~= localplayer and amISpectating(plyId) then
             txt = txt .. "SPEC "
         end
-        if ply:get_model_hash() ~= joaat("mp_m_freemode_01") and ply:get_model_hash() ~= joaat("mp_f_freemode_01") then
+        if ply():get_model_hash() ~= joaat("mp_m_freemode_01") and ply():get_model_hash() ~= joaat("mp_f_freemode_01") then
             txt = txt .. "MODDED_PED "
         end
-        if ply ~= localplayer and isSpectatingMe(plyId) then
+        if ply() ~= localplayer and isSpectatingMe(plyId) then
             txt = txt .. "!WATCHING YOU! "
         end
         if getScriptHostPlayerID() == plyId then
             txt = txt .. "HOST "
         end
-        if isInInterior(ply, plyId) and blipType ~= "INTERIOR" then
+        if isInInterior(ply(), plyId) and blipType ~= "INTERIOR" then
             txt = txt .. "INTERIOR "
         end
-        if ply:get_godmode() and not isInInterior(ply, plyId) then --Don't show godmode for players in an interior
+        if ply():get_godmode() and not isInInterior(ply(), plyId) then --Don't show godmode for players in an interior
             txt = txt .. "GOD "
         end
         if hasDevDLC(plyId) ~= 0 then
             txt = txt .. "!DEV! "
         end
-        if modCheck(ply, plyName, plyId) then
+        if modCheck(ply(), plyName, plyId) then
             txt = txt .. "HAX "
         end
-        if ply:is_in_cutscene() then
+        if ply():is_in_cutscene() then
             txt = txt .. "CUTSCENE "
         end
 
@@ -934,7 +953,7 @@ local function playerInfo(plyId, sub, plyName)
     --health/armor/wanted level
     greyText(sub, centeredText("------ Health/Armor/Wanted Level ------"))
     sub:add_bare_item("", function()
-        local healthPercent = (ply:get_health() / ply:get_max_health()) * 100
+        local healthPercent = (ply():get_health() / ply():get_max_health()) * 100
         local respawnState = getPlayerRespawnState(plyId)
 
         if healthPercent == 0 or respawnState == -1 then
@@ -945,9 +964,9 @@ local function playerInfo(plyId, sub, plyName)
             healthPercent = "MOD GHOST"
         end
 
-        local armor = (math.floor(ply:get_armour()) * 2) .. "%"
-        local wanted = ply:get_wanted_level() > 0 and string.rep(" \u{2605}", ply:get_wanted_level(), "") or "0\u{2605}  "
-        local vehicle_health = ply:is_in_vehicle() and math.floor(ply:get_current_vehicle():get_health()) or 0
+        local armor = (math.floor(ply():get_armour()) * 2) .. "%"
+        local wanted = ply():get_wanted_level() > 0 and string.rep(" \u{2605}", ply():get_wanted_level(), "") or "0\u{2605}  "
+        local vehicle_health = ply():is_in_vehicle() and math.floor(ply():get_current_vehicle():get_health()) or 0
 
         return " " .. healthPercent .. "    " .. armor .. "\u{1F6E1}    " .. wanted .. "|" .. "\u{1F697}" .. vehicle_health .. "\u{2665}"
     end, null, null, null)
@@ -955,11 +974,11 @@ local function playerInfo(plyId, sub, plyName)
     --Weapon/Vehicle
     greyText(sub, centeredText("------ 🔫 Weapon / Vehicle 🚗------"))
     sub:add_bare_item("", function()
-        local wpn_text = getWpn(ply)
+        local wpn_text = getWpn(ply())
         local vehicle_name, vehicle_class = "On Foot", ""
 
-        if ply:is_in_vehicle() then
-            local veh = ply:get_current_vehicle()
+        if ply():is_in_vehicle() then
+            local veh = ply():get_current_vehicle()
             local details = VEHICLE[veh:get_model_hash()]
             if details then
                 vehicle_name, vehicle_class = details[1], details[2]
@@ -976,18 +995,18 @@ local function playerInfo(plyId, sub, plyName)
     end, null, null, null)
 
     sub:add_action("Force enter " .. plyName .. "'s Vehicle", function()
-        if ply:is_in_vehicle() or interiorBlips[getPlayerBlipType(plyId)] then
+        if ply():is_in_vehicle() or interiorBlips[getPlayerBlipType(plyId)] then
             local oldPos = localplayer:get_position()
             local offRadarToggled = false
             if localplayer:get_max_health() > 100 then --Do the TP into vehicle while in offradar so other people don't see us jumping around on the minimap if it fails
                 offRadar()
                 offRadarToggled = true
             end
-            if not ply:is_in_vehicle() then --Assume the player is in a vehicle (determined before this through blip type) so we teleport closer first to make sure the vehicle is loaded correctly
+            if not ply():is_in_vehicle() then --Assume the player is in a vehicle (determined before this through blip type) so we teleport closer first to make sure the vehicle is loaded correctly
                 localplayer:set_freeze_momentum(true)
                 localplayer:set_no_ragdoll(true)
                 localplayer:set_config_flag(292, true)
-                tpToPlayer(ply, -5)
+                tpToPlayer(ply(), -5)
             end
             sleep(0.12)
             setPedIntoVehicle(getVehicleForPlayerID(plyId), oldPos)
@@ -996,7 +1015,7 @@ local function playerInfo(plyId, sub, plyName)
             end
         end
     end, function()
-        return ply:is_in_vehicle() or getPlayerBlipType(plyId) == "VEHICLE" or getPlayerBlipType(plyId) == "PLANE_GHOST"
+        return ply():is_in_vehicle() or getPlayerBlipType(plyId) == "VEHICLE" or getPlayerBlipType(plyId) == "PLANE_GHOST"
     end)
     --Player Stats
     greyText(sub, centeredText("------ Player Stats ------"))
@@ -1035,12 +1054,12 @@ local function playerInfo(plyId, sub, plyName)
     greyText(sub, centeredText("--- Distance / Speed / Direction ---"))
     sub:add_bare_item("", function()
         local distanceStr = formatStyles[playerlistSettings.stringFormat] == "Metric (EU)" and " km/h" or " mph"
-        return "    " .. distanceBetween(localplayer, ply) .. " m    " .. updateSpeed(ply) .. distanceStr .. "   " .. getDirectionalArrow(getDirectionToThing(ply)) .. "    "
+        return "    " .. distanceBetween(localplayer, ply()) .. " m    " .. updateSpeed(ply()) .. distanceStr .. "   " .. getDirectionalArrow(getDirectionToThing(ply())) .. "    "
     end, null, null, null)
     sub:add_bare_item("", function()
-        return "Pos: " .. printPlayerPos(ply)
+        return "Pos: " .. printPlayerPos(ply())
     end, function()
-        print(printPlayerPos(ply))
+        print(printPlayerPos(ply()))
     end, null, null)
 
     greyText(sub, centeredText("------ Modder Info ------"))
@@ -1052,34 +1071,34 @@ local function playerInfo(plyId, sub, plyName)
     end, null, null, null)
 
     sub:add_bare_item("Godmode", function()
-        if ply:get_godmode() then
+        if ply():get_godmode() then
             return "Godmode"
         end
     end, null, null, null)
 
     sub:add_bare_item("Godmode Outside Interior", function()
-        if ply ~= localplayer and ply:get_godmode() and not isInInterior(ply, plyId) and tostring(ply:get_position().z) ~= "-51.3" then
+        if ply() ~= localplayer and ply():get_godmode() and not isInInterior(ply(), plyId) and tostring(ply():get_position().z) ~= "-51.3" then
             return "Godmode Outside Interior"
         end
     end, null, null, null)
 
     sub:add_bare_item("Less than 0 Max Health (Ghost)", function()
-        if ply:get_max_health() <= 0 then
+        if ply():get_max_health() <= 0 then
             return "Max Health 0 (Ghost)"
         end
     end, null, null, null)
 
     --vehicle
-    if ply:is_in_vehicle() then
-        local veh = ply:get_current_vehicle()
+    if ply():is_in_vehicle() then
+        local veh = ply():get_current_vehicle()
         sub:add_bare_item("Vehicle Godmode", function()
-            if ply:is_in_vehicle() and veh:get_godmode() then
+            if ply():is_in_vehicle() and veh:get_godmode() then
                 return "Vehicle Is in Godmode"
             end
         end, null, null, null)
 
         sub:add_bare_item("Seatbelt", function()
-            if ply:is_in_vehicle() and ply:get_seatbelt() then
+            if ply():is_in_vehicle() and ply():get_seatbelt() then
                 return "Seatbelt"
             end
         end, null, null, null)
@@ -1087,7 +1106,7 @@ local function playerInfo(plyId, sub, plyName)
 
     --Debug Stuff
     greyText(sub, centeredText("------ ADVANCED INFOS ------"))
-    sub:add_bare_item("", function() return "Ped Model: " .. findPedDataFromHash(ply:get_model_hash())[3] end, null, null, null)
+    sub:add_bare_item("", function() return "Ped Model: " .. findPedDataFromHash(ply():get_model_hash())[3] end, null, null, null)
     sub:add_bare_item("", function() return "RespawnState: " .. getPlayerRespawnState(plyId) end, null, null, null)
     sub:add_bare_item("", function()
         local playerBlip = getPlayerBlip(plyId)
@@ -1167,14 +1186,20 @@ end
 --Instantiates Player List that has SubMenus with Player names and general info about the player.
 function addSubActions(sub, plyName, plyId)
     sub:clear()
-    local ply = player.get_player_ped(plyId)
-    if not ply then
-        return
+    local oldPly
+    local function ply()
+        local newPly = player.get_player_ped(plyId)
+        if newPly then
+            oldPly = newPly
+            return newPly
+        else
+            return oldPly
+        end
     end
     auto_action_player_id = plyId
     auto_action_player_name = plyName
 
-    if ply == localplayer then
+    if ply() == localplayer then
         greyText(sub, "--You--" .. "|Lvl " .. "(" .. getPlayerLevel(plyId) .. ")")
     else
         sub:add_bare_item(plyName .. "|Lvl " .. "(" .. getPlayerLevel(plyId) .. ")", function()
@@ -1188,33 +1213,43 @@ function addSubActions(sub, plyName, plyId)
     end)
     local nearbyPlayersSub
     nearbyPlayersSub = sub:add_submenu("|Nearby Players", function()
-        nearbyPlayersMenu(ply, nearbyPlayersSub, plyId)
+        nearbyPlayersMenu(ply(), nearbyPlayersSub, plyId)
     end)
-    if ply ~= localplayer then
-        greyText(sub, centeredText("--------Teleport--------"))
+    if ply() ~= localplayer then
+        greyText(sub, centeredText("--------Teleport/Track--------"))
         sub:add_int_range("Teleport to " .. plyName .. "|Height:", 5, 0, 500, function()
             return teleportHeight
         end, function(n)
-            tpToPlayer(ply, n, nil)
+            tpToPlayer(ply(), n, nil)
         end)
         sub:add_toggle("TP Spectate", function()
             return auto_teleport
         end, function(value)
             auto_teleport = value
-            menu.emit_event('startAutoTeleport')
+            if auto_teleport then
+                menu.emit_event('startAutoTeleport')
+            end
+        end)
+        sub:add_toggle("📍 GPS Tracker 📍", function()
+            return auto_gps
+        end, function(value)
+            auto_gps = value
+            if auto_gps then
+                menu.emit_event('trackGPS')
+            end
         end)
     end
     greyText(sub, centeredText("--------Vehicle Spawn--------"))
     local vehSpawnSub
     vehSpawnSub = sub:add_submenu("Spawn Vehicle for " .. plyName, function()
-        addVehicleSpawnMenu(ply, vehSpawnSub)
+        addVehicleSpawnMenu(ply(), vehSpawnSub)
     end)
     sub:add_action("Give Random Vehicle to " .. plyName, function()
-        giveRandomVehicle(ply)
+        giveRandomVehicle(ply())
     end)
     greyText(sub, centeredText("--------Trolling--------"))
     local trollSub = sub:add_submenu("\u{1F480} Trolling Options:")
-    if ply == localplayer then
+    if ply() == localplayer then
         addText(trollSub, centeredText("Troll yourself"))
     else
         trollSub:add_bare_item("Trolling " .. plyName .. "...", function()
@@ -1223,7 +1258,7 @@ function addSubActions(sub, plyName, plyId)
     end
     local trollNearbyPlayersSub
     trollNearbyPlayersSub = trollSub:add_submenu("|Nearby Players", function()
-        nearbyPlayersMenu(ply, trollNearbyPlayersSub, plyId)
+        nearbyPlayersMenu(ply(), trollNearbyPlayersSub, plyId)
     end)
     local numStars = 5
     trollSub:add_int_range("Give " .. plyName .. " Cops |\u{2605}", 1, 0, 5, function()
@@ -1248,13 +1283,13 @@ function addSubActions(sub, plyName, plyId)
         return teleportTypeSelection
     end, function(value)
         teleportTypeSelection = value
-        tpPedToPlayer(ply, teleportType[value])
+        tpPedToPlayer(ply(), teleportType[value])
     end)
     trollSub:add_array_item("CAGE " .. plyName .. "", CageTypes, function()
         return CageType
     end, function(value)
         CageType = value
-        cagePlayer(ply, CageTypes[value])
+        cagePlayer(ply(), CageTypes[value])
     end)
     trollSub:add_toggle("Invis Cage has collision?", function()
         return prepared
@@ -1265,54 +1300,54 @@ function addSubActions(sub, plyName, plyId)
         return auto_fly
     end, function(value)
         auto_fly = value
-        prepareFlying(ply)
+        prepareFlying(ply())
         menu.emit_event('startFlyThread')
     end)
     greyText(trollSub, centeredText("--------Vehicle Trolling---------"))
     trollSub:add_action("RAMP player with ramp buggy", function()
-        rampPly = ply
+        rampPly = ply()
         menu.emit_event('giveRamp')
     end)
     trollSub:add_array_item("LAUNCH " .. plyName .. ":", LaunchTypes, function()
         return LaunchType
     end, function(value)
         LaunchType = value
-        launchPly = ply
+        launchPly = ply()
         menu.emit_event('launchOnce')
     end)
     trollSub:add_action("Give Random Vehicle to " .. plyName, function()
-        giveRandomVehicle(ply)
+        giveRandomVehicle(ply())
     end)
     trollSub:add_action("DROP Random Vehicle on " .. plyName, function()
-        randomVehicleRain(ply)
+        randomVehicleRain(ply())
     end)
     trollSub:add_array_item("SPAWN Above " .. plyName .. ":", dropVehicles, function()
         return selectedDropType
     end, function(value)
         selectedDropType = value
-        dropVehicleOnPlayer(ply, dropVehicles[value])
+        dropVehicleOnPlayer(ply(), dropVehicles[value])
     end)
     trollSub:add_bare_item("GEEET DUMPED OONN!!", function()
         return centeredText("GEEET DUMPED OONN!!")
     end, function()
-        slamPly = ply
+        slamPly = ply()
         menu.emit_event('preciseSlam')
     end, null, null)
     trollSub:add_action("Traffic Launcher", function()
-        manipulatePlayerWithTraffic(ply, "launch")
+        manipulatePlayerWithTraffic(ply(), "launch")
     end)
     trollSub:add_action("SLAM " .. plyName .. " with traffic", function()
-        manipulatePlayerWithTraffic(ply, "slam")
+        manipulatePlayerWithTraffic(ply(), "slam")
     end)
     trollSub:add_int_range("TP Vehicles to " .. plyName .. " |Range:", 1, 0, 10, function()
         return vehicleDistance
     end, function(n)
-        TeleportVehiclesToPlayer(ply, n, false, nil)
+        TeleportVehiclesToPlayer(ply(), n, false, nil)
     end)
     trollSub:add_int_range("EXPLODE " .. plyName .. " |Range:", 1, 0, 10, function()
         return vehicleDistance
     end, function(n)
-        TeleportVehiclesToPlayer(ply, n, true, nil)
+        TeleportVehiclesToPlayer(ply(), n, true, nil)
     end)
     trollSub:add_action("\u{26A0} EMERGENCY STOP ALL LOOPS \u{26A0}", emergencyStop)
     greyText(trollSub, centeredText("--------Loop Actions--------"))
@@ -1320,61 +1355,81 @@ function addSubActions(sub, plyName, plyId)
         return auto_peds
     end, function(value)
         auto_peds = value
-        menu.emit_event('autoPedSpam')
+        if auto_peds then
+            menu.emit_event('autoPedSpam')
+        end
     end)
     trollSub:add_toggle("|🚫 BIKE BLOCK 🚫", function()
         return auto_bike
     end, function(value)
         auto_bike = value
-        menu.emit_event('autoBikeSpam')
+        if auto_bike then
+            menu.emit_event('autoBikeSpam')
+        end
     end)
     trollSub:add_toggle("|⬆️ KEEP LAUNCHING ⬆️", function()
         return auto_launch
     end, function(value)
         auto_launch = value
-        menu.emit_event('autoLaunch')
+        if auto_launch then
+            menu.emit_event('autoLaunch')
+        end
     end)
     trollSub:add_toggle("|🚗 RANDOM VEHICLE SPAM 🚗", function()
         return auto_vehicle_spam
     end, function(value)
         auto_vehicle_spam = value
-        menu.emit_event('autoVehicleSpam')
+        if auto_vehicle_spam then
+            menu.emit_event('autoVehicleSpam')
+        end
     end)
     trollSub:add_toggle("|🚠 CABLECAR SPAM 🚠", function()
         return auto_cable_spam
     end, function(value)
         auto_cable_spam = value
-        menu.emit_event('autoCableCarSpam')
+        if auto_cable_spam then
+            menu.emit_event('autoCableCarSpam')
+        end
     end)
     trollSub:add_toggle("|🚂 TRAIN SPAM (NO DESPAWN)", function()
         return auto_train_spam
     end, function(value)
         auto_train_spam = value
-        menu.emit_event('trainSpam')
+        if auto_train_spam then
+            menu.emit_event('trainSpam')
+        end
     end)
     trollSub:add_toggle("|🌧️ RANDOM VEHICLE RAIN 🌧️", function()
         return auto_rain
     end, function(value)
         auto_rain = value
-        menu.emit_event('startRainThread')
+        if auto_rain then
+            menu.emit_event('startRainThread')
+        end
     end)
     trollSub:add_toggle("|🌪️ VEHICLE STORM 🌪️", function()
         return auto_storm
     end, function(value)
         auto_storm = value
-        menu.emit_event('autoVehicleStorm')
+        if auto_storm then
+            menu.emit_event('autoVehicleStorm')
+        end
     end)
     trollSub:add_toggle("|💥💥 CONSTANT EXPLOSION 💥💥", function()
         return auto_explode
     end, function(value)
         auto_explode = value
-        menu.emit_event('startAutoExplode')
+        if auto_explode then
+            menu.emit_event('startAutoExplode')
+        end
     end)
     trollSub:add_toggle("   ✈️\u{26A0} ITS RAINING PLANES \u{26A0}✈️", function()
         return auto_cargo_spam
     end, function(value)
         auto_cargo_spam = value
-        menu.emit_event('autoCargoSpam')
+        if auto_cargo_spam then
+            menu.emit_event('autoCargoSpam')
+        end
     end)
 
     playerInfo(plyId, trollSub, plyName)
@@ -1382,10 +1437,10 @@ function addSubActions(sub, plyName, plyId)
 
     local pedFlagSub
     pedFlagSub = sub:add_submenu("(DEBUG) Show Active Ped Flags", function()
-        pedFlags(ply, pedFlagSub)
+        pedFlags(ply(), pedFlagSub)
     end)
     sub:add_action("+++ Save current Pos as Interior +++", function()
-        saveNewInterior(ply:get_position())
+        saveNewInterior(ply():get_position())
     end)
 end
 
@@ -1573,10 +1628,7 @@ end)
 
 local function vehicleRainThread()
     while auto_action_player_id and auto_rain do
-        if player.get_player_name(auto_action_player_id) ~= auto_action_player_name then
-            auto_rain = false
-            return
-        end
+        if checkAndPerformEmergencyStop() then return end
         randomVehicleRain(autoPly())
         sleep(0.07)
     end
@@ -1587,10 +1639,7 @@ menu.register_callback('startRainThread', vehicleRainThread)
 local function flyThread()
     sleep(0.15)
     while auto_fly and auto_yeet do
-        if player.get_player_name(auto_action_player_id) ~= auto_action_player_name then
-            auto_fly = false
-            return
-        end
+        if checkAndPerformEmergencyStop() then return end
         auto_yeet:set_position(autoPly():get_position() + random_direction + vector3(0, 0, 5))
         sleep(0.12)
     end
@@ -1619,9 +1668,7 @@ local function autoTeleportThread()
         tpToPlayer(autoPly(), teleportHeight, myPlayer)
         teleported = true
         sleep(0.1)
-        if player.get_player_name(auto_action_player_id) ~= auto_action_player_name then
-            auto_teleport = false
-        end
+        checkAndPerformEmergencyStop()
     end
 
     if teleported then
@@ -1636,12 +1683,23 @@ local function autoTeleportThread()
 end
 menu.register_callback('startAutoTeleport', autoTeleportThread)
 
+local function gpsTrackerThread()
+    while auto_action_player_id and auto_gps do
+        local playerPos = autoPly():get_position()
+        setWayPoint(playerPos.x, playerPos.y)
+        sleep(0.5)
+        checkAndPerformEmergencyStop()
+    end
+    --Remove waypoint in the end by placing it at our localplayer
+    for _=1, 3 do
+        setWayPoint(localplayer:get_position().x, localplayer:get_position().y)
+    end
+end
+menu.register_callback('trackGPS', gpsTrackerThread)
+
 local function autoExplodeThread()
     while auto_action_player_id and auto_explode do
-        if player.get_player_name(auto_action_player_id) ~= auto_action_player_name then
-            auto_explode = false
-            return
-        end
+        if checkAndPerformEmergencyStop() then return end
         TeleportVehiclesToPlayer(autoPly(), vehicleDistance, true, nil)
         sleep(0.35)
     end
@@ -1650,10 +1708,7 @@ menu.register_callback('startAutoExplode', autoExplodeThread)
 
 local function autoVehicleStormThread()
     while auto_action_player_id and auto_storm do
-        if player.get_player_name(auto_action_player_id) ~= auto_action_player_name then
-            auto_storm = false
-            return
-        end
+        if checkAndPerformEmergencyStop() then return end
         TeleportVehiclesToPlayer(autoPly(), vehicleDistance, false, nil)
         sleep(0.26)
     end
@@ -1662,10 +1717,7 @@ menu.register_callback('autoVehicleStorm', autoVehicleStormThread)
 
 local function autoBikeSpamThread()
     while auto_action_player_id and auto_bike do
-        if player.get_player_name(auto_action_player_id) ~= auto_action_player_name then
-            auto_bike = false
-            return
-        end
+        if checkAndPerformEmergencyStop() then return end
         giveRandomBike(autoPly())
         sleep(0.13)
     end
@@ -1674,10 +1726,7 @@ menu.register_callback('autoBikeSpam', autoBikeSpamThread)
 
 local function autoRandomCarSpamThread()
     while auto_action_player_id and auto_vehicle_spam do
-        if player.get_player_name(auto_action_player_id) ~= auto_action_player_name then
-            auto_vehicle_spam = false
-            return
-        end
+        if checkAndPerformEmergencyStop() then return end
         local pos = autoPly():get_position() + autoPly():get_heading() * 2 + autoPly():get_velocity() * 2
         local random_distance = vector3(math.random(-2, 2), math.random(2, 2), math.random(2, 2))
         giveRandomVehicle(autoPly(), pos + random_distance, true, true)
@@ -1688,10 +1737,7 @@ menu.register_callback('autoVehicleSpam', autoRandomCarSpamThread)
 
 local function autoCableCarSpamThread()
     while auto_action_player_id and auto_cable_spam do
-        if player.get_player_name(auto_action_player_id) ~= auto_action_player_name then
-            auto_cable_spam = false
-            return
-        end
+        if checkAndPerformEmergencyStop() then return end
         local rot = autoPly():get_rotation()
         local angle = math.deg(math.atan(rot.y, rot.x + math.pi / 2))
         createVehicle(joaat("CableCar"), autoPly():get_position(), angle, true)
@@ -1703,10 +1749,7 @@ menu.register_callback('autoCableCarSpam', autoCableCarSpamThread)
 local function trainSpam()
     local i = 1
     while auto_action_player_id and auto_train_spam do
-        if player.get_player_name(auto_action_player_id) ~= auto_action_player_name then
-            auto_train_spam = false
-            return
-        end
+        if checkAndPerformEmergencyStop() then return end
         createVehicle(joaat("Freight"), autoPly():get_position() + vector3(math.random(-10, 10), math.random(-10, 10), math.random(-10, 10)), math.random(0, 360), true)
         sleep(0.1)
         i = i + 1
@@ -1716,10 +1759,7 @@ menu.register_callback('trainSpam', trainSpam)
 
 local function autoPedSpamThread()
     while auto_action_player_id and auto_peds do
-        if player.get_player_name(auto_action_player_id) ~= auto_action_player_name then
-            auto_peds = false
-            return
-        end
+        if checkAndPerformEmergencyStop() then return end
         tpPedToPlayer(autoPly(), teleportType[teleportTypeSelection])
         sleep(0.1)
     end
@@ -1730,10 +1770,7 @@ local function cargoSpamThread()
     local vehicles = { "Cargoplane", "Jet", "Kosatka" } -- add your vehicle types here
 
     while auto_action_player_id and auto_cargo_spam do
-        if player.get_player_name(auto_action_player_id) ~= auto_action_player_name then
-            auto_cargo_spam = false
-            return
-        end
+        if checkAndPerformEmergencyStop() then return end
 
         local vehicle = vehicles[math.random(#vehicles)] -- select random vehicle
         local random_distance = vector3((math.random(-900, 900) / 10), (math.random(-900, 900) / 10), (math.random(10, 1200) / 10))
@@ -1751,10 +1788,7 @@ menu.register_callback('autoCargoSpam', cargoSpamThread)
 
 local function autoLaunchThread()
     while auto_action_player_id and auto_launch do
-        if player.get_player_name(auto_action_player_id) ~= auto_action_player_name then
-            auto_launch = false
-            return
-        end
+        if checkAndPerformEmergencyStop() then return end
         LaunchType = 2
         launchPly = autoPly()
         menu.emit_event('launchOnce')

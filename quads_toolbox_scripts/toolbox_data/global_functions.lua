@@ -143,7 +143,7 @@ function createVehicle(modelHash, pos, heading, skip_remove_current, mod, altern
     --###SPAWNER #2 (Without heading, with mods, more reliable)
     if not vehicle_is_creating then
         vehicle_is_creating = true
-        if (not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 2) and not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 5)) then
+        --if (not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 2) and not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 5)) then
             local primaryColor = random_details and math.random(0, 160) or (max_details and 159 or 0)
             globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 5, primaryColor) --primary color selection (see eVehicleColor)
             local secondaryColor = random_details and math.random(0, 160) or (max_details and 159 or 0)
@@ -190,6 +190,7 @@ function createVehicle(modelHash, pos, heading, skip_remove_current, mod, altern
                 globals.set_float(baseGlobals.vehicleSpawner2.baseGlobal2 + 7 + 0, pos.x) --Spawn location xyz
                 globals.set_float(baseGlobals.vehicleSpawner2.baseGlobal2 + 7 + 1, pos.y)
                 globals.set_float(baseGlobals.vehicleSpawner2.baseGlobal2 + 7 + 2, -300)
+                globals.set_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 3, false) --Spawn trigger for pegasus vehicle
                 globals.set_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 2, true) --Spawn trigger #1
                 globals.set_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 5, true) --Spawn trigger #2
                 local counter = 0
@@ -200,14 +201,18 @@ function createVehicle(modelHash, pos, heading, skip_remove_current, mod, altern
             globals.set_float(baseGlobals.vehicleSpawner2.baseGlobal2 + 7 + 0, pos.x)
             globals.set_float(baseGlobals.vehicleSpawner2.baseGlobal2 + 7 + 1, pos.y)
             globals.set_float(baseGlobals.vehicleSpawner2.baseGlobal2 + 7 + 2, pos.z)
+            globals.set_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 3, false) --Spawn trigger for pegasus vehicle
             globals.set_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 2, true) --Spawn trigger #1
             globals.set_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 5, true) --Spawn trigger #2
             local counter = 0
             repeat
                 counter = counter + 1
             until (not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 2) and not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 5)) or counter > 426900 --Spawn again at correct coords, removing any vehicle in the way
-        end
+        --end
         vehicle_is_creating = nil
+        globals.set_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 2, false) --Spawn trigger #1
+        globals.set_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 3, false) --Pegasus Spawn trigger
+        globals.set_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 5, false) --Spawn trigger #2
         return getNetIDOfLastSpawnedVehicle()
     end
 end
@@ -1091,8 +1096,8 @@ function setPlayerModel(hash)
             if (hash ~= joaat("mp_m_freemode_01") and hash ~= joaat("mp_f_freemode_01")) then
                 sleep(playerlistSettings.pedChangerSleepTimeout)
                 globals.set_int(baseGlobals.pedChanger.pedTrigger + 278, getOrSetPlayerPedID())
-                globals.set_bool(baseGlobals.pedChanger.pedTrigger + 226 + 1, true)
             end
+            globals.set_bool(baseGlobals.pedChanger.pedTrigger + 226 + 1, true) --enable weapons
             globals.set_int(baseGlobals.pedChanger.hashGlobal1 + 7 + gender, joaat(default_models[gender]))
             sleep(playerlistSettings.pedChangerSleepTimeout)
             tries = tries + 1
@@ -1100,4 +1105,33 @@ function setPlayerModel(hash)
         ped_is_setting = nil
     end
     menu.max_all_ammo()
+end
+--------------------------------------- SET WAYPOINT ---------------------------------------------
+-----Thanks to rf2007 for the globals!
+baseGlobals.waypointGlobal = {}
+baseGlobals.waypointGlobal.baseGlobal = 2676532
+baseGlobals.waypointGlobal.testFunctionExplanation = "Set Waypoint to 420, 420"
+baseGlobals.waypointGlobal.testFunction = function() setWayPoint(420, 420) end
+function setWayPoint(x, y)
+    --set waypoint
+    local oldHash = globals.get_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 66)
+    globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2, joaat("rcbandito"))
+    globals.set_float(baseGlobals.vehicleSpawner2.baseGlobal2 + 7 + 0, x) --Spawn RCBandito at xyz with Pegasus flag enabled
+    globals.set_float(baseGlobals.vehicleSpawner2.baseGlobal2 + 7 + 1, y)
+    globals.set_float(baseGlobals.vehicleSpawner2.baseGlobal2 + 7 + 2, 1500)
+    globals.set_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 2, true) --Spawn trigger #1
+    globals.set_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 3, true) --Pegasus Spawn trigger
+    globals.set_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 5, true) --Spawn trigger #2
+    sleep(0.1)
+    globals.set_int(baseGlobals.waypointGlobal.baseGlobal, 512) -- Set some wild bits in some random global idfk
+    x = 2 ^ 8 + 2 ^ 10
+    for _ = 1, 100 do
+        if globals.get_int(baseGlobals.waypointGlobal.baseGlobal) & x == x then
+            break
+        end
+        sleep(0.01)
+    end
+    sleep(0.4)
+    globals.set_int(baseGlobals.waypointGlobal.baseGlobal, 2 ^ 15)
+    globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 66, oldHash)
 end
