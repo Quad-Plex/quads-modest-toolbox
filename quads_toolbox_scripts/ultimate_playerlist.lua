@@ -218,7 +218,7 @@ local function TeleportVehiclesToPlayer(ply, distance, explode, vector_switch)
             veh:set_position(tpPos)
             veh:set_rotation(vector3(math.random(0, 360), math.random(0, 360), math.random(0, 360)))
         end
-        if explode and distanceBetween(veh, ply, vector_switch) < random_distance+1 then
+        if explode and distanceBetween(veh, tpPos, vector_switch) < 5 then
             veh:set_godmode(false)
             veh:set_health(-1)
         end
@@ -1344,7 +1344,7 @@ function addSubActions(sub, plyName, plyId)
     trollSub:add_int_range("EXPLODE " .. plyName .. " |Range:", 1, 0, 10, function()
         return vehicleDistance
     end, function(n)
-        TeleportVehiclesToPlayer(ply(), n, true)
+        TeleportVehiclesToPlayer(ply():get_position(), n, true, true)
     end)
     trollSub:add_action("\u{26A0} EMERGENCY STOP ALL LOOPS \u{26A0}", emergencyStop)
     greyText(trollSub, centeredText("--------Loop Actions--------"))
@@ -1697,7 +1697,7 @@ menu.register_callback('trackGPS', gpsTrackerThread)
 local function autoExplodeThread()
     while auto_action_player_id and auto_explode do
         if checkAndPerformEmergencyStop() then return end
-        TeleportVehiclesToPlayer(autoPly(), vehicleDistance, true)
+        TeleportVehiclesToPlayer(autoPly():get_position(), vehicleDistance, true, true)
         sleep(0.35)
     end
 end
