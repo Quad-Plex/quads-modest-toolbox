@@ -2,7 +2,7 @@ baseGlobals = {}
 
 ------------------------------Localplayer ID getter----------------------------
 baseGlobals.localPlayerGlobal = {}
-baseGlobals.localPlayerGlobal.baseGlobal = 2672741
+baseGlobals.localPlayerGlobal.baseGlobal = 2672855
 baseGlobals.localPlayerGlobal.bareStringCheck = function()
     return "LocalplayerID from Global: " .. tostring(globals.get_int(baseGlobals.localPlayerGlobal.baseGlobal))
 end
@@ -25,15 +25,15 @@ function getOrSetPlayerPedID(set)
 end
 
 baseGlobals.playerPedGlobal = {}
-baseGlobals.playerPedGlobal.baseGlobal = 1906517
-baseGlobals.playerPedGlobal.freemode_local = 450 + 641
+baseGlobals.playerPedGlobal.baseGlobal = 1906887
+baseGlobals.playerPedGlobal.freemode_local = 458 + 641
 baseGlobals.playerPedGlobal.bareStringCheck = function()
     return "Own PlayerPed: " .. tostring(getPlayerPed(getLocalplayerID()))
 end
 
 function getPlayerPed(playerID)
-    if not globals.get_bool(baseGlobals.playerPedGlobal.baseGlobal + 1 + (getLocalplayerID() * 299) + 29 + 18) then
-        globals.set_bool(baseGlobals.playerPedGlobal.baseGlobal + 1 + (getLocalplayerID() * 299) + 29 + 18, true)
+    if not globals.get_bool(baseGlobals.playerPedGlobal.baseGlobal + 1 + (getLocalplayerID() * 304) + 29 + 18) then
+        globals.set_bool(baseGlobals.playerPedGlobal.baseGlobal + 1 + (getLocalplayerID() * 304) + 29 + 18, true)
     end
     if script("freemode"):is_active() then
         return script("freemode"):get_int(baseGlobals.playerPedGlobal.freemode_local + 1 + (playerID * 3) + 2)
@@ -45,7 +45,7 @@ end
 --after session switch that string disappeared - has to be configurable somehow
 local timeoutDuration
 baseGlobals.messageDisplay = {}
-baseGlobals.messageDisplay.baseGlobal = 2672741 + 2518 + 1
+baseGlobals.messageDisplay.baseGlobal = 2672855 + 2557 + 1
 baseGlobals.messageDisplay.testFunction = function()
     displayHudBanner("FGTXT_F_F3", "RESPAWN_W", "", 108)
 end
@@ -95,7 +95,7 @@ menu.register_callback('OnScriptsLoaded', OnScriptsLoadedGlobal)
 local noMods = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}
 
 baseGlobals.vehicleSpawner = {}
-baseGlobals.vehicleSpawner.baseGlobal = 2640095
+baseGlobals.vehicleSpawner.baseGlobal = 2640096
 baseGlobals.vehicleSpawner.testFunction = function()
     createVehicle(joaat("Youga4"), localplayer:get_position() + localplayer:get_heading() * 5)
 end
@@ -103,20 +103,20 @@ baseGlobals.vehicleSpawner.testFunctionExplanation = "Spawn Youga4 with spawner#
 
 
 baseGlobals.vehicleSpawner2 = {}
-baseGlobals.vehicleSpawner2.baseGlobal2 = 2695991
+baseGlobals.vehicleSpawner2.baseGlobal2 = 2696212
 baseGlobals.vehicleSpawner2.testFunction = function()
     createVehicle(joaat("PoliceOld2"), localplayer:get_position() + localplayer:get_heading() * 5, nil, nil, nil, true)
 end
 baseGlobals.vehicleSpawner2.testFunctionExplanation = "Spawn PoliceOld2 with spawner#2"
 
 baseGlobals.vehicleSpawnerNetID = {}
-baseGlobals.vehicleSpawnerNetID.vehNetIDGlobal = 2738587
+baseGlobals.vehicleSpawnerNetID.vehNetIDGlobal = 2738934
 baseGlobals.vehicleSpawnerNetID.bareStringCheck = function()
     return "VehNetID (last spawned): " .. tostring(getNetIDOfLastSpawnedVehicle())
 end
 
 function getNetIDOfLastSpawnedVehicle()
-    return globals.get_int(baseGlobals.vehicleSpawnerNetID.vehNetIDGlobal + 6762)
+    return globals.get_int(baseGlobals.vehicleSpawnerNetID.vehNetIDGlobal + 6799)
 end
 
 function createVehicle(modelHash, pos, heading, skip_remove_current, mod, alternative_spawn_toggle, random_details, max_details)
@@ -126,15 +126,15 @@ function createVehicle(modelHash, pos, heading, skip_remove_current, mod, altern
     --###SPAWNER #1 (With heading, spammable, without mods)
     if not alternative_spawn_toggle and not player.get_player_ped():is_in_vehicle() then
         local oldNetID = getNetIDOfLastSpawnedVehicle()
-        globals.set_int(baseGlobals.vehicleSpawner.baseGlobal + 47, modelHash)
-        globals.set_float(baseGlobals.vehicleSpawner.baseGlobal + 43, pos.x)
-        globals.set_float(baseGlobals.vehicleSpawner.baseGlobal + 44, pos.y)
-        globals.set_float(baseGlobals.vehicleSpawner.baseGlobal + 45, pos.z)
+        globals.set_int(baseGlobals.vehicleSpawner.baseGlobal + 48, modelHash)
+        globals.set_float(baseGlobals.vehicleSpawner.baseGlobal + 44, pos.x)
+        globals.set_float(baseGlobals.vehicleSpawner.baseGlobal + 45, pos.y)
+        globals.set_float(baseGlobals.vehicleSpawner.baseGlobal + 46, pos.z)
         if heading then
-            globals.set_float(baseGlobals.vehicleSpawner.baseGlobal + 46, heading)
+            globals.set_float(baseGlobals.vehicleSpawner.baseGlobal + 47, heading)
         end
-        globals.set_boolean(baseGlobals.vehicleSpawner.baseGlobal + 42, true)
-        sleep(0.15)
+        globals.set_boolean(baseGlobals.vehicleSpawner.baseGlobal + 43, true)
+        sleep(0.1)
         local newNetID = getNetIDOfLastSpawnedVehicle()
         if newNetID ~= oldNetID then
             return
@@ -142,6 +142,7 @@ function createVehicle(modelHash, pos, heading, skip_remove_current, mod, altern
     end
     --###SPAWNER #2 (Without heading, with mods, more reliable)
     if not vehicle_is_creating then
+        print("Spawner #2...")
         vehicle_is_creating = true
         --if (not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 2) and not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 5)) then
             local primaryColor = random_details and math.random(0, 160) or (max_details and 159 or 0)
@@ -221,20 +222,20 @@ end
 ------------------------------------------------------------------------------------------------
 ----------------------------------- set ped into vehicle ---------------------------------------
 baseGlobals.setIntoVehicle = {}
-baseGlobals.setIntoVehicle.baseGlobal = 2738587
-baseGlobals.setIntoVehicle.forceControl = 2635562
+baseGlobals.setIntoVehicle.baseGlobal = 2738934
+baseGlobals.setIntoVehicle.forceControl = 2635563
 baseGlobals.setIntoVehicle.bareStringCheck = function()
     return "Using Veh with ID:: " .. tostring(getVehicleForPlayerID() or "")
 end
 
 local function getForcedVehicleHandle(playerID)
-    local oldVehicleNetIDValue = globals.get_int(baseGlobals.setIntoVehicle.baseGlobal + 7022)
+    local oldVehicleNetIDValue = globals.get_int(baseGlobals.setIntoVehicle.baseGlobal + 7060)
     local playerPed = getPlayerPed(playerID)
     local count = 0
     while true and (count < 100000) do
         --Force a different playerPed into the function that gets the veh net ID
         getOrSetPlayerPedID(playerPed)
-        local newVehicleNetIDValue = globals.get_int(baseGlobals.setIntoVehicle.baseGlobal + 7022)
+        local newVehicleNetIDValue = globals.get_int(baseGlobals.setIntoVehicle.baseGlobal + 7060)
         --Hope that the game used that Ped to get a different car net ID
         if (newVehicleNetIDValue ~= oldVehicleNetIDValue) then
             return newVehicleNetIDValue
@@ -245,15 +246,15 @@ end
 
 function getVehicleForPlayerID(playerID)
     if not playerID or playerID == getLocalplayerID() then
-        if (globals.get_int(baseGlobals.setIntoVehicle.baseGlobal + 7022) ~= 0) then
-            return globals.get_int(baseGlobals.setIntoVehicle.baseGlobal + 7022) --ped:get_vehicle_ped_is_in(Global_2672741.f_4.f_15
+        if (globals.get_int(baseGlobals.setIntoVehicle.baseGlobal + 7060) ~= 0) then
+            return globals.get_int(baseGlobals.setIntoVehicle.baseGlobal + 7060) --ped:get_vehicle_ped_is_in(Global_2672741.f_4.f_15
         end
     else
         local player = player.get_player_ped(playerID)
         if player then
             if localplayer:is_in_vehicle() then
                 if (localplayer:get_current_vehicle() == player:get_current_vehicle()) then
-                    return globals.get_int(baseGlobals.setIntoVehicle.baseGlobal + 7022)
+                    return globals.get_int(baseGlobals.setIntoVehicle.baseGlobal + 7060)
                 end
             end
             return getForcedVehicleHandle(playerID)
@@ -303,10 +304,10 @@ end
 
 ----------------------Pickup Spawner--------------------------
 baseGlobals.ambientSpawner = {}
-baseGlobals.ambientSpawner.spawn_trigger = 2707022
+baseGlobals.ambientSpawner.spawn_trigger = 2707342
 baseGlobals.ambientSpawner.networked_trigger = 262145 + 31218
-baseGlobals.ambientSpawner.pickup_data = 2707016
-baseGlobals.ambientSpawner.check = 4535851
+baseGlobals.ambientSpawner.pickup_data = 2707336
+baseGlobals.ambientSpawner.check = 4535950
 baseGlobals.ambientSpawner.testFunction = function()
     createPickup(localplayer:get_position(), 420)
 end
@@ -328,26 +329,26 @@ end
 --Global_1845263[PLAYER::PLAYER_ID() /*877*/].f_205.f_6 Level
 --.f_3 Wallet, .f_56 cumulative money, .f_28 kills, .f_29 deaths
 baseGlobals.playerLevel = {}
-baseGlobals.playerLevel.baseGlobal = 1845263
+baseGlobals.playerLevel.baseGlobal = 1845281
 baseGlobals.playerLevel.testIntRange = function()
     return getPlayerLevel(getLocalplayerID())
 end
 baseGlobals.playerLevel.intRangeExplanation = "Shows your own LVL:"
 getPlayerLevel = function(plyId)
-    return globals.get_int(baseGlobals.playerLevel.baseGlobal + 1 + (plyId * 877) + 205 + 6)
+    return globals.get_int(baseGlobals.playerLevel.baseGlobal + 1 + (plyId * 883) + 206 + 6)
 end
 
 getPlayerWalletAmount = function(plyId)
-    return globals.get_int(baseGlobals.playerLevel.baseGlobal + 1 + (plyId * 877) + 205 + 3)
+    return globals.get_int(baseGlobals.playerLevel.baseGlobal + 1 + (plyId * 883) + 206 + 3)
 end
 
 getPlayerBankAmount = function(plyId)
-    return globals.get_int(baseGlobals.playerLevel.baseGlobal + 1 + (plyId * 877) + 205 + 56)
+    return globals.get_int(baseGlobals.playerLevel.baseGlobal + 1 + (plyId * 883) + 206 + 56)
 end
 
 getPlayerKd = function(plyId)
-    local kills = globals.get_int(baseGlobals.playerLevel.baseGlobal + 1 + (plyId * 877) + 205 + 28)
-    local deaths = globals.get_int(baseGlobals.playerLevel.baseGlobal + 1 + (plyId * 877) + 205 + 29)
+    local kills = globals.get_int(baseGlobals.playerLevel.baseGlobal + 1 + (plyId * 883) + 206 + 28)
+    local deaths = globals.get_int(baseGlobals.playerLevel.baseGlobal + 1 + (plyId * 883) + 206 + 29)
     if kills == 0 or deaths == 0 then
         return 0
     end
@@ -355,11 +356,11 @@ getPlayerKd = function(plyId)
 end
 
 getPlayerKills = function(plyId)
-    return globals.get_int(baseGlobals.playerLevel.baseGlobal + 1 + (plyId * 877) + 205 + 28)
+    return globals.get_int(baseGlobals.playerLevel.baseGlobal + 1 + (plyId * 883) + 206 + 28)
 end
 
 getPlayerDeaths = function(plyId)
-    return globals.get_int(baseGlobals.playerLevel.baseGlobal + 1 + (plyId * 877) + 205 + 29)
+    return globals.get_int(baseGlobals.playerLevel.baseGlobal + 1 + (plyId * 883) + 206 + 29)
 end
 
 function getTopPlayer(getPlayerAttribute, nameOrId, findMin)
@@ -408,16 +409,16 @@ end
 ---------------------Check Dev DLC --------------------------------
 --Global_2657921[bParam1 /*463*/].f_269
 baseGlobals.devCheck = {}
-baseGlobals.devCheck.baseGlobal = 2657921
+baseGlobals.devCheck.baseGlobal = 2657971
 hasDevDLC = function(plyId)
-    return globals.get_int(baseGlobals.devCheck.baseGlobal + 1 + (plyId * 463) + 269)
+    return globals.get_int(baseGlobals.devCheck.baseGlobal + 1 + (plyId * 465) + 270)
 end
 
 -------------------------------------------------------------------
 ----------------------Respawn State (Interior Check)----------------
 --Global_2657921[iVar0 /*463*/].f_232
 baseGlobals.respawnState = {}
-baseGlobals.respawnState.baseGlobal = 2657921
+baseGlobals.respawnState.baseGlobal = 2657971
 baseGlobals.respawnState.testIntRange = function()
     return getPlayerRespawnState(getLocalplayerID())
 end
@@ -426,13 +427,13 @@ baseGlobals.respawnState.intRangeExplanation = "Should be 99 while idling outsid
 -- 99 is fully loaded
 
 getPlayerRespawnState = function(plyId)
-    return globals.get_int(baseGlobals.respawnState.baseGlobal + 1 + (plyId * 463) + 232)
+    return globals.get_int(baseGlobals.respawnState.baseGlobal + 1 + (plyId * 465) + 233)
 end
 
 -- -1/1 repair vehicle, 11 flip vehicle, 2-6 are respawn triggers
 --Only seem to work on oneself
 setPlayerRespawnState = function(plyId, respawnState)
-    globals.set_int(baseGlobals.respawnState.baseGlobal + 1 + (plyId * 463) + 232, respawnState)
+    globals.set_int(baseGlobals.respawnState.baseGlobal + 1 + (plyId * 465) + 233, respawnState)
 end
 
 ---------------------Player Org---------------------------------
@@ -440,17 +441,17 @@ end
 --Global_1886967[PLAYER::PLAYER_ID() /*609*/].f_10
 --OrgColor is at .f104
 baseGlobals.playerOrg = {}
-baseGlobals.playerOrg.baseGlobal = 1886967
+baseGlobals.playerOrg.baseGlobal = 1887305
 baseGlobals.playerOrg.bareStringCheck = function()
     return getPlayerOrgID(getLocalplayerID()) ~= -1 and "Own Org Name: " .. tostring(getPlayerOrgName(getLocalplayerID())) or "No Organisation found"
 end
 local org_types = { [0] = "CEO", "MC" }
 getPlayerOrgType = function(plyId)
-    return org_types[globals.get_int(baseGlobals.playerOrg.baseGlobal + 1 + (plyId * 609) + 10 + 429)]
+    return org_types[globals.get_int(baseGlobals.playerOrg.baseGlobal + 1 + (plyId * 610) + 10 + 430)]
 end
 
 getPlayerOrgName = function(plyId)
-    local orgName = globals.get_string(baseGlobals.playerOrg.baseGlobal + 1 + (plyId * 609) + 10 + 105, 30)
+    local orgName = globals.get_string(baseGlobals.playerOrg.baseGlobal + 1 + (plyId * 610) + 10 + 105, 30)
     if orgName == "" then
         orgName = "Organisation"
     end
@@ -458,19 +459,19 @@ getPlayerOrgName = function(plyId)
 end
 
 getPlayerOrgID = function(plyId)
-    return globals.get_int(baseGlobals.playerOrg.baseGlobal + 1 + (plyId * 609) + 10)
+    return globals.get_int(baseGlobals.playerOrg.baseGlobal + 1 + (plyId * 610) + 10)
 end
 
 joinPlayerOrg = function(plyId)
     local plyOrgId = getPlayerOrgID(plyId)
-    globals.set_int(baseGlobals.playerOrg.baseGlobal + 1 + (getLocalplayerID() * 609) + 10, plyOrgId)
+    globals.set_int(baseGlobals.playerOrg.baseGlobal + 1 + (getLocalplayerID() * 610) + 10, plyOrgId)
 end
 
 ------------------------Set Wanted Level Remote----------------------
 --Global_2657921[bVar0 /*463*/].f_214 playerId
 --Global_2657704[bVar0 /*463*/].f_215 num of stars (0-5)
 baseGlobals.wantedLevel = {}
-baseGlobals.wantedLevel.baseGlobal = 2657921
+baseGlobals.wantedLevel.baseGlobal = baseGlobals.devCheck.baseGlobal
 baseGlobals.wantedLevel.testFunction = function()
     giveWantedLevel(getLocalplayerID(), 5)
     sleep(0.5)
@@ -478,8 +479,8 @@ baseGlobals.wantedLevel.testFunction = function()
 end
 baseGlobals.wantedLevel.testFunctionExplanation = "Give yourself 5 Stars"
 giveWantedLevel = function(plyId, numStars)
-    globals.set_int(baseGlobals.wantedLevel.baseGlobal + 1 + (getLocalplayerID() * 463) + 214, plyId)
-    globals.set_int(baseGlobals.wantedLevel.baseGlobal + 1 + (getLocalplayerID() * 463) + 215, numStars)
+    globals.set_int(baseGlobals.wantedLevel.baseGlobal + 1 + (getLocalplayerID() * 465) + 215, plyId)
+    globals.set_int(baseGlobals.wantedLevel.baseGlobal + 1 + (getLocalplayerID() * 465) + 216, numStars)
 end
 
 ----------------------------------------------------------------
@@ -535,12 +536,7 @@ shortformBlips = {
     ["PREP_MISSION"] = "PREP",
     ["CLOTHES_SHOP"] = "CLOTH"
 }
-baseGlobals.blipType = {}
-baseGlobals.blipType.baseGlobal = 2657921
-baseGlobals.blipType.testIntRange = function()
-    return getPlayerBlip(getLocalplayerID())
-end
-baseGlobals.blipType.intRangeExplanation = "Should be 4 while idling outside"
+
 local vehicle_blips = utils_Set({ 262144, 262145, 262148, 262149, 262156, 262164, 262165, 262208, 262212, 262248, 262276, 262277, 262660, 262661, 262724, 262784, 262789, 262788, 786564, 2627888, 2359300 })
 local plane_ghost_blips = utils_Set({ 8388612, 8650884, 8651332, 8651396, 8651397, 8650756, 8650757, 8650820, 8651268, 8651269 })
 local ultralight_ghost_blips = utils_Set({ 262676, 262740 })
@@ -564,8 +560,19 @@ local loading_blips = utils_Set({ 0, 6, 64, 65 })
 local prep_mission_blips = utils_Set({524804})
 local junk_bike_blips = utils_Set({ 2359424, 2359428 })
 
+baseGlobals.blipType = {}
+baseGlobals.blipType.baseGlobal = 2657971
+baseGlobals.blipType.testIntRange = function()
+    return getPlayerBlip(getLocalplayerID())
+end
+baseGlobals.blipType.intRangeExplanation = "Should be 4 while idling outside"
+
+getPlayerBlip = function(plyId)
+    return globals.get_int(baseGlobals.blipType.baseGlobal + (plyId * 465) + 74 + 3)
+end
+
 getPlayerBlipType = function(plyId)
-    local plyBlip = globals.get_int(baseGlobals.blipType.baseGlobal + (plyId * 463) + 73 + 3)
+    local plyBlip = getPlayerBlip(plyId)
 
     if vehicle_blips[plyBlip] then
         return "VEHICLE"
@@ -616,14 +623,10 @@ getPlayerBlipType = function(plyId)
     end
 end
 
-getPlayerBlip = function(plyId)
-    return globals.get_int(baseGlobals.blipType.baseGlobal + (plyId * 463) + 73 + 3)
-end
-
 ----------------------------------------------------------------
 ---------------------Podium Vehicle Changer---------------------
 baseGlobals.podiumVehicle = {}
-baseGlobals.podiumVehicle.baseGlobal = 289178
+baseGlobals.podiumVehicle.baseGlobal = 288479
 baseGlobals.podiumVehicle.testFunction = function()
     setPodiumVehicle(joaat("Tug"))
 end
@@ -641,13 +644,12 @@ end
 ------------------------------------------------------------------
 ------------------Bounty Functions--------------------------------
 ---CREDITS GO ENTIRELY TO APPLEVEGASS!!!!
--- 1.67 globals. Found by: (AppleVegas), updated for 1.69 by Quad_Plex
+-- Globals Found by: (AppleVegas), updated by Quad_Plex
 --easily updated by looking for TXT_BNTY_NPC1 in freemode.c
---Global_2359296[func_900() /*5569*/].f_5151.f_14
 baseGlobals.bountyGlobals = {}
-baseGlobals.bountyGlobals.bounty_base = 2738587
+baseGlobals.bountyGlobals.bounty_base = 2738934
 baseGlobals.bountyGlobals.bounty_overrideBounty = 262145
-baseGlobals.bountyGlobals.bounty_selfValue = 2359296 + 1 + (0 * 5569) + 5151 + 14
+baseGlobals.bountyGlobals.bounty_selfValue = 2359296 + 1 + (0 * 5570) + 5152 + 14
 baseGlobals.bountyGlobals.testFunction = function()
     sendBountyToYourself(420)
 end
@@ -659,26 +661,26 @@ end
 
 function overrideBounty(amount)
     local fee = calculateFee(amount)
-    globals.set_int(baseGlobals.bountyGlobals.bounty_overrideBounty + 2348, minPay)
-    globals.set_int(baseGlobals.bountyGlobals.bounty_overrideBounty + 2349, minPay)
-    globals.set_int(baseGlobals.bountyGlobals.bounty_overrideBounty + 2350, minPay)
-    globals.set_int(baseGlobals.bountyGlobals.bounty_overrideBounty + 2351, minPay)
-    globals.set_int(baseGlobals.bountyGlobals.bounty_overrideBounty + 2352, minPay)
-    globals.set_int(baseGlobals.bountyGlobals.bounty_overrideBounty + 7178, fee)
+    globals.set_int(baseGlobals.bountyGlobals.bounty_overrideBounty + 2333, minPay)
+    globals.set_int(baseGlobals.bountyGlobals.bounty_overrideBounty + 2334, minPay)
+    globals.set_int(baseGlobals.bountyGlobals.bounty_overrideBounty + 2335, minPay)
+    globals.set_int(baseGlobals.bountyGlobals.bounty_overrideBounty + 2336, minPay)
+    globals.set_int(baseGlobals.bountyGlobals.bounty_overrideBounty + 2337, minPay)
+    globals.set_int(baseGlobals.bountyGlobals.bounty_overrideBounty + 7179, fee)
 end
 
 function resetOverrideBounty()
-    globals.set_int(baseGlobals.bountyGlobals.bounty_overrideBounty + 2348, 2000)
-    globals.set_int(baseGlobals.bountyGlobals.bounty_overrideBounty + 2349, 4000)
-    globals.set_int(baseGlobals.bountyGlobals.bounty_overrideBounty + 2350, 6000)
-    globals.set_int(baseGlobals.bountyGlobals.bounty_overrideBounty + 2351, 8000)
-    globals.set_int(baseGlobals.bountyGlobals.bounty_overrideBounty + 2352, 10000)
-    globals.set_int(baseGlobals.bountyGlobals.bounty_overrideBounty + 7178, 1000)
+    globals.set_int(baseGlobals.bountyGlobals.bounty_overrideBounty + 2333, 2000)
+    globals.set_int(baseGlobals.bountyGlobals.bounty_overrideBounty + 2334, 4000)
+    globals.set_int(baseGlobals.bountyGlobals.bounty_overrideBounty + 2335, 6000)
+    globals.set_int(baseGlobals.bountyGlobals.bounty_overrideBounty + 2336, 8000)
+    globals.set_int(baseGlobals.bountyGlobals.bounty_overrideBounty + 2337, 10000)
+    globals.set_int(baseGlobals.bountyGlobals.bounty_overrideBounty + 7179, 1000)
 end
 
 function sendBountyToYourself(money)
     globals.set_int(baseGlobals.bountyGlobals.bounty_selfValue, money)
-    globals.set_int(baseGlobals.bountyGlobals.bounty_base + 1893 + 57, 0)
+    globals.set_int(baseGlobals.bountyGlobals.bounty_base + 1908 + 57, 0)
 end
 
 function sendBounty(id, amount, skipOverride)
@@ -690,9 +692,9 @@ function sendBounty(id, amount, skipOverride)
     if not skipOverride then
         overrideBounty(amount)
     end
-    globals.set_int(baseGlobals.bountyGlobals.bounty_base + 4571, id)
-    globals.set_int(baseGlobals.bountyGlobals.bounty_base + 4571 + 1, 1)
-    globals.set_bool(baseGlobals.bountyGlobals.bounty_base + 4571 + 2 + 1, true)
+    globals.set_int(baseGlobals.bountyGlobals.bounty_base + 4586, id)
+    globals.set_int(baseGlobals.bountyGlobals.bounty_base + 4586 + 1, 1)
+    globals.set_bool(baseGlobals.bountyGlobals.bounty_base + 4586 + 2 + 1, true)
     sleep(0.4)
     if not skipOverride then
         resetOverrideBounty()
@@ -703,7 +705,7 @@ end
 --------------------------Host Check--------------------------
 --Global_2650416.f_1
 baseGlobals.hostCheck = {}
-baseGlobals.hostCheck.baseGlobal = 2650416 + 1
+baseGlobals.hostCheck.baseGlobal = 2650436 + 1
 baseGlobals.hostCheck.testCheck = function()
     return getScriptHostPlayerID() == getLocalplayerID()
 end
@@ -715,7 +717,7 @@ end
 ---------------------------Host Kick--------------------------
 --Global_1877042[PLAYER::PLAYER_ID()]
 baseGlobals.hostKick = {}
-baseGlobals.hostKick.baseGlobal = 1877042
+baseGlobals.hostKick.baseGlobal = 1877252
 baseGlobals.hostKick.testFunction = function()
     hostKick(getLocalplayerID())
 end
@@ -731,27 +733,28 @@ end
 --Global_2657921[PLAYER::PLAYER_ID() /*463*/].f_34
 --Scanned:
 --SpecdPlayerId: 2672741
+-- now 2672855?
 
 baseGlobals.spectatorCheck = {}
-baseGlobals.spectatorCheck.specPlayerBaseGlobal = 2657921
+baseGlobals.spectatorCheck.specPlayerBaseGlobal = 2657971
 baseGlobals.spectatorCheck.testCheck = function()
     return amISpectating(getLocalplayerID())
 end
 baseGlobals.spectatorCheck.checkExplanation = "Am I spectating myself?"
 
 baseGlobals.spectatorCheck2 = {}
-baseGlobals.spectatorCheck2.tvSpectatePlyIDGlobal = 2672741
+baseGlobals.spectatorCheck2.tvSpectatePlyIDGlobal = baseGlobals.localPlayerGlobal.baseGlobal
 baseGlobals.spectatorCheck2.testIntRange = function()
     return globals.get_int(baseGlobals.spectatorCheck2.tvSpectatePlyIDGlobal)
 end
 baseGlobals.spectatorCheck2.intRangeExplanation = "Currently watched player on TV:"
 function getIsTrackedPedVisibleState(plyId)
-    return globals.get_int(baseGlobals.spectatorCheck.specPlayerBaseGlobal + 1 + (plyId * 463) + 33)
+    return globals.get_int(baseGlobals.spectatorCheck.specPlayerBaseGlobal + 1 + (plyId * 465) + 33)
 end
 
 --Unused, but still keeping it for documentation's sake
 function getIsVisibleToScriptState(plyId)
-    return globals.get_int(baseGlobals.spectatorCheck.specPlayerBaseGlobal + 1 + (plyId * 463) + 34)
+    return globals.get_int(baseGlobals.spectatorCheck.specPlayerBaseGlobal + 1 + (plyId * 465) + 34)
 end
 
 function isSpectatingMe(plyId)
@@ -793,7 +796,8 @@ end
 -----------------------------------------------------------------------------
 -------------------------- Special Export Vehicles --------------------------
 baseGlobals.specialExport = {}
-baseGlobals.specialExport.baseGlobal = 1942456
+--Global found through GLobal Scanner script, the value doesn't correspond to a freemode Global_
+baseGlobals.specialExport.baseGlobal = 1943195
 baseGlobals.specialExport.bareStringCheck = function()
     local vehicle = getSpecialExportVehiclesList()[1]
     local vehicle_data = vehicle and VEHICLE[vehicle]
@@ -815,7 +819,7 @@ end
 -------------------------------------------------------------------------------
 ------------------------- Sessanta Shit ---------------------------------------
 baseGlobals.sessantaShit = {}
-baseGlobals.sessantaShit.base_local = 307
+baseGlobals.sessantaShit.base_local = 331
 function newSessantaVehicle()
     local shop_controller = script("shop_controller")
     if shop_controller and shop_controller:is_active() then
@@ -837,7 +841,7 @@ baseGlobals.sessantaShit.testFunctionExplanation = "Trigger new Sessanta Vehicle
 phoneDisabledState = false
 local phoneLoopRunning = false
 baseGlobals.phoneDisabler = {}
-baseGlobals.phoneDisabler.base_global = 20796
+baseGlobals.phoneDisabler.base_global = 20913
 baseGlobals.phoneDisabler.testFunction = function()
     setPhoneDisabled(not phoneDisabledState)
 end
@@ -912,7 +916,7 @@ end
 ----------------------------------------------------------------------------
 --------------------------- Vehicle Options --------------------------------
 baseGlobals.vehicleOptions = {}
-baseGlobals.vehicleOptions.base_global = 1572015
+baseGlobals.vehicleOptions.base_global = 1572050
 baseGlobals.vehicleOptions.testFunctionExplanation = "Toggle Flappy Doors"
 baseGlobals.vehicleOptions.testFunction = function()
     flappyDoors = not flappyDoors
@@ -977,7 +981,7 @@ end
 local coords_is_setting = false
 baseGlobals.teleport = {}
 baseGlobals.teleport.baseGlobalPed = 4521801
-baseGlobals.teleport.baseGlobalVeh = 2635562
+baseGlobals.teleport.baseGlobalVeh = 2635563
 baseGlobals.teleport.testFunctionExplanation = "Teleport forward"
 baseGlobals.teleport.testFunction = function()
     nativeTeleport(localplayer:get_position() + localplayer:get_heading() * 2)
@@ -985,17 +989,17 @@ end
 function nativeTeleport(vector, headingVec)
     if (localplayer and (localplayer:get_pedtype() == 2) and not localplayer:is_in_vehicle() and not coords_is_setting) then -- localplayer is netplayer and not in vehicle
         coords_is_setting = true
-        globals.set_float(baseGlobals.teleport.baseGlobalPed + 946 + 0, vector.x)
-        globals.set_float(baseGlobals.teleport.baseGlobalPed + 946 + 1, vector.y)
-        globals.set_float(baseGlobals.teleport.baseGlobalPed + 946 + 2, vector.z)
+        globals.set_float(baseGlobals.teleport.baseGlobalPed + 948 + 0, vector.x)
+        globals.set_float(baseGlobals.teleport.baseGlobalPed + 948 + 1, vector.y)
+        globals.set_float(baseGlobals.teleport.baseGlobalPed + 948 + 2, vector.z)
         if headingVec then
-            globals.set_float(baseGlobals.teleport.baseGlobalPed + 949, math.deg(math.atan(headingVec.y, headingVec.x)) - 90)
+            globals.set_float(baseGlobals.teleport.baseGlobalPed + 951, math.deg(math.atan(headingVec.y, headingVec.x)) - 90)
         else
-            globals.set_float(baseGlobals.teleport.baseGlobalPed + 949, math.deg(math.atan(localplayer:get_heading().y, localplayer:get_heading().x)) - 90)
+            globals.set_float(baseGlobals.teleport.baseGlobalPed + 951, math.deg(math.atan(localplayer:get_heading().y, localplayer:get_heading().x)) - 90)
         end
-        globals.set_int(baseGlobals.teleport.baseGlobalPed + 943, 20) --Trigger Entity:set_entity_coords
+        globals.set_int(baseGlobals.teleport.baseGlobalPed + 945, 20) --Trigger Entity:set_entity_coords
         sleep(0.05)
-        globals.set_int(baseGlobals.teleport.baseGlobalPed + 943, -1)
+        globals.set_int(baseGlobals.teleport.baseGlobalPed + 945, -1)
         setPlayerRespawnState(getLocalplayerID(), 0)
     elseif localplayer:is_in_vehicle() and not coords_is_setting then
         coords_is_setting = true
@@ -1023,7 +1027,7 @@ end
 
 ------------------------------------ Playername/Blip Hider -------------------------------------
 baseGlobals.hideGlobal = {}
-baseGlobals.hideGlobal.baseGlobal = 1845263
+baseGlobals.hideGlobal.baseGlobal = 1845281
 baseGlobals.hideGlobal.testFunctionExplanation = "Toggle Hide"
 baseGlobals.hideGlobal.testFunction = function()
     hidePlayer(not isHidden())
@@ -1034,10 +1038,10 @@ local hideRunnerRunning = false
 local function hideRunner()
     while hideRunnerEnabled do
         hideRunnerRunning = true
-        globals.set_int(baseGlobals.hideGlobal.baseGlobal + 1 + (getLocalplayerID() * 877) + 205, 8)
+        globals.set_int(baseGlobals.hideGlobal.baseGlobal + 1 + (getLocalplayerID() * 883) + 206, 8)
         sleep(1)
     end
-    globals.set_int(baseGlobals.hideGlobal.baseGlobal + 1 + (getLocalplayerID() * 877) + 205, 9)
+    globals.set_int(baseGlobals.hideGlobal.baseGlobal + 1 + (getLocalplayerID() * 883) + 206, 9)
     hideRunnerRunning = false
 end
 menu.register_callback('hideRunner', hideRunner)
@@ -1054,7 +1058,7 @@ function hidePlayer(hideToggle)
 end
 
 function isHidden()
-    return globals.get_int(baseGlobals.hideGlobal.baseGlobal + 1 + (getLocalplayerID() * 877) + 205) == 8
+    return globals.get_int(baseGlobals.hideGlobal.baseGlobal + 1 + (getLocalplayerID() * 883) + 206) == 8
 end
 
 
@@ -1063,9 +1067,9 @@ end
 ---Big thanks to Alice2333
 ---
 baseGlobals.pedChanger = {}
-baseGlobals.pedChanger.hashGlobal1 = 153045
-baseGlobals.pedChanger.hashGlobal2 = 2640095
-baseGlobals.pedChanger.pedTrigger = 2707706
+baseGlobals.pedChanger.hashGlobal1 = 152645
+baseGlobals.pedChanger.hashGlobal2 = 2640096
+baseGlobals.pedChanger.pedTrigger = 2708057
 baseGlobals.pedChanger.testFunctionExplanation = "Turn into a Dog"
 baseGlobals.pedChanger.testFunction = function()
     setPlayerModel(joaat("a_c_shepherd"))
@@ -1090,10 +1094,10 @@ function setPlayerModel(hash)
         while (localplayer:get_model_hash() ~= hash and tries < 42) do
             ped_is_setting = true
             --globals.set_int(baseGlobals.pedChanger.hashGlobal1 + 7 + gender, hash)
-            globals.set_int(baseGlobals.pedChanger.hashGlobal2 + 49, hash)
-            globals.set_bool(baseGlobals.pedChanger.hashGlobal2 + 62, true)
+            globals.set_int(baseGlobals.pedChanger.hashGlobal2 + 50, hash)
+            globals.set_bool(baseGlobals.pedChanger.hashGlobal2 + 63, true)
             sleep(playerlistSettings.pedChangerSleepTimeout) -- short sleep to interrupt the ped changer function with next call, prevents it from changing back to base model
-            globals.set_bool(baseGlobals.pedChanger.hashGlobal2 + 62, false)
+            globals.set_bool(baseGlobals.pedChanger.hashGlobal2 + 63, false)
             if (hash ~= joaat("mp_m_freemode_01") and hash ~= joaat("mp_f_freemode_01")) then
                 sleep(playerlistSettings.pedChangerSleepTimeout)
                 globals.set_int(baseGlobals.pedChanger.pedTrigger + 278, getOrSetPlayerPedID())
@@ -1108,9 +1112,9 @@ function setPlayerModel(hash)
     menu.max_all_ammo()
 end
 --------------------------------------- SET WAYPOINT ---------------------------------------------
------Thanks to rf2007 for the globals!
+-----Thanks to rf2007 for the globals! Updated to newest gta version by me
 baseGlobals.waypointGlobal = {}
-baseGlobals.waypointGlobal.baseGlobal = 2676532
+baseGlobals.waypointGlobal.baseGlobal = 2672855 + 3830
 baseGlobals.waypointGlobal.testFunctionExplanation = "Set Waypoint to 420, 420"
 baseGlobals.waypointGlobal.testFunction = function() setWayPoint(420, 420) end
 function setWayPoint(x, y)

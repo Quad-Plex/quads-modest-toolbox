@@ -289,7 +289,7 @@ vehicleOptionsSub:add_action("Set Car Mass to 26969", makeCarMassive, function()
 --------------------------------
 local beybladeEnabled = false
 local beybladeRunning = false
-local beybladeModes = {[0]="Hover", "Carnage"}
+local beybladeModes = {[0]="Hover", "Drop Down"}
 local beybladeModeSelection = 0
 local function carBeyblade()
     if not localplayer:is_in_vehicle() or beybladeRunning or not beybladeEnabled then return end
@@ -316,7 +316,7 @@ local function carBeyblade()
             carJump(-25 + additionalGrav + heightDifference * 1.5)
         else
             local plyVelocity = localplayer:get_velocity().z
-            localplayer:get_current_vehicle():set_gravity(25)
+            localplayer:get_current_vehicle():set_gravity(35)
             if plyVelocity > 0 then
                 additionalGrav = plyVelocity * 7
             else
@@ -326,7 +326,7 @@ local function carBeyblade()
             menu.send_key_down(keycodes.W_KEY)
             menu.send_key_down(keycodes.S_KEY)
             menu.send_key_down(keycodes.A_KEY)
-            carJump(-52 + additionalGrav + heightDifference * 1.5)
+            carJump(-55 + additionalGrav + heightDifference * 1.5)
         end
         sleep(0.3)
     end

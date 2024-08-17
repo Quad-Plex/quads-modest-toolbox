@@ -1,8 +1,14 @@
 TODO:
-- Add Readme and FAQ description for unclear actions
-- More testing with the invisible MOC 
+- playerlist readme/legend with symbol explanation
+- update modder info in playerinfo with dev dlc/ped model detection
+- add distinction for likely modder (godmode outside interior) and definitely modder (dev dlc/ped model)
+- Add Readme and FAQ description for unclear actions 
 
 DONE:
+- ~~add missing ped models~~
+- ~~Clean up ped-changer sorting~~
+- ~~Add new vehicles from DLC with mod data~~
+- ~~Updated all globals to version 3274~~
 - ~~Fix noclip causing under-map respawn~~
 - ~~add a 'Track Player with GPS' option~~
 - ~~modder detection based on modified ped model~~
@@ -34,7 +40,7 @@ DONE:
   - ~~Added easy updater in case of unknown offset~~
 - ~~Save godmode spawner status for favorited cars in vehicle spawner~~
 - ~~Add all ExplosionTypes with an array item~~
-- ~~Improve displayMessage timeout for multiple calls to it
+- ~~Improve displayMessage timeout for multiple calls to it~~
 - ~~Add displayMessages for hotkey toggles~~
 - ~~add ability to turn on/off modder/spectator notifications (playerlist settings maybe)~~
 - ~~More testing with the speedometer (find displayboxtype without fade-in maybe?)~~ Nope.

@@ -1,5 +1,5 @@
 finishedLoading = false
-require_game_build(3179) -- GTA Online v1.68 (build 3179)
+require_game_build(3274)
 
 --Load all required constants
 require("scripts/quads_toolbox_scripts/toolbox_data/enums/VEHICLES")
@@ -86,7 +86,8 @@ local function saveClosestVehicleModData(lastSpawnedVehicleHash)
 	local spawnedVehicleHash = spawnedVehicle:get_model_hash()
 	if not lastSpawnedVehicleHash or spawnedVehicleHash ~= lastSpawnedVehicleHash then
 		if not VEHICLE[spawnedVehicleHash] then
-			print("!!!!! UNKNOWN HASH: " .. spawnedVehicleHash .. "Mods: " .. "\", {" .. modsResultString .. "}}")
+			print("!!!!! UNKNOWN HASH!!!!!")
+			print("VEHICLE[" .. spawnedVehicleHash .."] = { \"VehName\", \"VehClass\", {" .. modsResultString .. "}}")
 		else
 			print("VEHICLE[" .. spawnedVehicleHash .."] = { \"" .. VEHICLE[spawnedVehicleHash][1] .. "\", \""  .. VEHICLE[spawnedVehicleHash][2] .. "\", {" .. modsResultString .. "}}")
 		end
@@ -101,7 +102,7 @@ greyText(debugToolsSub, "Spawn with 'Anonymous (maxed)' before using")
 
 greyText(toolboxSub, "--------------------------------------")
 
-local creditsSub = toolboxSub:add_submenu(centeredText(" \u{00A9} Quad_Plex"))
+local creditsSub = toolboxSub:add_submenu(centeredText("\u{00A9} Quad_Plex"))
 addText(creditsSub, "Some people I want to thank:")
 addText(creditsSub, "(No particular order)")
 addText(creditsSub, "!!!Major thanks to Kiddion!!!")

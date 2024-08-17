@@ -355,4 +355,4 @@ end
 menu.register_callback("nearbyGodmode", nearbyGodmode)
 
 local carMeetHelperMenu
-carMeetHelperMenu = toolboxSub:add_submenu("     ★🚗 Car Meet Helper ★🚗", function() addCarMeetHelper(carMeetHelperMenu) end)
+carMeetHelperMenu = toolboxSub:add_submenu("  ★🚗 Car Meet Helper (Beta) ★🚗", function() addCarMeetHelper(carMeetHelperMenu) end)

@@ -130,6 +130,8 @@ local function buildSpecialExportSubmenu(sub)
 			end
 			sleep(0.2)
 			createVehicle(hash, vector3(2000,2000,2000), angle) --Create a second vehicle, which causes the first one to be considered deliverable
+			sleep(0.2)
+			setWayPoint(1169.2, -2972.9)
 		end)
 	end
 	greyText(sub, "-------------------------")

@@ -133,23 +133,56 @@ local favoritePedsMenu
 favoritePedsMenu = pedChangerSub:add_submenu("Favorited Peds", function() showFavoritePedsMenu(favoritePedsMenu) end)
 greyText(pedChangerSub, "-------------------------")
 
-local pedSubs = {};
--- { hash, internal_name, display_name}
+local pedSubs = {}
+local categorizedPeds = {}
+
+-- Categorize each ped
 for _, pedModelData in ipairs(tbl_PedList) do
     local current_category
     for _, pedCategory in ipairs(tbl_PedModelTypes) do
         if string.find(pedModelData[2], "^" .. pedCategory[1]) then
             current_category = pedCategory[2]
-            break;
+            break
         end
     end
+
     if current_category == nil then
         current_category = "Other"
     end
-    if pedSubs[current_category] == nil then
-        pedSubs[current_category] = pedChangerSub:add_submenu(current_category)
+
+    -- Create a table for the category if it doesn't exist
+    if categorizedPeds[current_category] == nil then
+        categorizedPeds[current_category] = {}
     end
 
-    local pedMenu
-    pedMenu = pedSubs[current_category]:add_submenu(pedModelData[3], function() addPedMenu(pedMenu, pedModelData) end)
+    -- Add the ped to the appropriate category table
+    table.insert(categorizedPeds[current_category], pedModelData)
+end
+
+-- Sort each category table by display_name
+for category, pedList in pairs(categorizedPeds) do
+    table.sort(pedList, function(a, b)
+        return a[3] < b[3]  -- Sort by display_name (3rd element in pedModelData)
+    end)
+end
+
+-- Get the categories and sort them alphabetically
+local sortedCategories = {}
+for category in pairs(categorizedPeds) do
+    table.insert(sortedCategories, category)
+end
+table.sort(sortedCategories)
+
+-- Create the submenus and add peds in sorted order
+for _, category in ipairs(sortedCategories) do
+    -- Create a submenu for the category if it doesn't exist
+    if pedSubs[category] == nil then
+        pedSubs[category] = pedChangerSub:add_submenu(category)
+    end
+
+    -- Add each ped to the category submenu in sorted order
+    for _, pedModelData in ipairs(categorizedPeds[category]) do
+        local pedMenu
+        pedMenu = pedSubs[category]:add_submenu(pedModelData[3], function() addPedMenu(pedMenu, pedModelData) end)
+    end
 end

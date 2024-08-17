@@ -142,6 +142,7 @@ WEAPON[618237638] = "Emp Launcher"
 WEAPON[62870901] = "Snow Launcher"
 WEAPON[485882440] = "Hacking Device"
 WEAPON[1924557585] = "Battle Rifle"
+WEAPON[0xDAC00025] = "Stunrod"
 
 --Vehicle Weapons
 WEAPON[-1090665087] = "Vehicle Rocket"

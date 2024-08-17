@@ -16,8 +16,8 @@ local roofState = 0
 local hydraulicState = 0
 --Not a local because we need it for the global check
 flappyDoors = false
+rcSpamRunning = false
 local strobeLights = false
-local rcSpamRunning = false
 vehicleOptionsSub:add_toggle("Flappy Vehicle Doors", function() return flappyDoors end, function(toggle)
     flappyDoors = toggle
     if flappyDoors then

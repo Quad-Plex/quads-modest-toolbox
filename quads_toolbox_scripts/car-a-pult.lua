@@ -20,7 +20,7 @@ local function spawnCarWhereAiming()
 	end
 	local spawnPos = (localplayer:get_position() + localplayer:get_heading()*2.4)
 	if localplayer:is_in_vehicle() then
-		spawnPos = localplayer:get_position() + (localplayer:get_heading() * 10) + (localplayer:get_velocity()*0.9)
+		spawnPos = localplayer:get_position() + (localplayer:get_heading() * 12) + (localplayer:get_velocity()*0.9)
 	end
 	local angle = math.deg(math.atan(localplayer:get_heading().y, localplayer:get_heading().x))
 	if angle < 0 then angle = angle + 360 end
