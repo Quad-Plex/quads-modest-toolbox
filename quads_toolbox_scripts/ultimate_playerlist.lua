@@ -1065,12 +1065,6 @@ local function playerInfo(plyId, sub, plyName)
         end
     end, null, null, null)
 
-    sub:add_bare_item("❌ No godmode", function()
-        if ply():get_godmode() then
-            return "✔️ Godmode"
-        end
-    end, null, null, null)
-
     sub:add_bare_item("❌ No godmode outside interior", function()
         if ply() ~= localplayer and ply():get_godmode() and not isInInterior(ply(), plyId) and tostring(ply():get_position().z) ~= "-51.3" then
             return "✔️ Godmode Outside Interior"

@@ -29,43 +29,6 @@ local function getHeadingFromCarMeetData(carMeet)
     end
 end
 
-local selectedLetterPos = 1
-local lowercaseLetters = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' }
-local selectedNumberPos = 1
-local numbers = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' }
-local selectedSymbolPos = 1
-local symbols = { ' ', '!', '?', '.', ',', '/', '\\','_', '*', '-', '=', '+', ';', ':', "'", '"', '(', ')', '[', ']', '{', '}', '@', '#', '$', '€', '%', '^', '&', '<', '>', '|' }
-local uppercaseToggle = false
-local function showLettersForPosition(letterPos, table)
-    local result = ""
-    local start_index = letterPos - 4
-    local end_index = letterPos + 4
-    for i = start_index, end_index do
-        local index = i
-        if index == letterPos then
-            result = result .. "(" .. table[index] .. ") "
-        elseif i < 1 then
-            result = result .. "  "
-        elseif i > #table then
-            result = result .. "  "
-        else
-            result = result .. table[index] .. " "
-        end
-    end
-    if table == lowercaseLetters and uppercaseToggle then
-        result = result:upper()
-    end
-    return result
-end
-
-local function addLetterToString(letter, string)
-    if not uppercaseToggle then
-        return string .. letter
-    else
-        return string .. letter:upper()
-    end
-end
-
 local function stringChangerCarmeet(sub, stringToChange)
     local oldName = stringToChange
     local tempString = stringToChange
@@ -86,7 +49,7 @@ local function stringChangerCarmeet(sub, stringToChange)
         end, null, null, null)
     end
     greyText(sub, "----------------------------")
-    sub:add_action("|⌫ Backspace ⌫|", function()
+    sub:add_action("||⌫ Backspace ⌫|", function()
         stringToChange = string.sub(stringToChange, 1, -2)
     end)
     sub:add_toggle("Uppercase Letters", function() return uppercaseToggle end, function(toggle) uppercaseToggle = toggle end)

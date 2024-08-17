@@ -10,7 +10,7 @@ function vehicleNoclipThread()
             return
         end
         setPlayerRespawnState(getLocalplayerID(), 9)
-        sleep(3.2) --The effect sticks around a bit so we don't need to spam it that hard
+        sleep(3.1) --The effect sticks around a bit so we don't need to spam it that hard
     end
 end
 menu.register_callback('vehicleNoclip', vehicleNoclipThread)

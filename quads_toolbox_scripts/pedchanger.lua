@@ -11,6 +11,72 @@ function findPedDataFromHash(hash)
     return {"Unknown: " .. hash, hash, "Unknown: " .. hash}
 end
 
+local function searchForPed(searchString)
+    local results = {}
+    for index, ped in ipairs(tbl_PedList) do
+        if string.find(ped[3]:lower(), searchString:lower()) then
+            table.insert(results, ped)
+        end
+    end
+    return results
+end
+
+
+----------------- Keyboard Ped Search ---------------------
+local function stringChangerSearch(sub, results, oldSearch)
+    if not results then
+        results = {}
+    end
+    local searchString = ""
+    if oldSearch then
+        searchString = oldSearch
+    end
+    sub:clear()
+    sub:add_action("||⌫ Backspace ⌫|", function()
+        searchString = string.sub(searchString, 1, -2)
+    end)
+    sub:add_bare_item("",
+            function()
+                return "Add Letter: ◀ " .. showLettersForPosition(selectedLetterPos, lowercaseLetters, true) .. " ▶"
+            end,
+            function()
+                searchString = addLetterToString(lowercaseLetters[selectedLetterPos], searchString)
+            end,
+            function()
+                if selectedLetterPos > 1 then selectedLetterPos = selectedLetterPos - 1 end
+                return "Add Letter: ◀ " .. showLettersForPosition(selectedLetterPos, lowercaseLetters, true) .. " ▶"
+            end,
+            function()
+                if selectedLetterPos < #lowercaseLetters then selectedLetterPos = selectedLetterPos + 1 end
+                return "Add Letter: ◀ " .. showLettersForPosition(selectedLetterPos, lowercaseLetters, true) .. " ▶"
+            end)
+    sub:add_bare_item("", function()
+        return "Search for " .. searchString
+    end, function()
+        local newResults = searchForPed(searchString)
+        if #newResults > 0 then
+            stringChangerSearch(sub, newResults, searchString)
+        end
+    end, null, null)
+    greyText(sub, "---------------------------")
+    if #results < 1 then
+        addText(sub, "❌ No results yet! ❌")
+    else
+        local count = 0
+        for _, ped in ipairs(results) do
+            if count == 40 then
+                goto continue
+            end
+            local pedSub
+            pedSub = sub:add_submenu(ped[3], function() addPedMenu(pedSub, ped) end)
+            count = count + 1
+        end
+    end
+    ::continue::
+    greyText(sub, "---------------------------")
+end
+
+
 local function isInFavoritePeds(pedModel)
     for i, favPedData in ipairs(favPeds) do
         if favPedData[2] == pedModel then
@@ -20,7 +86,7 @@ local function isInFavoritePeds(pedModel)
     return false
 end
 
-local function addPedMenu(sub, pedData)
+function addPedMenu(sub, pedData)
     sub:clear()
     greyText(sub, "Selected Ped: " .. pedData[3])
     sub:add_toggle("Mark " .. pedData[3] .. " as favorite", function() return isInFavoritePeds(pedData[2]) ~= false end, function(state)
@@ -132,6 +198,10 @@ greyText(pedChangerSub, "-------------------------")
 local favoritePedsMenu
 favoritePedsMenu = pedChangerSub:add_submenu("Favorited Peds", function() showFavoritePedsMenu(favoritePedsMenu) end)
 greyText(pedChangerSub, "-------------------------")
+local pedSearchSub
+pedSearchSub = pedChangerSub:add_submenu("🔎 Search for specific Ped ➜", function() stringChangerSearch(pedSearchSub) end)
+greyText(pedChangerSub, "-------------------------")
+
 
 local pedSubs = {}
 local categorizedPeds = {}

@@ -3,114 +3,114 @@
     "event": "ToggleAtomizerHotkey",
     "keycode": 161,
     "name": "Atomizer Gun",
-    "toggleVar": true
+    "toggleVar": false
   },
   {
     "event": "ToggleCarapultHotkey",
     "keycode": 106,
     "name": "Car-A-Pult",
-    "toggleVar": true
+    "toggleVar": false
   },
   {
     "event": "ToggleCarBoostHotkey",
     "keycode": 45,
     "name": "CarBoost",
-    "toggleVar": true
+    "toggleVar": false
   },
   {
     "event": "ToggleCarjumpHotkey",
     "keycode": 110,
     "name": "Carjump",
-    "toggleVar": true
+    "toggleVar": false
   },
   {
     "event": "ToggleEnterPVHotkey",
     "keycode": 114,
     "name": "Enter PV",
-    "toggleVar": true
+    "toggleVar": false
   },
   {
     "event": "ToggleExplosionGunHotkey",
     "keycode": 163,
     "name": "Explosive Gun",
-    "toggleVar": true
+    "toggleVar": false
   },
   {
     "event": "ToggleGodmodeRagdollHotkey",
     "keycode": 120,
     "name": "Godmode/Ragdoll/Inf Ammo",
-    "toggleVar": true
+    "toggleVar": false
   },
   {
     "event": "ToggleHealthAndArmorHotkey",
     "keycode": 117,
     "name": "Health/Armor Refill",
-    "toggleVar": true
+    "toggleVar": false
   },
   {
     "event": "ToggleMassiveCarHotkey",
     "keycode": 123,
     "name": "MassiveCar",
-    "toggleVar": true
+    "toggleVar": false
   },
   {
     "event": "ToggleNoclipHotkey",
     "keycode": 111,
     "name": "Noclip",
-    "toggleVar": true
+    "toggleVar": false
   },
   {
     "event": "ToggleRandomVehicleHotkey",
     "keycode": 122,
     "name": "Random Veh. Spawner",
-    "toggleVar": true
+    "toggleVar": false
   },
   {
     "event": "ToggleWantedLevelHotkey",
     "keycode": 46,
     "name": "Remove Cops",
-    "toggleVar": true
+    "toggleVar": false
   },
   {
     "event": "ToggleRepairVehicleHotkey",
     "keycode": 118,
     "name": "Repair Vehicle",
-    "toggleVar": true
+    "toggleVar": false
   },
   {
     "event": "ToggleLoopStopHotkey",
     "keycode": 110,
     "name": "Stop Loop Actions",
-    "toggleVar": true
+    "toggleVar": false
   },
   {
     "event": "ToggleSuicideHotkey",
     "keycode": 115,
     "name": "Suicide",
-    "toggleVar": true
+    "toggleVar": false
   },
   {
     "event": "ToggleTeleportToObjectiveHotkey",
     "keycode": 113,
     "name": "TP to Objective",
-    "toggleVar": true
+    "toggleVar": false
   },
   {
     "event": "ToggleTeleportToWaypointHotkey",
     "keycode": 112,
     "name": "TP to Waypoint",
-    "toggleVar": true
+    "toggleVar": false
   },
   {
     "event": "ToggleOffradarHotkey",
     "keycode": 121,
     "name": "Undead Offradar",
-    "toggleVar": true
+    "toggleVar": false
   },
   {
     "event": "ToggleVehicleGodmodeHotkey",
     "keycode": 119,
     "name": "Vehicle Godmode",
-    "toggleVar": true
+    "toggleVar": false
   }
 ]

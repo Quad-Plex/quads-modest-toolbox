@@ -134,7 +134,7 @@ function createVehicle(modelHash, pos, heading, skip_remove_current, mod, altern
             globals.set_float(baseGlobals.vehicleSpawner.baseGlobal + 47, heading)
         end
         globals.set_boolean(baseGlobals.vehicleSpawner.baseGlobal + 43, true)
-        sleep(0.1)
+        sleep(0.15)
         local newNetID = getNetIDOfLastSpawnedVehicle()
         if newNetID ~= oldNetID then
             return
@@ -1091,7 +1091,7 @@ function setPlayerModel(hash)
     end
     if not ped_is_setting then
         local tries = 0
-        while (localplayer:get_model_hash() ~= hash and tries < 42) do
+        while (localplayer:get_model_hash() ~= hash and tries < 20) do
             ped_is_setting = true
             --globals.set_int(baseGlobals.pedChanger.hashGlobal1 + 7 + gender, hash)
             globals.set_int(baseGlobals.pedChanger.hashGlobal2 + 50, hash)

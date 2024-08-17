@@ -64,15 +64,28 @@ local function isInFavorites(veh_hash)
     return false
 end
 
-------------------------KEYBOARD ENTRY FOR FAV VEHICLES ----------------------------
-local selectedLetterPos = 1
-local lowercaseLetters = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' }
-local selectedNumberPos = 1
-local numbers = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' }
-local selectedSymbolPos = 1
-local symbols = { ' ', '!', '?', '.', ',', '/', '\\','_', '*', '-', '=', '+', ';', ':', "'", '"', '(', ')', '[', ']', '{', '}', '@', '#', '$', '€', '%', '^', '&', '<', '>', '|' }
-local uppercaseToggle = false
-local function showLettersForPosition(letterPos, table)
+
+------------------- Vehicle Search ----------------------
+local function searchForVehicle(searchString)
+    local results = {}
+    for index, vehicle in ipairs(sorted_vehicles) do
+        if string.find(vehicle[2][1]:lower(), searchString:lower()) then
+            table.insert(results, vehicle)
+        end
+    end
+    return results
+end
+
+
+------------------------KEYBOARD ENTRY FOR FAV VEHICLES/SEARCH ----------------------------
+selectedLetterPos = 1
+lowercaseLetters = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' }
+selectedNumberPos = 1
+numbers = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' }
+selectedSymbolPos = 1
+symbols = { ' ', '!', '?', '.', ',', '/', '\\','_', '*', '-', '=', '+', ';', ':', "'", '"', '(', ')', '[', ']', '{', '}', '@', '#', '$', '€', '%', '^', '&', '<', '>', '|' }
+uppercaseToggle = false
+function showLettersForPosition(letterPos, table, ignore_uppercase)
     local result = ""
     local start_index = letterPos - 4
     local end_index = letterPos + 4
@@ -88,13 +101,13 @@ local function showLettersForPosition(letterPos, table)
             result = result .. table[index] .. " "
         end
     end
-    if table == lowercaseLetters and uppercaseToggle then
+    if table == lowercaseLetters and uppercaseToggle and not ignore_uppercase then
         result = result:upper()
     end
     return result
 end
 
-local function addLetterToString(letter, string)
+function addLetterToString(letter, string)
     if not uppercaseToggle then
         return string .. letter
     else
@@ -125,7 +138,7 @@ local function stringChangerFavVehicle(sub, stringToChange, veh_data)
         end, null, null, null)
     end
     greyText(sub, "----------------------------")
-    sub:add_action("|⌫ Backspace ⌫|", function()
+    sub:add_action("||⌫ Backspace ⌫|", function()
         stringToChange = string.sub(stringToChange, 1, -2)
     end)
     sub:add_toggle("Uppercase Letters", function() return uppercaseToggle end, function(toggle) uppercaseToggle = toggle end)
@@ -176,6 +189,59 @@ local function stringChangerFavVehicle(sub, stringToChange, veh_data)
             end)
 end
 
+local function stringChangerSearch(sub, ply, results, oldSearch)
+    if not results then
+        results = {}
+    end
+    local searchString = ""
+    if oldSearch then
+        searchString = oldSearch
+    end
+    sub:clear()
+    sub:add_action("||⌫ Backspace ⌫|", function()
+        searchString = string.sub(searchString, 1, -2)
+    end)
+    sub:add_bare_item("",
+            function()
+                return "Add Letter: ◀ " .. showLettersForPosition(selectedLetterPos, lowercaseLetters, true) .. " ▶"
+            end,
+            function()
+                searchString = addLetterToString(lowercaseLetters[selectedLetterPos], searchString)
+            end,
+            function()
+                if selectedLetterPos > 1 then selectedLetterPos = selectedLetterPos - 1 end
+                return "Add Letter: ◀ " .. showLettersForPosition(selectedLetterPos, lowercaseLetters, true) .. " ▶"
+            end,
+            function()
+                if selectedLetterPos < #lowercaseLetters then selectedLetterPos = selectedLetterPos + 1 end
+                return "Add Letter: ◀ " .. showLettersForPosition(selectedLetterPos, lowercaseLetters, true) .. " ▶"
+            end)
+    sub:add_bare_item("", function()
+        return "Search for " .. searchString
+    end, function()
+        local newResults = searchForVehicle(searchString)
+        if #newResults > 0 then
+            stringChangerSearch(sub, ply, newResults, searchString)
+        end
+    end, null, null)
+    greyText(sub, "---------------------------")
+    if #results < 1 then
+        addText(sub, "❌ No results yet! ❌")
+    else
+        local count = 0
+        for _, vehicle in ipairs(results) do
+            if count == 40 then
+                goto continue
+            end
+            local vehSub
+            vehSub = sub:add_submenu(vehicle[2][1], function() addVehicleEntry(vehSub, vehicle, ply) end)
+            count = count + 1
+        end
+    end
+    ::continue::
+    greyText(sub, "---------------------------")
+end
+
 function generateRandomMods(inputTable)
     local newTable = {}
     for i, value in ipairs(inputTable) do
@@ -202,7 +268,7 @@ local spawnTypeSelectionCurrent = 0
 local spawnTypeSelectionStandard = 0
 local godmodeEnabledSpawn = false
 local enterOnSpawn = false
-local function addVehicleEntry(vehMenu, vehicle, ply)
+function addVehicleEntry(vehMenu, vehicle, ply)
     vehMenu:clear()
     greyText(vehMenu, "|Spawning " .. vehicle[2][1] .. "...")
     local favoriteVehicle = isInFavorites(vehicle[1])
@@ -362,6 +428,9 @@ function addVehicleSpawnMenu(ply, sub)
         vehData[3] = oldModData
     end, function() return ply:is_in_vehicle() and #favoritedCars > 0 and not table.contains(favoritedCars, ply:get_current_vehicle():get_model_hash()) end)
 
+    greyText(sub, "---------------------------")
+    local searchSub
+    searchSub = sub:add_submenu("🔎 Search for vehicle ➜", function() stringChangerSearch(searchSub, ply) end)
     greyText(sub, "---------------------------")
     -- vehicle = { hash, { name, class} }
     for index, vehicle in ipairs(sorted_vehicles) do --Populate sub with vehicle categories, and fill the categories with all cars belonging to that category

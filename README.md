@@ -1,9 +1,10 @@
 TODO:
-- maybe add text search for cars
 - playerlist readme/legend with symbol explanation
 - Add Readme and FAQ description for unclear actions 
 
 DONE:
+- ~~add text search for peds~~
+- ~~add text search for cars~~
 - ~~update modder info in playerinfo and add dev dlc/ped model detection~~
 - ~~Fix roll_center in carboost making some cars uncontrollable~~
 - ~~add missing ped models~~
