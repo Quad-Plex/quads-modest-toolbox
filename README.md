@@ -1,10 +1,11 @@
 TODO:
+- maybe add text search for cars
 - playerlist readme/legend with symbol explanation
-- update modder info in playerinfo with dev dlc/ped model detection
-- add distinction for likely modder (godmode outside interior) and definitely modder (dev dlc/ped model)
 - Add Readme and FAQ description for unclear actions 
 
 DONE:
+- ~~update modder info in playerinfo and add dev dlc/ped model detection~~
+- ~~Fix roll_center in carboost making some cars uncontrollable~~
 - ~~add missing ped models~~
 - ~~Clean up ped-changer sorting~~
 - ~~Add new vehicles from DLC with mod data~~

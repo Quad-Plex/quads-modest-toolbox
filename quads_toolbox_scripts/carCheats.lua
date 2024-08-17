@@ -63,7 +63,7 @@ end)
 --functions for carboost
 local _, cars_data = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/KNOWN_BOOSTED_CARS.json")
 
-local function boostVehicle(vehicle_data, vehicle, boost)
+local function boostVehicle(vehicle_data, vehicle, boost, category)
     if boost then
         --boost mode
         accel = vehicle_data[1] * (17 * (playerlistSettings.defaultBoostStrength / 100))
@@ -83,8 +83,19 @@ local function boostVehicle(vehicle_data, vehicle, boost)
             --Dont increase the following roll_centre variables more than 100%. Makes things flip.
             playerlistSettings.defaultBoostStrength = 100
         end
-        roll_centre_front = vehicle_data[14] + (0.300 * (playerlistSettings.defaultBoostStrength / 100)) --these two stop the car from rolling even at high speeds, it rolls inwards instead
-        roll_centre_rear = vehicle_data[15] + (0.300 * (playerlistSettings.defaultBoostStrength / 100))
+        if category == "Super" or category == "OpenWheel" or category == "Motorcycle" or category == "Sport" or category == "Cycle" then
+            roll_centre_front = vehicle_data[14] + (0.18 * (playerlistSettings.defaultBoostStrength / 100)) --these two stop the car from rolling even at high speeds, it rolls inwards instead
+            roll_centre_rear = vehicle_data[15] + (0.18 * (playerlistSettings.defaultBoostStrength / 100))
+        elseif category == "Off-Road" or category == "Van" then
+            roll_centre_front = vehicle_data[14] + (0.35 * (playerlistSettings.defaultBoostStrength / 100))
+            roll_centre_rear = vehicle_data[15] + (0.35 * (playerlistSettings.defaultBoostStrength / 100))
+        elseif category == "Industrial" or category == "Commercials" then
+            roll_centre_front = vehicle_data[14] + (0.420 * (playerlistSettings.defaultBoostStrength / 100))
+            roll_centre_rear = vehicle_data[15] + (0.420 * (playerlistSettings.defaultBoostStrength / 100))
+        else
+            roll_centre_front = vehicle_data[14] + (0.3 * (playerlistSettings.defaultBoostStrength / 100))
+            roll_centre_rear = vehicle_data[15] + (0.3 * (playerlistSettings.defaultBoostStrength / 100))
+        end
         drive_bias = 0.5   --all wheel drive
         traction_loss_multiplier = 1
         initial_drag_coefficient = 1  --no drag forces
@@ -186,7 +197,7 @@ local function carBoost()
             end
 
             --boost car if data has been read successfully
-            boostVehicle(cars_data[tostring(current:get_model_hash())], current, true)
+            boostVehicle(cars_data[tostring(current:get_model_hash())], current, true, VEHICLE[current:get_model_hash()][2])
             displayHudBanner("DRONE_BOOST", "FM_ISC_RAT1", playerlistSettings.defaultBoostStrength, 108)
         else
             reloadVehicle(current)

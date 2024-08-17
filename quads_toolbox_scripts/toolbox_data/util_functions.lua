@@ -475,6 +475,16 @@ function addVehicleSpawnMenu(ply, sub)
             findAndEnableGodmodeForVehicle(currentVeh:get_model_hash(), spawnPos)
         end
     end)
+    sub:add_toggle("Immediately enter when spawning", function()
+        return enterOnSpawn
+    end, function(n)
+        enterOnSpawn = n
+    end)
+    sub:add_toggle("Spawn with Godmode enabled", function()
+        return godmodeEnabledSpawn
+    end, function(n)
+        godmodeEnabledSpawn = n
+    end)
 
     greyText(sub, "---------------------------")
 

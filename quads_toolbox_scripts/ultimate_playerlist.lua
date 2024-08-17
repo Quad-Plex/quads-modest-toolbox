@@ -549,7 +549,7 @@ local function getPlayerStateText(ply, plyId)
         return shortformBlips[playerBlipType]
     end
 
-    if hasDevDLC(plyId) ~= 0 then
+    if hasDevDLC(plyId) then
         return "!DEV!"
     end
 
@@ -640,7 +640,7 @@ end
 
 local function modCheck(ply, plyName, plyId, skipVehCheck)
     if not ply then return false end
-    if (plyName and marked_modders[plyName] == "detected") or hasDevDLC(plyId) ~= 0 or ply:get_max_health() < 100 then
+    if (plyName and marked_modders[plyName] == "detected") or hasDevDLC(plyId) or ply:get_max_health() < 100 then
         return true
     end
     if getPlayerRespawnState(plyId) ~= 99 or ply:is_in_cutscene() then
@@ -928,7 +928,7 @@ local function playerInfo(plyId, sub, plyName)
         if ply():get_godmode() and not isInInterior(ply(), plyId) then --Don't show godmode for players in an interior
             txt = txt .. "GOD "
         end
-        if hasDevDLC(plyId) ~= 0 then
+        if hasDevDLC(plyId) then
             txt = txt .. "!DEV! "
         end
         if modCheck(ply(), plyName, plyId) then
@@ -1059,45 +1059,54 @@ local function playerInfo(plyId, sub, plyName)
 
     greyText(sub, centeredText("------ Modder Info ------"))
     --general
-    sub:add_bare_item("Confirmed as Modder", function()
+    sub:add_bare_item("❌ Not confirmed as modder", function()
         if marked_modders[plyName] == "detected" then
-            return "Confirmed as Modder"
+            return "✔️ Confirmed as Modder"
         end
     end, null, null, null)
 
-    sub:add_bare_item("Godmode", function()
+    sub:add_bare_item("❌ No godmode", function()
         if ply():get_godmode() then
-            return "Godmode"
+            return "✔️ Godmode"
         end
     end, null, null, null)
 
-    sub:add_bare_item("Godmode Outside Interior", function()
+    sub:add_bare_item("❌ No godmode outside interior", function()
         if ply() ~= localplayer and ply():get_godmode() and not isInInterior(ply(), plyId) and tostring(ply():get_position().z) ~= "-51.3" then
-            return "Godmode Outside Interior"
+            return "✔️ Godmode Outside Interior"
         end
     end, null, null, null)
 
-    sub:add_bare_item("Less than 0 Max Health (Ghost)", function()
+    sub:add_bare_item("❌ Normal Max Health", function()
         if ply():get_max_health() <= 0 then
-            return "Max Health 0 (Ghost)"
+            return "✔️ Max Health 0 (Ghost)"
         end
     end, null, null, null)
 
     --vehicle
-    if ply():is_in_vehicle() then
-        local veh = ply():get_current_vehicle()
-        sub:add_bare_item("Vehicle Godmode", function()
-            if ply():is_in_vehicle() and veh:get_godmode() then
-                return "Vehicle Is in Godmode"
-            end
-        end, null, null, null)
+    sub:add_bare_item("❌ No vehicle godmode", function()
+        if ply():is_in_vehicle() and ply():get_current_vehicle():get_godmode() then
+            return "✔️ Vehicle Is in Godmode"
+        end
+    end, null, null, null)
 
-        sub:add_bare_item("Seatbelt", function()
-            if ply():is_in_vehicle() and ply():get_seatbelt() then
-                return "Seatbelt"
-            end
-        end, null, null, null)
-    end
+    sub:add_bare_item("❌ No seatbelt", function()
+        if ply():is_in_vehicle() and ply():get_seatbelt() then
+            return "✔️ Seatbelt"
+        end
+    end, null, null, null)
+
+    sub:add_bare_item("❌ Dev DLC not active", function()
+        if hasDevDLC(plyId) then
+            return "✔️ Dev DLC active"
+        end
+    end, null, null, null)
+
+    sub:add_bare_item("❌ Default Ped", function()
+        if ply():get_model_hash() ~= joaat("mp_m_freemode_01") and ply():get_model_hash() ~= joaat("mp_f_freemode_01") then
+            return "✔️ Modded Ped Model"
+        end
+    end, null, null, null)
 
     --Debug Stuff
     greyText(sub, centeredText("------ ADVANCED INFOS ------"))
@@ -1796,7 +1805,7 @@ menu.register_callback('autoLaunch', autoLaunchThread)
 
 local function checkObviousModder(ply, plyName, i)
     if not ply then return end
-    if ply:get_max_health() <= 0 or hasDevDLC(i) ~= 0 then
+    if ply:get_max_health() <= 0 or hasDevDLC(i) then
         marked_modders[plyName] = "detected"
         if not playerlistSettings.disableModdersWarning then
             displayHudBanner(ply:get_max_health() <= 0 and "VVHUD_GHOST" or "PIM_GS_13", "GBC_STPASS_CHE", "", 90)

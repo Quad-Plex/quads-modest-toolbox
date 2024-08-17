@@ -411,7 +411,7 @@ end
 baseGlobals.devCheck = {}
 baseGlobals.devCheck.baseGlobal = 2657971
 hasDevDLC = function(plyId)
-    return globals.get_int(baseGlobals.devCheck.baseGlobal + 1 + (plyId * 465) + 270)
+    return globals.get_int(baseGlobals.devCheck.baseGlobal + 1 + (plyId * 465) + 270) ~= 0
 end
 
 -------------------------------------------------------------------
