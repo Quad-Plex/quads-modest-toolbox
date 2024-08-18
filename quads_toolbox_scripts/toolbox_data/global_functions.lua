@@ -232,7 +232,7 @@ local function getForcedVehicleHandle(playerID)
     local oldVehicleNetIDValue = globals.get_int(baseGlobals.setIntoVehicle.baseGlobal + 7060)
     local playerPed = getPlayerPed(playerID)
     local count = 0
-    while true and (count < 100000) do
+    while true and (count < 10000) do
         --Force a different playerPed into the function that gets the veh net ID
         getOrSetPlayerPedID(playerPed)
         local newVehicleNetIDValue = globals.get_int(baseGlobals.setIntoVehicle.baseGlobal + 7060)
@@ -762,7 +762,7 @@ function isSpectatingMe(plyId)
     if not ply then return end
     local visibleState = getIsTrackedPedVisibleState(plyId)
     local isWatchingMe = checkBit(visibleState, getLocalplayerID())
-    return isWatchingMe and distanceBetween(player.get_player_ped(), ply) > 290
+    return isWatchingMe and distanceBetween(player.get_player_ped(), ply) > 300
 end
 
 function amISpectating(plyId)
@@ -772,7 +772,7 @@ function amISpectating(plyId)
     if not ply then return end
     local ownVisibleState = getIsTrackedPedVisibleState(getLocalplayerID())
     local amIWatching = checkBit(ownVisibleState, plyId)
-    return amIWatching and distanceBetween(player.get_player_ped(), ply) > 290
+    return amIWatching and distanceBetween(player.get_player_ped(), ply) > 300
 end
 
 ---------------------------------------------------------------------------
@@ -1091,7 +1091,7 @@ function setPlayerModel(hash)
     end
     if not ped_is_setting then
         local tries = 0
-        while (localplayer:get_model_hash() ~= hash and tries < 20) do
+        while (localplayer:get_model_hash() ~= hash and tries < 4) do
             ped_is_setting = true
             --globals.set_int(baseGlobals.pedChanger.hashGlobal1 + 7 + gender, hash)
             globals.set_int(baseGlobals.pedChanger.hashGlobal2 + 50, hash)
@@ -1102,7 +1102,7 @@ function setPlayerModel(hash)
                 sleep(playerlistSettings.pedChangerSleepTimeout)
                 globals.set_int(baseGlobals.pedChanger.pedTrigger + 278, getOrSetPlayerPedID())
             end
-            globals.set_bool(baseGlobals.pedChanger.pedTrigger + 226 + 1, true) --enable weapons
+            enableWeapons()
             globals.set_int(baseGlobals.pedChanger.hashGlobal1 + 7 + gender, joaat(default_models[gender]))
             sleep(playerlistSettings.pedChangerSleepTimeout)
             tries = tries + 1
@@ -1111,8 +1111,14 @@ function setPlayerModel(hash)
     end
     menu.max_all_ammo()
 end
+
+function enableWeapons()
+    globals.set_bool(baseGlobals.pedChanger.pedTrigger + 226 + 1, true) --enable weapons
+end
 --------------------------------------- SET WAYPOINT ---------------------------------------------
 -----Thanks to rf2007 for the globals! Updated to newest gta version by me
+local bitStorage1 = 2 ^ 8 + 2 ^ 10
+local bitStorage2 = 2 ^ 15
 baseGlobals.waypointGlobal = {}
 baseGlobals.waypointGlobal.baseGlobal = 2672855 + 3830
 baseGlobals.waypointGlobal.testFunctionExplanation = "Set Waypoint to 420, 420"
@@ -1129,14 +1135,13 @@ function setWayPoint(x, y)
     globals.set_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 5, true) --Spawn trigger #2
     sleep(0.1)
     globals.set_int(baseGlobals.waypointGlobal.baseGlobal, 512) -- 9th bit sets quick gps to pegasus vehicle
-    x = 2 ^ 8 + 2 ^ 10
-    for _ = 1, 100 do
-        if globals.get_int(baseGlobals.waypointGlobal.baseGlobal) & x == x then
+    for _ = 1, 10 do
+        if globals.get_int(baseGlobals.waypointGlobal.baseGlobal) & bitStorage1 == bitStorage1 then
             break
         end
-        sleep(0.01)
+        sleep(0.1)
     end
     sleep(0.4)
-    globals.set_int(baseGlobals.waypointGlobal.baseGlobal, 2 ^ 15) --bit 15 removes pegasus blip from vehicle
+    globals.set_int(baseGlobals.waypointGlobal.baseGlobal, bitStorage2) --bit 15 removes pegasus blip from vehicle
     globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 66, oldHash)
 end

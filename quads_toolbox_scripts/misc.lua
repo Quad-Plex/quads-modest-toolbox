@@ -60,6 +60,7 @@ miscOptionsSub:add_action("Refill Inventory |🍪🍫🍾", function()
 end)
 
 ----------------------Respawn State changer----------------------
+greyText(miscOptionsSub, "-------- Unstuck Options --------")
 local stateToSet = 7
 miscOptionsSub:add_int_range("Trigger Respawn (Unstuck) |🔁", 1, -10, 100, function() return stateToSet end, function(n)
 	displayHudBanner("TRI_WARP", "", "", 108)
@@ -67,6 +68,8 @@ miscOptionsSub:add_int_range("Trigger Respawn (Unstuck) |🔁", 1, -10, 100, fun
 	stateToSet = n
 	setPlayerRespawnState(getLocalplayerID(), n)
 end)
+
+miscOptionsSub:add_action("Reset Character/Give Weapons", function() enableWeapons() end)
 
 --------------------------------
 --Nightclub Options

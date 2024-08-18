@@ -1,8 +1,10 @@
 TODO:
 - playerlist readme/legend with symbol explanation
 - Add Readme and FAQ description for unclear actions 
+- add automated release procedure
 
 DONE:
+- ~~Add Give Back Weapons~~
 - ~~add text search for peds~~
 - ~~add text search for cars~~
 - ~~update modder info in playerinfo and add dev dlc/ped model detection~~

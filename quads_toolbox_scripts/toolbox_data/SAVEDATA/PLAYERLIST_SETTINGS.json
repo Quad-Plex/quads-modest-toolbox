@@ -1,9 +1,9 @@
 {
-  "defaultBoostStrength": 70,
+  "defaultBoostStrength": 75,
   "defaultSortingMethod": 0,
   "disableModdersWarning": false,
   "disableSpectatorWarning": false,
-  "pedChangerSleepTimeout": 0.017000,
+  "pedChangerSleepTimeout": 0.034000,
   "speedDisplaySelection": "Banner",
   "stringFormat": 0
 }

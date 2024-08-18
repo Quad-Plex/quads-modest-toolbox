@@ -107,7 +107,7 @@ function addPedMenu(sub, pedData)
             end
         end
     end)
-    sub:add_action("Turn into " .. pedData[3], function()
+    sub:add_action("Turn into " .. pedData[3] .. " (Hold)", function()
         setPlayerModel(joaat(pedData[2]))
     end)
     sub:add_action("     🔄 Reset Ped Model 🔄", function() setPlayerModel(joaat(default_models[getGender()])) end)
@@ -127,7 +127,7 @@ function addPedMenu(sub, pedData)
     greyText(sub, "If the ped change doesn't work,")
     greyText(sub, "Try changing the sleep time ")
     greyText(sub, "step by step until it works")
-    greyText(sub, "Sometimes spamming 'Turn into' helps")
+    greyText(sub, "Sometimes holding 'Turn into' helps")
 end
 
 local function showFavoritePedsMenu(sub)

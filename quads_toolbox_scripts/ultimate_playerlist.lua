@@ -1003,6 +1003,7 @@ local function playerInfo(plyId, sub, plyName)
                 repeat
                     counter = counter + 1
                 until ply():is_in_vehicle() or counter == 40000
+                sleep(0.05)
             end
             setPedIntoVehicle(getVehicleForPlayerID(plyId), oldPos)
             if offRadarToggled then
