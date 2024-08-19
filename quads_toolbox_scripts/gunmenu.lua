@@ -1,11 +1,12 @@
-local function getCurrentWeaponName()
+function getCurrentWeaponName()
     if localplayer and localplayer:get_current_weapon() then
         return WEAPON[localplayer:get_current_weapon():get_name_hash()] or "hash: " .. weaponHash
     end
     return "No Weapon"
 end
 
-gunOptionsSub:add_bare_item("", function() return "=== Current Weapon: " .. getCurrentWeaponName() .. " ===" end, null, null, null)
+greyText(gunOptionsSub, "----------------------------")
+
 gunOptionsSub:add_float_range("Bullet DMG", 10, 0, 10000, function() return localplayer and localplayer:get_current_weapon() and localplayer:get_current_weapon():get_bullet_damage() or 0 end,
         function(value)
             if localplayer and localplayer:get_current_weapon() then
@@ -62,3 +63,12 @@ gunOptionsSub:add_float_range("Spread", 0.5, 0, 1000, function() return localpla
                 localplayer:get_current_weapon():set_spread(value)
             end
         end)
+
+gunOptionsSub:add_array_item("Explosion Type: ", ExplosionTypesNumbered, function() return localplayer and localplayer:get_current_weapon() and localplayer:get_current_weapon():get_explosion_type() end, function(new_expl_type)
+    if new_expl_type == -1 then
+        ResetWeaponStats()
+        return
+    end
+    local toggle = not (localplayer and localplayer:get_current_weapon() and localplayer:get_current_weapon():get_explosion_type() == new_expl_type)
+    ToggleWeaponStats(toggle, new_expl_type, 5, 9999, 0, "")
+end)

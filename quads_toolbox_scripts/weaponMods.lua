@@ -62,17 +62,6 @@ local function toggleAtomizerGun()
     ToggleWeaponStats(atomizerToggle, ExplosionTypes.RAYGUN, 5, 9999, 0, "UNLOCK_RAYGUN")
 end
 
-gunOptionsSub:add_array_item("Explosion Type: ", ExplosionTypesNumbered, function() return localplayer and localplayer:get_current_weapon() and localplayer:get_current_weapon():get_explosion_type() end, function(new_expl_type)
-    if new_expl_type == -1 then
-        ResetWeaponStats()
-        return
-    end
-    local toggle = not (localplayer and localplayer:get_current_weapon() and localplayer:get_current_weapon():get_explosion_type() == new_expl_type)
-    ToggleWeaponStats(toggle, new_expl_type, 5, 9999, 0, "")
-end)
-
-greyText(gunOptionsSub, "----------------------------")
-
 gunOptionsSub:add_toggle("Constant Atomizer", function()
     return localplayer and localplayer:get_current_weapon() and localplayer:get_current_weapon():get_explosion_type() == ExplosionTypes.RAYGUN
 end, function(_)

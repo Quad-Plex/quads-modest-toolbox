@@ -35,9 +35,11 @@ require("scripts/quads_toolbox_scripts/misc_vehicle")
 
 gunOptionsSub = toolboxSub:add_submenu(centeredText(" 🔫 Gun Scripts 🔫"))
 greyText(gunOptionsSub, centeredText(" 🔫 Gun Options 🔫"))
-require("scripts/quads_toolbox_scripts/gunmenu")
+gunOptionsSub:add_bare_item("", function() return "== Current Gun: " .. getCurrentWeaponName() .. " ==" end, null, null, null)
+greyText(gunOptionsSub, "----------------------------")
 require("scripts/quads_toolbox_scripts/weaponMods")
 require("scripts/quads_toolbox_scripts/car-a-pult")
+require("scripts/quads_toolbox_scripts/gunmenu")
 
 pedChangerSub = toolboxSub:add_submenu(centeredText("    ★🏃 Ped Changer 🏃★"))
 require("scripts/quads_toolbox_scripts/pedchanger")

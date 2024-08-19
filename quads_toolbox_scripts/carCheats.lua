@@ -225,7 +225,7 @@ end, function(value)
     playerlistSettings.defaultBoostStrength = value
     json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/PLAYERLIST_SETTINGS.json", playerlistSettings)
 end)
-vehicleOptionsSub:add_action("Reset all modified handling data", function()
+vehicleOptionsSub:add_action("Reset all boosted cars", function()
     for veh in replayinterface.get_vehicles() do
         if veh:get_gravity() == 21.420 and cars_data[tostring(veh:get_model_hash())] then
             reloadVehicle(veh)

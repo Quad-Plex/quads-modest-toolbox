@@ -3,9 +3,6 @@
 -- Pickup-Suite v0.4.20
 -------------------------------
 
---TODO: Check if PICKUP_PORTABLE_FM_CONTENT_MISSION_ENTITY_SMALL can be created this way
---Could be used to create tr_prop_tr_chest_01a movie prop pickups
-
 local sorted_model_names = {}
 local duplicate_models = {}
 for _, model_name in pairs(MODELS) do
@@ -79,7 +76,15 @@ local function collectPickups(singlePickup)
 
 	sleep(0.3)
 
-	nativeTeleport(oldPos)
+	--Teleport back using stock teleport, otherwise battle crate pickups wont get carried over
+	for i=0, 100 do
+		localplayer:set_position(oldPos)
+	end
+
+	if distanceBetween(localplayer, oldPos, true) > 10 then
+		--Do a native teleport in case the first one failed
+		nativeTeleport(oldPos, nil)
+	end
 
 	localplayer:set_godmode(oldGodmode)
 	localplayer:set_max_health(oldHealth)
@@ -97,7 +102,9 @@ local function createCustomPickupWithCustomModel(pickup_hash, model, value, ply)
 	local pos = ply and ply:get_position() or localplayer:get_position()
 	local tries = 0
 	if not value then value = 69 end
+	print("Creating Pickup")
 	createPickup(pos + vector3(0,0,2), value)
+	print("Done creating")
 	--force the pickup hash fast enough for it to be changed before being picked up
 	while (tries < 10) do
 		for pickup in replayinterface.get_pickups() do

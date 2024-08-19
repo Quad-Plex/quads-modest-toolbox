@@ -177,8 +177,7 @@ function createVehicle(modelHash, pos, heading, skip_remove_current, mod, altern
             globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 76, math.random(0, 255)) --Blue
             globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 77, -264238592) --Bit-Storage for veh flags 0-8: veh-specific, reserved, 9:bulletproof tires, 10: bool vehicle_is_stolen, 11: Crew Emblem  12: custom secondary color, 13: custom primary color, 27: bool IgnoredByQuickSave decor 28: Neon Front, 29: Neon Back, 30: Neon Left, 31: Neon Right
             globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 79, 1) --custom Horn                                     --1111111111111111111111111111111111110000010000000000101000000000
-            local dirtLevel = random_details and math.random() or 0
-            globals.set_float(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 80, dirtLevel) --Dirt Level (Float between 0 and 1.0)
+            globals.set_float(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 80, 0) --Dirt Level (Float between 0 and 1.0)
             globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 94, 0) --switch-case: 0: nil, 1: set decor player_vehicle, 2: set decor veh_modded_by_player
             globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 95, 15) --Bit-Storage that gets checked when previous global sets 1 or 2 (setting all to true 1111 is the easiest way)
             local interiorColor = random_details and math.random(0, 160) or (max_details and 159 or 0)
