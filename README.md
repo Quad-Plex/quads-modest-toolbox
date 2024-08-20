@@ -1,4 +1,5 @@
 TODO:
+- Add error message about missing folder if requires fail
 - playerlist readme/legend with symbol explanation
 - Add Readme and FAQ description for unclear actions 
 - add automated release procedure

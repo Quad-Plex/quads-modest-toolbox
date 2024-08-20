@@ -79,22 +79,23 @@ local function boostVehicle(vehicle_data, vehicle, boost, category)
         max_flat_vel = 10000
         collision_dmg_multiplier = 0
         engine_dmg_multiplier = 0
-        if playerlistSettings.defaultBoostStrength >= 100 then
+        local tempStrength = playerlistSettings.defaultBoostStrength
+        if tempStrength >= 100 then
             --Dont increase the following roll_centre variables more than 100%. Makes things flip.
-            playerlistSettings.defaultBoostStrength = 100
+            tempStrength = 100
         end
         if category == "Super" or category == "OpenWheel" or category == "Motorcycle" or category == "Sport" or category == "Cycle" then
-            roll_centre_front = vehicle_data[14] + (0.18 * (playerlistSettings.defaultBoostStrength / 100)) --these two stop the car from rolling even at high speeds, it rolls inwards instead
-            roll_centre_rear = vehicle_data[15] + (0.18 * (playerlistSettings.defaultBoostStrength / 100))
+            roll_centre_front = vehicle_data[14] + (0.18 * (tempStrength / 100)) --these two stop the car from rolling even at high speeds, it rolls inwards instead
+            roll_centre_rear = vehicle_data[15] + (0.18 * (tempStrength / 100))
         elseif category == "Off-Road" or category == "Van" then
-            roll_centre_front = vehicle_data[14] + (0.35 * (playerlistSettings.defaultBoostStrength / 100))
-            roll_centre_rear = vehicle_data[15] + (0.35 * (playerlistSettings.defaultBoostStrength / 100))
+            roll_centre_front = vehicle_data[14] + (0.35 * (tempStrength / 100))
+            roll_centre_rear = vehicle_data[15] + (0.35 * (tempStrength / 100))
         elseif category == "Industrial" or category == "Commercials" then
-            roll_centre_front = vehicle_data[14] + (0.420 * (playerlistSettings.defaultBoostStrength / 100))
-            roll_centre_rear = vehicle_data[15] + (0.420 * (playerlistSettings.defaultBoostStrength / 100))
+            roll_centre_front = vehicle_data[14] + (0.420 * (tempStrength / 100))
+            roll_centre_rear = vehicle_data[15] + (0.420 * (tempStrength / 100))
         else
-            roll_centre_front = vehicle_data[14] + (0.3 * (playerlistSettings.defaultBoostStrength / 100))
-            roll_centre_rear = vehicle_data[15] + (0.3 * (playerlistSettings.defaultBoostStrength / 100))
+            roll_centre_front = vehicle_data[14] + (0.3 * (tempStrength / 100))
+            roll_centre_rear = vehicle_data[15] + (0.3 * (tempStrength / 100))
         end
         drive_bias = 0.5   --all wheel drive
         traction_loss_multiplier = 1

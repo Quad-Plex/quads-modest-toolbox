@@ -38,7 +38,7 @@ function removeTrafficThread()
         end
         local nonPlayerVehicles = getNonPlayerVehicles()
         for _, veh in pairs(nonPlayerVehicles) do
-            if distanceBetween(localplayer, veh) < 75 then
+            if distanceBetween(localplayer, veh) < 90 then
                 local pos = veh:get_position() + vector3(0, 0, 1620)
                 for _ = 0, 900 do
                     veh:set_position(pos)
