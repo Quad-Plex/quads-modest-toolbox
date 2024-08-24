@@ -122,7 +122,7 @@ local function NoClip(toggle)
 					end
 				end
 			end
-			turnOffVehTeleporter()
+			fixPedVehTeleport()
 		end
 	end
 end

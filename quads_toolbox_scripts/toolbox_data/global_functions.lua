@@ -299,6 +299,7 @@ function setPedIntoVehicle(vehicleNetID, oldPos, noFreeze)
         localplayer:set_no_ragdoll(false)
         localplayer:set_config_flag(292, false)
     end
+    fixPedVehTeleport()
 end
 
 ----------------------Pickup Spawner--------------------------
@@ -761,7 +762,7 @@ function isSpectatingMe(plyId)
     if not ply then return end
     local visibleState = getIsTrackedPedVisibleState(plyId)
     local isWatchingMe = checkBit(visibleState, getLocalplayerID())
-    return isWatchingMe and distanceBetween(player.get_player_ped(), ply) > 300
+    return isWatchingMe and distanceBetween(player.get_player_ped(), ply) > 305
 end
 
 function amISpectating(plyId)
@@ -771,7 +772,7 @@ function amISpectating(plyId)
     if not ply then return end
     local ownVisibleState = getIsTrackedPedVisibleState(getLocalplayerID())
     local amIWatching = checkBit(ownVisibleState, plyId)
-    return amIWatching and distanceBetween(player.get_player_ped(), ply) > 300
+    return amIWatching and distanceBetween(player.get_player_ped(), ply) > 305
 end
 
 ---------------------------------------------------------------------------
@@ -1020,7 +1021,7 @@ function nativeTeleport(vector, headingVec)
     coords_is_setting = false
 end
 
-function turnOffVehTeleporter()
+function fixPedVehTeleport()
     globals.set_int(baseGlobals.teleport.baseGlobalVeh + 45 + 65, 0)
 end
 

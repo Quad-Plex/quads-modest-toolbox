@@ -88,7 +88,7 @@ local function safeLoop()
 end
 menu.register_callback("startSafeLoop", safeLoop)
 
-miscOptionsSub:add_toggle("$ Nightclub Safe Loop (50k/5s) $", function() return safeLoopEnabled
+miscOptionsSub:add_toggle("$ Nightclub Safe Loop (100k/5s) $", function() return safeLoopEnabled
 end, function(value)
 	safeLoopEnabled = value
 	if value then
@@ -141,7 +141,7 @@ local function buildSpecialExportSubmenu(sub)
 	sub:add_action("TP to Docks (Deliver instantly)", function() nativeTeleport(vector3(1169.2, -2972.9, 5)) end)
 end
 local specialExportSub
-specialExportSub = miscOptionsSub:add_submenu("$ Get Special Export Vehicles $", function() buildSpecialExportSubmenu(specialExportSub) end)
+specialExportSub = miscOptionsSub:add_submenu("$ Get Weekly Export Vehicles $", function() buildSpecialExportSubmenu(specialExportSub) end)
 
 --------------------------Casino Options-----------------------------------
 greyText(miscOptionsSub, "-------- Casino Options --------")

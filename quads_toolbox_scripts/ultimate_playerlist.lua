@@ -164,7 +164,7 @@ local function preciseSlam()
     if vel.z < 0 then
         vel.z = 0
     end
-    createVehicle(joaat("Dump"), (slamPly:get_position() + (vel * 1.26) + vector3(0, 0, 38)), nil, nil, generateRandomMods(VEHICLE[joaat("Dump")][3]))
+    createVehicle(joaat("Dump"), (slamPly:get_position() + (vel * 1.26) + vector3(0, 0, 38)), nil, true, generateRandomMods(VEHICLE[joaat("Dump")][3]))
     local found = false
     local tries = 0
     while (not found and tries < 20) do
@@ -196,7 +196,7 @@ menu.register_callback('preciseSlam', preciseSlam)
 local dropVehicles = { [0] = "Panto", "Rhino", "Youga4", "Tourbus", "Benson", "Bulldozer", "Ambulance", "Riot", "TipTruck", "Stockade", "FireTruk", "Brickade", "Barracks", "Biff", "Mixer2", "Flatbed", "Bus", "PropTrailer", "TankerCar", "PBus", "Freight", "TrailerLarge", "Tug", "Cargoplane", "Kosatka" }
 local selectedDropType = 0
 local function dropVehicleOnPlayer(ply, model)
-    createVehicle(joaat(model), ply:get_position() + (ply:get_velocity() * 2.22) + vector3(0, 0, 20))
+    createVehicle(joaat(model), ply:get_position() + (ply:get_velocity() * 2.22) + vector3(0, 0, 20), nil, true)
 end
 
 local vehicleDistance = 3
@@ -1195,6 +1195,7 @@ function addSubActions(sub, plyName, plyId)
             return oldPly
         end
     end
+    emergencyStop() --Stop all loop actions upon entering a new player or they'll transfer over unintended
     auto_action_player_id = plyId
     auto_action_player_name = plyName
 
@@ -1688,7 +1689,7 @@ local function gpsTrackerThread()
     while auto_action_player_id and auto_gps do
         local playerPos = autoPly():get_position()
         setWayPoint(playerPos.x, playerPos.y)
-        sleep(0.5)
+        sleep(0.6)
         checkAndPerformEmergencyStop()
     end
     --Remove waypoint in the end by placing it at our localplayer
@@ -1859,12 +1860,6 @@ local function modWatcher()
                 end
             end
             :: continue ::
-        end
-        if not statsInitialized then
-            initializeStats()
-        end
-        if statsInitialized then
-            checkForChanges()
         end
         sleep(5)
     end

@@ -44,11 +44,21 @@ end)
 
 --F8, Vehicle Godmode
 local vehicleGodmodeHotkey
+local oldDefMul
 menu.register_callback('ToggleVehicleGodmodeHotkey', function()
     if not vehicleGodmodeHotkey then
         vehicleGodmodeHotkey = menu.register_hotkey(find_keycode("ToggleVehicleGodmodeHotkey"), function()
             if localplayer:is_in_vehicle() then
                 localplayer:get_current_vehicle():set_godmode(not localplayer:get_current_vehicle():get_godmode())
+                local defMul = localplayer:get_current_vehicle():get_deformation_damage_multiplier()
+                if localplayer:get_current_vehicle():get_godmode() then
+                    oldDefMul = defMul
+                    localplayer:get_current_vehicle():set_deformation_damage_multiplier(0)
+                else
+                    if oldDefMul then
+                        localplayer:get_current_vehicle():set_deformation_damage_multiplier(oldDefMul)
+                    end
+                end
 
                 if localplayer:get_current_vehicle():get_godmode() then
                     displayHudBanner("GBC_HUD_VH", "GREEN_LIV5", "", 108)
