@@ -142,7 +142,6 @@ function createVehicle(modelHash, pos, heading, skip_remove_current, mod, altern
     end
     --###SPAWNER #2 (Without heading, with mods, more reliable)
     if not vehicle_is_creating then
-        print("Spawner #2...")
         vehicle_is_creating = true
         --if (not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 2) and not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 5)) then
             local primaryColor = random_details and math.random(0, 160) or (max_details and 159 or 0)
@@ -209,10 +208,10 @@ function createVehicle(modelHash, pos, heading, skip_remove_current, mod, altern
                 counter = counter + 1
             until (not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 2) and not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 5)) or counter > 426900 --Spawn again at correct coords, removing any vehicle in the way
         --end
-        vehicle_is_creating = nil
         globals.set_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 2, false) --Spawn trigger #1
         globals.set_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 3, false) --Pegasus Spawn trigger
         globals.set_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 5, false) --Spawn trigger #2
+        vehicle_is_creating = nil
         return getNetIDOfLastSpawnedVehicle()
     end
 end
@@ -542,7 +541,7 @@ local plane_ghost_blips = utils_Set({ 8388612, 8650884, 8651332, 8651396, 865139
 local ultralight_ghost_blips = utils_Set({ 262676, 262740 })
 local ls_customs_blip = utils_Set({ 2097280, 2359330, 2359458, 262178 })
 local interior_blips = utils_Set({ 12, 20, 262274, 262656, 262272, 192, 128, 196, 576, 512, 517, 640, 708, 1 })
-local normal_blips = utils_Set({ 4, 5, 68, 132, 133, 140, 516, 580, 644 })
+local normal_blips = utils_Set({ 4, 5, 68, 132, 133, 140, 516, 580, 644, 645 })
 local ls_car_meet = utils_Set({ 2359334, 2359426, 2359296, 262146 })
 local cashier_blip = utils_Set({ 2097152 })
 local clothes_shop_blip = utils_Set( { 130 } )
@@ -1144,4 +1143,23 @@ function setWayPoint(x, y)
     sleep(0.4)
     globals.set_int(baseGlobals.waypointGlobal.baseGlobal, bitStorage2) --bit 15 removes pegasus blip from vehicle
     globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 66, oldHash)
+end
+
+
+--------------------- Snow Global ------------------------------
+--Global_262145.f_4413 /* Tunable: TURN_SNOW_ON_OFF */
+baseGlobals.snowGlobal = {}
+baseGlobals.snowGlobal.baseGlobal = 262145 + 4413
+baseGlobals.snowGlobal.testFunctionExplanation = "Toggle snow"
+
+function changeSnowGlobal(bool)
+    globals.set_bool(baseGlobals.snowGlobal.baseGlobal, bool)
+end
+
+function isSnowTurnedOn()
+    return globals.get_bool(baseGlobals.snowGlobal.baseGlobal)
+end
+
+baseGlobals.snowGlobal.testFunction = function()
+
 end
