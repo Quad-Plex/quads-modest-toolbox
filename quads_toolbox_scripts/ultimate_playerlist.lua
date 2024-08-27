@@ -22,49 +22,6 @@ if not settingsLoadingSuccess then
     json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/PLAYERLIST_SETTINGS.json", playerlistSettings)
 end
 
---Define booleans used for interacting with the separate loop action threads
-local auto_teleport = false
-local auto_storm = false
-local auto_explode = false
-local auto_bike = false
-local auto_peds = false
-local auto_launch = false
-local auto_fly = false
-local auto_rain = false
-local auto_cargo_spam = false
-local auto_vehicle_spam = false
-local auto_yeet = false
-local auto_cable_spam = false
-local auto_train_spam = false
-local auto_gps = false
-local auto_action_player_id
-local auto_action_player_name
-
-local function emergencyStop()
-    auto_teleport = false
-    auto_storm = false
-    auto_explode = false
-    auto_bike = false
-    auto_peds = false
-    auto_launch = false
-    auto_fly = false
-    auto_rain = false
-    auto_cargo_spam = false
-    auto_vehicle_spam = false
-    auto_yeet = false
-    auto_cable_spam = false
-    auto_train_spam = false
-    auto_gps = false
-end
-
-local function checkAndPerformEmergencyStop()
-    if player.get_player_name(auto_action_player_id) ~= auto_action_player_name then
-        emergencyStop()
-        return true
-    end
-    return false
-end
-
 local bounty_numbers = { [0] = 1, 42, 69, 420, 4200, 6969, 9999 }
 local current_bounty_number = 0
 
@@ -76,20 +33,6 @@ local function saveNewInterior(pos)
         serializeInteriors[_] = { interior.x, interior.y, interior.z }
     end
     json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/SAVED_INTERIORS.json", serializeInteriors)
-end
-
---Used for loop-actions running on a player
---has a small oldPlayer backup to avoid some nil errors on player disconnect
-local oldPlayer
-local autoPly = function()
-    local activePlayer = player.get_player_ped(auto_action_player_id)
-    if activePlayer and player.get_player_name(auto_action_player_id) == auto_action_player_name then
-        oldPlayer = activePlayer
-    elseif oldPlayer ~= nil then
-        activePlayer = oldPlayer
-        oldPlayer = nil
-    end
-    return activePlayer
 end
 
 local currentSpeed = 0.0
@@ -106,48 +49,6 @@ local function updateSpeed(ply)
         currentSpeed = math.floor((math.sqrt(x * x + y * y + z * z) * 3.6371084) * 10) / 10
     end
     return string.format("% 7.1f", currentSpeed)
-end
-
---teleport yourself to player
-local current_me
-local teleportHeight = 0
-local function tpToPlayer(ply, height, auto_localplayer)
-    if not ply or ply == nil then return end
-
-    if auto_localplayer then
-        current_me = auto_localplayer
-    else
-        current_me = localplayer
-    end
-    local heading = ply:get_heading()
-    heading.z = 0
-    local pos = ply:get_position() + (heading * -(height / 2.6))
-    pos.z = pos.z + height
-    teleportHeight = height
-
-    nativeTeleport(pos)
-end
-
---teleports all peds to player
-local teleportType = { [0] = "right on Player", "in Front of Player" }
-local teleportTypeSelection = 0
-local function tpPedToPlayer(ply, tpType)
-    for ped in replayinterface.get_peds() do
-        if ped and ped ~= nil and ped:get_pedtype() >= 4 and not ped:is_in_vehicle() and ped ~= localplayer then
-            ped:set_freeze_momentum(true)
-            local pos
-            if tpType == "in Front of Player" then
-                pos = ply and ply:get_position() + ply:get_heading() * (math.random(40, 70) / 10) or nil
-            else
-                pos = ply and ply:get_position() + vector3((math.random(-10, 10) / 10), (math.random(-10, 10) / 10), (math.random(-10, 10) / 10)) or nil
-            end
-            if not pos then return end
-            for _ = 0, 100 do
-                ped:set_position(pos)
-            end
-            ped:set_freeze_momentum(false)
-        end
-    end
 end
 
 --spawns a Dump carefully above and in front of a player taking into account their current heading/speed
@@ -199,30 +100,6 @@ local function dropVehicleOnPlayer(ply, model)
     createVehicle(joaat(model), ply:get_position() + (ply:get_velocity() * 2.22) + vector3(0, 0, 20), nil, true)
 end
 
-local vehicleDistance = 3
-local function TeleportVehiclesToPlayer(ply, distance, explode, vector_switch)
-    if not ply then return end
-
-    local nonPlayerVehicles = getNonPlayerVehicles()
-
-    local pos = vector_switch and ply or ply:get_position()
-
-    for _, veh in pairs(nonPlayerVehicles) do
-        local random_distance = vector3(math.random(-distance, distance), math.random(-distance, distance), math.random(-distance, distance))
-        veh:set_godmode(true)
-        veh:set_acceleration(0)
-        local tpPos = pos + random_distance
-        for _ = 0, 69 do
-            veh:set_position(tpPos)
-            veh:set_rotation(vector3(math.random(0, 360), math.random(0, 360), math.random(0, 360)))
-        end
-        if explode and distanceBetween(veh, tpPos, vector_switch) < 5 then
-            veh:set_godmode(false)
-            veh:set_health(-1)
-        end
-    end
-end
-
 local function manipulatePlayerWithTraffic(ply, action)
     local nonPlayerVehicles = getNonPlayerVehicles()
     local pos = ply:get_position() + (ply:get_velocity() * 0.44)
@@ -251,80 +128,6 @@ local function manipulatePlayerWithTraffic(ply, action)
         veh:set_gravity(9.8)
     end
 end
-
-local LaunchTypes = { "Dump", "ArmyTrailer", "dune5" }
-local LaunchType = 1
-local launchPly
-local function launchOnce()
-    if not launchPly or launchPly == nil then
-        return
-    end
-
-    local model = LaunchTypes[LaunchType]
-
-    local currentVehicle
-
-    if localplayer:is_in_vehicle() then
-        currentVehicle = localplayer:get_current_vehicle()
-    end
-
-    if model == "ArmyTrailer" or model == "Dump" then
-        local vel = launchPly:get_velocity()
-        vel.z = 0;
-        local angle = math.deg(math.atan(launchPly:get_heading().y, launchPly:get_heading().x)) + 90
-        createVehicle(joaat(model), (launchPly:get_position() + (vel * 0.48) + vector3(0, 0, -12)), angle, true)
-
-        local found = false
-        local tries = 0
-        while (not found and tries < 20) do
-            for veh in replayinterface.get_vehicles() do
-                if veh:get_model_hash() == joaat(model) and (not currentVehicle or (currentVehicle ~= veh)) and not ((veh:get_gravity() == 9.42) or (veh:get_gravity() == -340)) then
-                    found = true
-                    veh:set_rotation(launchPly:get_rotation())
-                    while (veh:get_gravity() ~= -340) do
-                        veh:set_rotation(launchPly:get_rotation())
-                        veh:set_gravity(-340)
-                    end
-                    sleep(0.5)
-                    veh:set_gravity(9.42)
-                    return
-                end
-            end
-            if not found then
-                tries = tries + 1
-                sleep(0.08)
-            end
-        end
-    elseif model == "dune5" then
-        createVehicle(joaat(model), (launchPly:get_position() + vector3(0, 0.2, -0.2)))
-        local found = false
-        local tries = 0
-        while (not found and tries < 20) do
-            for veh in replayinterface.get_vehicles() do
-                if veh:get_model_hash() == joaat(model) and (not currentVehicle or (currentVehicle ~= veh)) and not ((veh:get_gravity() == 9.42) or (veh:get_gravity() == -5) or (veh:get_gravity() == -10) or (veh:get_gravity() == -69) or (veh:get_gravity() == -300)) then
-                    found = true
-                    veh:set_rotation(launchPly:get_rotation())
-                    while veh:get_gravity() ~= -300 do
-                        veh:set_gravity(-5)
-                        sleep(0.4)
-                        veh:set_gravity(-10)
-                        sleep(0.4)
-                        veh:set_gravity(-69)
-                        sleep(0.4)
-                        veh:set_gravity(-300)
-                    end
-                    sleep(2.5)
-                    veh:set_gravity(9.42)
-                    return
-                end
-            end
-            tries = tries + 1
-            sleep(0.08)
-        end
-    end
-end
-
-menu.register_callback('launchOnce', launchOnce)
 
 local CageTypes = { "CableCar", "Spawned MOC", "TP invis MOC", "Remove Cages" }
 local CageType = 1
@@ -366,7 +169,7 @@ local function cagePlayer(ply, type)
                     moc:set_position(mocPosition)
                     sleep(0.2)
                     moc:set_health(1000)
-                    TeleportVehiclesToPlayer(mocPosition, 0, false, true)
+                    teleportVehiclesToPlayer(mocPosition, 0, false, true)
                 end
                 moc:set_rotation(ply:get_rotation())
                 moc:set_position(ply:get_position() + ply:get_heading() * 2.25 + vector3(0, 0, -0.88))
@@ -391,16 +194,6 @@ local function cagePlayer(ply, type)
         local rot = ply:get_rotation()
         local angle = math.deg(math.atan(rot.y, rot.x + (math.pi / 4)))
         createVehicle(joaat("CableCar"), ply:get_position(), angle, false, nil, true)
-    end
-end
-
-local random_direction
-function prepareFlying(ply)
-    random_direction = vector3(math.random(-2, 2), math.random(-2, 2), 0)
-    for yeet in replayinterface.get_vehicles() do
-        if yeet:get_model_hash() == joaat("TrailerLarge") and (distanceBetween(yeet, ply) <= 150) then
-            auto_yeet = yeet
-        end
     end
 end
 
@@ -465,64 +258,7 @@ local function giveRamp()
         sleep(0.1)
     end
 end
-
 menu.register_callback('giveRamp', giveRamp)
-
-local BikeTypes = { "Bmx", "Inductor", "Inductor2", "Cruiser", "Fixter", "Scorcher", "TriBike", "TriBike2", "TriBike3" }
-local function giveRandomBike(ply)
-    if not ply or ply == nil then
-        return
-    end
-    createVehicle(joaat(BikeTypes[math.random(#BikeTypes)]), ply:get_position() + ply:get_heading() * 7, nil, true)
-end
-
-function giveRandomVehicle(ply, pos, skip_remove, firstSpawner)
-    if not ply or ply == nil then return end
-
-    if not pos then
-        pos = ply:get_position() + ply:get_heading() * 7
-    end
-
-    --             [1]    [2][1]  [2][2]
-    -- vehicle = { hash, { name, class} }
-    local selection = math.random(#sorted_vehicles)
-    createVehicle(sorted_vehicles[selection][1], pos, nil, skip_remove, generateRandomMods(VEHICLE[sorted_vehicles[selection][1]][3]), not firstSpawner, true, false)
-    return sorted_vehicles[selection][1]
-end
-
-local function randomVehicleRain(ply)
-    if not ply or ply == nil then
-        return
-    end
-
-    local currentVehicle = localplayer:is_in_vehicle() and localplayer:get_current_vehicle() or nil
-    local rainTries = 0
-    local plyVelocity = ply:get_velocity() * 1.28
-    local plyHeading = ply:get_heading() * 0.5
-    local plyPosition = ply:get_position()
-    local random_dist = vector3(math.random(-4, 4), math.random(-4, 4), math.random(-2, 2))
-    local rainDropPosition = plyPosition + plyHeading + plyVelocity + vector3(0, 0, 37) + random_dist
-
-    local spawned_vehicle_hash = giveRandomVehicle(ply, rainDropPosition, true, true)
-    local found = false
-    while not found and rainTries < 9 do
-        for veh in replayinterface.get_vehicles() do
-            local veh_gravity = veh:get_gravity()
-            if veh:get_model_hash() == spawned_vehicle_hash and (not currentVehicle or currentVehicle ~= veh) and veh_gravity ~= 9.42 and veh_gravity ~= 169 then
-                found = true
-                while (veh:get_gravity() ~= 169) do
-                    veh:set_gravity(169)
-                    sleep(0.07)
-                end
-                sleep(0.8)
-                veh:set_gravity(9.42)
-                return
-            end
-        end
-        rainTries = rainTries + 1
-        sleep(0.07)
-    end
-end
 
 local function getPlayerStateText(ply, plyId)
     if not ply or not plyId then
@@ -1195,14 +931,14 @@ function addSubActions(sub, plyName, plyId)
             return oldPly
         end
     end
-    emergencyStop() --Stop all loop actions upon entering a new player or they'll transfer over unintended
-    auto_action_player_id = plyId
-    auto_action_player_name = plyName
+    emergencyStopLoops()
 
     if ply() == localplayer then
         greyText(sub, "--You--" .. "|Lvl " .. "(" .. getPlayerLevel(plyId) .. ")")
     else
         sub:add_bare_item(plyName .. "|Lvl " .. "(" .. getPlayerLevel(plyId) .. ")", function()
+            --This function will be called every time the cursor moves in the playerlist
+            updateLoopData()
             refreshPlayer(plyName, plyId)
         end, null, null, null)
     end
@@ -1223,19 +959,27 @@ function addSubActions(sub, plyName, plyId)
             tpToPlayer(ply(), n, nil)
         end)
         sub:add_toggle("TP Spectate", function()
-            return auto_teleport
+            return loopData.auto_teleport
         end, function(value)
-            auto_teleport = value
-            if auto_teleport then
+            if value then
+                loopData.auto_teleport = true
+                setLoopPlayer(plyId, plyName)
                 menu.emit_event('startAutoTeleport')
+            else
+                loopData.auto_teleport = false
+                json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/LOOPS_STATE.json", loopData)
             end
         end)
         sub:add_toggle("📍 GPS Tracker 📍", function()
-            return auto_gps
+            return loopData.auto_gps
         end, function(value)
-            auto_gps = value
-            if auto_gps then
+            if value then
+                loopData.auto_gps = true
+                setLoopPlayer(plyId, plyName)
                 menu.emit_event('trackGPS')
+            else
+                loopData.auto_gps = false
+                json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/LOOPS_STATE.json", loopData)
             end
         end)
     end
@@ -1250,9 +994,14 @@ function addSubActions(sub, plyName, plyId)
     greyText(sub, centeredText("--------Trolling--------"))
     local trollSub = sub:add_submenu("\u{1F480} Trolling Options:")
     if ply() == localplayer then
-        addText(trollSub, centeredText("Troll yourself"))
+        trollSub:add_bare_item("Troll yourself", function()
+            --This function will be called every time the cursor moves in the playerlist
+            updateLoopData()
+        end, null, null, null)
     else
         trollSub:add_bare_item("Trolling " .. plyName .. "...", function()
+            --This function will be called every time the cursor moves in the playerlist
+            updateLoopData()
             refreshPlayer(plyName, plyId)
         end, null, null, null)
     end
@@ -1297,11 +1046,16 @@ function addSubActions(sub, plyName, plyId)
         prepared = value
     end)
     trollSub:add_toggle("Send Cage flying", function()
-        return auto_fly
+        return loopData.auto_fly
     end, function(value)
-        auto_fly = value
-        prepareFlying(ply())
-        menu.emit_event('startFlyThread')
+        if value then
+            loopData.auto_fly = true
+            setLoopPlayer(plyId, plyName)
+            menu.emit_event('startFlyThread')
+        else
+            loopData.auto_fly = false
+            saveLoopData()
+        end
     end)
     greyText(trollSub, centeredText("--------Vehicle Trolling---------"))
     trollSub:add_action("RAMP player with ramp buggy", function()
@@ -1312,8 +1066,7 @@ function addSubActions(sub, plyName, plyId)
         return LaunchType
     end, function(value)
         LaunchType = value
-        launchPly = ply()
-        menu.emit_event('launchOnce')
+        launchOnce(ply())
     end)
     trollSub:add_action("Give Random Vehicle to " .. plyName, function()
         giveRandomVehicle(ply())
@@ -1343,94 +1096,134 @@ function addSubActions(sub, plyName, plyId)
         return vehicleDistance
     end, function(n)
         vehicleDistance = n
-        TeleportVehiclesToPlayer(ply(), n, false)
+        teleportVehiclesToPlayer(ply(), n, false)
     end)
     trollSub:add_int_range("EXPLODE " .. plyName .. " |Range:", 1, 0, 10, function()
         return vehicleDistance
     end, function(n)
         vehicleDistance = n
-        TeleportVehiclesToPlayer(ply():get_position(), n, true, true)
+        teleportVehiclesToPlayer(ply():get_position(), n, true, true)
     end)
-    trollSub:add_action("\u{26A0} EMERGENCY STOP ALL LOOPS \u{26A0}", emergencyStop)
+    trollSub:add_action("\u{26A0} EMERGENCY STOP ALL LOOPS \u{26A0}", function() emergencyStopLoops() end)
     greyText(trollSub, centeredText("--------Loop Actions--------"))
     trollSub:add_toggle("|CONSTANT PEDS", function()
-        return auto_peds
+        return loopData.auto_peds
     end, function(value)
-        auto_peds = value
-        if auto_peds then
+        if value then
+            loopData.auto_peds = true
+            setLoopPlayer(plyId, plyName)
             menu.emit_event('autoPedSpam')
+        else
+            loopData.auto_peds = falsen
+            json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/LOOPS_STATE.json", loopData)
         end
     end)
     trollSub:add_toggle("|🚫 BIKE BLOCK 🚫", function()
-        return auto_bike
+        return loopData.auto_bike
     end, function(value)
-        auto_bike = value
-        if auto_bike then
+        if value then
+            loopData.auto_bike = true
+            setLoopPlayer(plyId, plyName)
             menu.emit_event('autoBikeSpam')
+        else
+            loopData.auto_bike = false
+            json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/LOOPS_STATE.json", loopData)
         end
     end)
     trollSub:add_toggle("|⬆️ KEEP LAUNCHING ⬆️", function()
-        return auto_launch
+        return loopData.auto_launch
     end, function(value)
-        auto_launch = value
-        if auto_launch then
+        if value then
+            loopData.auto_launch = true
+            setLoopPlayer(plyId, plyName)
             menu.emit_event('autoLaunch')
+        else
+            loopData.auto_launch = false
+            json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/LOOPS_STATE.json", loopData)
         end
     end)
     trollSub:add_toggle("|🚗 RANDOM VEHICLE SPAM 🚗", function()
-        return auto_vehicle_spam
+        return loopData.auto_vehicle_spam
     end, function(value)
-        auto_vehicle_spam = value
-        if auto_vehicle_spam then
+        if value then
+            loopData.auto_vehicle_spam = true
+            setLoopPlayer(plyId, plyName)
             menu.emit_event('autoVehicleSpam')
+        else
+            loopData.auto_vehicle_spam = false
+            json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/LOOPS_STATE.json", loopData)
         end
     end)
     trollSub:add_toggle("|🚠 CABLECAR SPAM 🚠", function()
-        return auto_cable_spam
+        return loopData.auto_cable_spam
     end, function(value)
-        auto_cable_spam = value
-        if auto_cable_spam then
+        if value then
+            loopData.auto_cable_spam = true
+            setLoopPlayer(plyId, plyName)
             menu.emit_event('autoCableCarSpam')
+        else
+            loopData.auto_cable_spam = false
+            json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/LOOPS_STATE.json", loopData)
         end
     end)
     trollSub:add_toggle("|🚂 TRAIN SPAM (NO DESPAWN)", function()
-        return auto_train_spam
+        return loopData.auto_train_spam
     end, function(value)
-        auto_train_spam = value
-        if auto_train_spam then
+        if value then
+            loopData.auto_train_spam = true
+            setLoopPlayer(plyId, plyName)
             menu.emit_event('trainSpam')
+        else
+            loopData.auto_train_spam = false
+            json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/LOOPS_STATE.json", loopData)
         end
     end)
     trollSub:add_toggle("|🌧️ RANDOM VEHICLE RAIN 🌧️", function()
-        return auto_rain
+        return loopData.auto_rain
     end, function(value)
-        auto_rain = value
-        if auto_rain then
+        if value then
+            loopData.auto_rain = true
+            setLoopPlayer(plyId, plyName)
             menu.emit_event('startRainThread')
+        else
+            loopData.auto_rain = false
+            json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/LOOPS_STATE.json", loopData)
         end
     end)
     trollSub:add_toggle("|🌪️ VEHICLE STORM 🌪️", function()
-        return auto_storm
+        return loopData.auto_storm
     end, function(value)
-        auto_storm = value
-        if auto_storm then
+        if value then
+            loopData.auto_storm = true
+            setLoopPlayer(plyId, plyName)
             menu.emit_event('autoVehicleStorm')
+        else
+            loopData.auto_storm = false
+            json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/LOOPS_STATE.json", loopData)
         end
     end)
     trollSub:add_toggle("|💥💥 CONSTANT EXPLOSION 💥💥", function()
-        return auto_explode
+        return loopData.auto_explode
     end, function(value)
-        auto_explode = value
-        if auto_explode then
+        if value then
+            loopData.auto_explode = true
+            setLoopPlayer(plyId, plyName)
             menu.emit_event('startAutoExplode')
+        else
+            loopData.auto_explode = false
+            json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/LOOPS_STATE.json", loopData)
         end
     end)
-    trollSub:add_toggle("   ✈️\u{26A0} ITS RAINING PLANES \u{26A0}✈️", function()
-        return auto_cargo_spam
+    trollSub:add_toggle("   ✈️\u{26A0} CARGO SPAM (FPS Killer) \u{26A0}✈️", function()
+        return loopData.auto_cargo_spam
     end, function(value)
-        auto_cargo_spam = value
-        if auto_cargo_spam then
+        if value then
+            loopData.auto_cargo_spam = true
+            setLoopPlayer(plyId, plyName)
             menu.emit_event('autoCargoSpam')
+        else
+            loopData.auto_cargo_spam = false
+            json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/LOOPS_STATE.json", loopData)
         end
     end)
 
@@ -1595,7 +1388,6 @@ local function SubMenus(playerList)
     settingsMenuSub = playerList:add_submenu("      ⚙️ Playerlist Settings ⚙️", function() addSettingsMenu(settingsMenuSub) end)
 end
 
-
 --F11 Random Vehicle
 local randomVehicleHotkey
 menu.register_callback('ToggleRandomVehicleHotkey', function()
@@ -1609,195 +1401,6 @@ menu.register_callback('ToggleRandomVehicleHotkey', function()
         randomVehicleHotkey = nil
     end
 end)
-
-
-------------------------------------------------------
-------------------------------------------------------
--------------- AUTO ACTIONS START HERE ---------------
-------------------------------------------------------
-------------------------------------------------------
-
---emergency stop all auto actions button, numpad comma (decimal) key
-local emergencyStopHotkey
-menu.register_callback('ToggleLoopStopHotkey', function()
-    if not emergencyStopHotkey then
-        emergencyStopHotkey = menu.register_hotkey(find_keycode("ToggleLoopStopHotkey"), emergencyStop)
-    else
-        menu.remove_hotkey(emergencyStopHotkey)
-        emergencyStopHotkey = nil
-    end
-end)
-
-local function vehicleRainThread()
-    while auto_action_player_id and auto_rain do
-        if checkAndPerformEmergencyStop() then return end
-        randomVehicleRain(autoPly())
-        sleep(0.07)
-    end
-end
-
-menu.register_callback('startRainThread', vehicleRainThread)
-
-local function flyThread()
-    sleep(0.15)
-    while auto_fly and auto_yeet do
-        if checkAndPerformEmergencyStop() then return end
-        auto_yeet:set_position(autoPly():get_position() + random_direction + vector3(0, 0, 5))
-        sleep(0.12)
-    end
-end
-
-menu.register_callback('startFlyThread', flyThread)
-
-local original_pos
-local teleported = false
-local function autoTeleportThread()
-    local myPlayer = player.get_player_ped()
-
-    if not myPlayer or not auto_teleport then
-        return
-    end
-
-    original_pos = myPlayer:get_position()
-    myPlayer:set_godmode(true)
-    myPlayer:set_max_health(0.0)
-    myPlayer:set_freeze_momentum(true)
-    myPlayer:set_no_ragdoll(true)
-    local oldTeleportHeight = teleportHeight
-    teleportHeight = 40
-
-    while auto_action_player_id and auto_teleport do
-        tpToPlayer(autoPly(), teleportHeight, myPlayer)
-        teleported = true
-        sleep(0.1)
-        checkAndPerformEmergencyStop()
-    end
-
-    if teleported then
-        teleportHeight = oldTeleportHeight
-        myPlayer:set_godmode(false)
-        myPlayer:set_max_health(328.0)
-        myPlayer:set_freeze_momentum(false)
-        myPlayer:set_no_ragdoll(false)
-        nativeTeleport(original_pos)
-        teleported = false
-    end
-end
-menu.register_callback('startAutoTeleport', autoTeleportThread)
-
-local function gpsTrackerThread()
-    while auto_action_player_id and auto_gps do
-        local playerPos = autoPly():get_position()
-        setWayPoint(playerPos.x, playerPos.y)
-        sleep(0.6)
-        checkAndPerformEmergencyStop()
-    end
-    --Remove waypoint in the end by placing it at our localplayer
-    for _=1, 3 do
-        setWayPoint(localplayer:get_position().x, localplayer:get_position().y)
-    end
-end
-menu.register_callback('trackGPS', gpsTrackerThread)
-
-local function autoExplodeThread()
-    while auto_action_player_id and auto_explode do
-        if checkAndPerformEmergencyStop() then return end
-        TeleportVehiclesToPlayer(autoPly():get_position(), 2, true, true)
-        sleep(0.35)
-    end
-end
-menu.register_callback('startAutoExplode', autoExplodeThread)
-
-local function autoVehicleStormThread()
-    while auto_action_player_id and auto_storm do
-        if checkAndPerformEmergencyStop() then return end
-        TeleportVehiclesToPlayer(autoPly(), 2, false)
-        sleep(0.26)
-    end
-end
-menu.register_callback('autoVehicleStorm', autoVehicleStormThread)
-
-local function autoBikeSpamThread()
-    while auto_action_player_id and auto_bike do
-        if checkAndPerformEmergencyStop() then return end
-        giveRandomBike(autoPly())
-        sleep(0.13)
-    end
-end
-menu.register_callback('autoBikeSpam', autoBikeSpamThread)
-
-local function autoRandomCarSpamThread()
-    while auto_action_player_id and auto_vehicle_spam do
-        if checkAndPerformEmergencyStop() then return end
-        local pos = autoPly():get_position() + autoPly():get_heading() * 2 + autoPly():get_velocity() * 2
-        local random_distance = vector3(math.random(-2, 2), math.random(2, 2), math.random(2, 2))
-        giveRandomVehicle(autoPly(), pos + random_distance, true, true)
-        sleep(0.2)
-    end
-end
-menu.register_callback('autoVehicleSpam', autoRandomCarSpamThread)
-
-local function autoCableCarSpamThread()
-    while auto_action_player_id and auto_cable_spam do
-        if checkAndPerformEmergencyStop() then return end
-        local rot = autoPly():get_rotation()
-        local angle = math.deg(math.atan(rot.y, rot.x + math.pi / 2))
-        createVehicle(joaat("CableCar"), autoPly():get_position(), angle, true)
-        sleep(0.2)
-    end
-end
-menu.register_callback('autoCableCarSpam', autoCableCarSpamThread)
-
-local function trainSpam()
-    local i = 1
-    while auto_action_player_id and auto_train_spam do
-        if checkAndPerformEmergencyStop() then return end
-        createVehicle(joaat("Freight"), autoPly():get_position() + vector3(math.random(-10, 10), math.random(-10, 10), math.random(-10, 10)), math.random(0, 360), true)
-        sleep(0.1)
-        i = i + 1
-    end
-end
-menu.register_callback('trainSpam', trainSpam)
-
-local function autoPedSpamThread()
-    while auto_action_player_id and auto_peds do
-        if checkAndPerformEmergencyStop() then return end
-        tpPedToPlayer(autoPly(), teleportType[teleportTypeSelection])
-        sleep(0.1)
-    end
-end
-menu.register_callback('autoPedSpam', autoPedSpamThread)
-
-local function cargoSpamThread()
-    local vehicles = { "Cargoplane", "Jet", "Kosatka" } -- add your vehicle types here
-
-    while auto_action_player_id and auto_cargo_spam do
-        if checkAndPerformEmergencyStop() then return end
-
-        local vehicle = vehicles[math.random(#vehicles)] -- select random vehicle
-        local random_distance = vector3((math.random(-900, 900) / 10), (math.random(-900, 900) / 10), (math.random(10, 1200) / 10))
-        createVehicle(joaat(vehicle), autoPly():get_position() + random_distance, math.random(0, 360), true)
-
-        for veh in replayinterface.get_vehicles() do
-            if veh:get_model_hash() == joaat(vehicle) then
-                veh:set_godmode(true)
-            end
-        end
-        sleep(0.18)
-    end
-end
-menu.register_callback('autoCargoSpam', cargoSpamThread)
-
-local function autoLaunchThread()
-    while auto_action_player_id and auto_launch do
-        if checkAndPerformEmergencyStop() then return end
-        LaunchType = 2
-        launchPly = autoPly()
-        menu.emit_event('launchOnce')
-        sleep(0.16)
-    end
-end
-menu.register_callback('autoLaunch', autoLaunchThread)
 
 local function checkObviousModder(ply, plyName, i)
     if not ply then return end

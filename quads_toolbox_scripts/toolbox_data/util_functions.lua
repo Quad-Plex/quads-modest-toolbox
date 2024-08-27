@@ -68,7 +68,7 @@ end
 ------------------- Vehicle Search ----------------------
 local function searchForVehicle(searchString)
     local results = {}
-    for index, vehicle in ipairs(sorted_vehicles) do
+    for _, vehicle in ipairs(sorted_vehicles) do
         if string.find(vehicle[2][1]:lower(), searchString:lower()) then
             table.insert(results, vehicle)
         end
@@ -566,30 +566,6 @@ end
 -------------------------------------------------------------
 ------------------JSON HOTKEY/KEYCODE DATA-------------------
 -------------------------------------------------------------
--- Define the hotkeys data
-success, hotkeysData = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/HOTKEY_CONFIG.json")
-if success then
-    print("Hotkey Configuration loaded successfully!!")
-else
-    error("Error loading Hotkey Configuration!", 0)
-end
-
-table.sort(hotkeysData, function(a, b)
-    return a.name < b.name
-end)
-
-indexedKeycodes = {}
-for key, keyCode in pairs(keycodes) do
-    indexedKeycodes[keyCode]=key
-end
-
-sortedKeycodes = {}
-for k in pairs(keycodes) do
-    table.insert(sortedKeycodes, k)
-end
-table.sort(sortedKeycodes)
-
-
 function find_keycode(event_name)
     success, hotkeysData = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/HOTKEY_CONFIG.json")
     for i=1, #hotkeysData do
@@ -599,7 +575,6 @@ function find_keycode(event_name)
     end
     return nil
 end
-
 
 -------------------Distance function----------------------------
 function round(num)

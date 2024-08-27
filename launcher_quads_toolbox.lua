@@ -2,7 +2,6 @@ finishedLoading = false
 require_game_build(3274)
 
 --Load all required constants
-require("scripts/quads_toolbox_scripts/toolbox_data/enums/VEHICLES")
 require("scripts/quads_toolbox_scripts/toolbox_data/enums/WEAPONS")
 require("scripts/quads_toolbox_scripts/toolbox_data/enums/PED_FLAGS")
 require("scripts/quads_toolbox_scripts/toolbox_data/enums/PED_MODELS")
@@ -12,8 +11,7 @@ require("scripts/quads_toolbox_scripts/toolbox_data/enums/PICKUP_HASHES")
 require("scripts/quads_toolbox_scripts/toolbox_data/enums/EXPLOSION_TYPES")
 
 --Initialize scripts one by one
-require("scripts/quads_toolbox_scripts/toolbox_data/global_functions")
-require("scripts/quads_toolbox_scripts/toolbox_data/util_functions")
+require("scripts/quads_toolbox_scripts/toolbox_data/playerlist_loop_functions")
 toolboxSub = menu.add_submenu("--== ☣️ Quad's Modest Toolbox ☣️ ==--")
 
 addText(toolboxSub, centeredText("     ☣️ Quad's Modest Toolbox ☣️"))

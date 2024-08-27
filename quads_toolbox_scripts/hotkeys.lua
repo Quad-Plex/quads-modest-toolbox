@@ -1,3 +1,40 @@
+-------------------- Define the hotkeys data ------------------------------------------------
+success, hotkeysData = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/HOTKEY_CONFIG.json")
+if success then
+    print("Hotkey Configuration loaded successfully!!")
+else
+    error("Error loading Hotkey Configuration!", 0)
+end
+
+table.sort(hotkeysData, function(a, b)
+    return a.name < b.name
+end)
+
+indexedKeycodes = {}
+for key, keyCode in pairs(keycodes) do
+    indexedKeycodes[keyCode]=key
+end
+
+sortedKeycodes = {}
+for k in pairs(keycodes) do
+    table.insert(sortedKeycodes, k)
+end
+table.sort(sortedKeycodes)
+--------------------------------------- HOTKEY FUNCTIONS ------------------------------------------------------
+--numpad comma (decimal) key, emergency stop all auto actions button
+local emergencyStopHotkey
+menu.register_callback('ToggleLoopStopHotkey', function()
+    if not emergencyStopHotkey then
+        emergencyStopHotkey = menu.register_hotkey(find_keycode("ToggleLoopStopHotkey"), function()
+            loopData = {}
+            emergencyStopLoops()
+        end)
+    else
+        menu.remove_hotkey(emergencyStopHotkey)
+        emergencyStopHotkey = nil
+    end
+end)
+
 --Del, Lose Wanted level
 local loseWantedLevelHotkey
 menu.register_callback('ToggleWantedLevelHotkey', function()
@@ -222,7 +259,7 @@ hotkeyMenu = toolboxSub:add_submenu(centeredText("    ⚙️ Hotkey Configuratio
     end
 end)
 
---Enable all Hotkeys once when this script is required
+--Enable all Hotkeys once when this script is loaded
 for _, hotkeyData in ipairs(hotkeysData) do
     if hotkeyData.toggleVar then menu.emit_event(hotkeyData.event) end
 end

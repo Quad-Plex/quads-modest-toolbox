@@ -1,10 +1,14 @@
 TODO:
+- Don't give back weapons when changing to an animal model
 - Add error message about missing folder if requires fail
 - playerlist readme/legend with symbol explanation
 - Add Readme and FAQ description for unclear actions 
 - add automated release procedure
 
 DONE:
+- ~~Add drift tyres toggle~~
+- ~~Add snow toggle~~
+- ~~Major rewrite of all loop functions to have them running in the background including json synchronisation~~
 - ~~Add Give Back Weapons~~
 - ~~add text search for peds~~
 - ~~add text search for cars~~
@@ -36,7 +40,7 @@ DONE:
   - ~~TP into other players' vehicles~~
 - ~~Added simple Nightclub safe money loop~~
 - ~~Added Stat Changer Submenu~~
-- ~~Search for globals related to remote controlling a vehicle (start engine, turn on lights, open doors etc)~~
+- ~~Search for globals related to remote controlling a vehicle (start engine, turn on lights, open doors etc.)~~
   - ~~If I can open doors - can I make flappy doors?? HELL YEA I CAN~~
 - ~~AUTO UPDATE OF RID WITHOUT UPDATING PLAYERLIST~~
 - ~~- Can I find RID from globals??~~
