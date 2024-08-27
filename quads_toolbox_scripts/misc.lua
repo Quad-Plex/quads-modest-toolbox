@@ -59,6 +59,10 @@ miscOptionsSub:add_action("Refill Inventory |🍪🍫🍾", function()
 	refillInventory()
 end)
 
+greyText(miscOptionsSub, "-------- Map Options --------")
+miscOptionsSub:add_toggle("Turn Snow On/Off", function() return isSnowTurnedOn() end, function(n) changeSnowGlobal(n) end)
+
+
 ----------------------Respawn State changer----------------------
 greyText(miscOptionsSub, "-------- Unstuck Options --------")
 local stateToSet = 7
@@ -141,7 +145,7 @@ local function buildSpecialExportSubmenu(sub)
 	sub:add_action("TP to Docks (Deliver instantly)", function() nativeTeleport(vector3(1169.2, -2972.9, 5)) end)
 end
 local specialExportSub
-specialExportSub = miscOptionsSub:add_submenu("$ Get Weekly Export Vehicles $", function() buildSpecialExportSubmenu(specialExportSub) end)
+specialExportSub = miscOptionsSub:add_submenu("$🚗 Get Weekly Export Vehicles 🚗$", function() buildSpecialExportSubmenu(specialExportSub) end)
 
 --------------------------Casino Options-----------------------------------
 greyText(miscOptionsSub, "-------- Casino Options --------")
