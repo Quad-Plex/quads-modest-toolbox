@@ -68,15 +68,15 @@ local function boostVehicle(vehicle_data, vehicle, boost, category)
         --boost mode
         accel = vehicle_data[1] * (17 * (playerlistSettings.defaultBoostStrength / 100))
         brake_force = vehicle_data[2] * (23 * (playerlistSettings.defaultBoostStrength / 100))
-        gravity = 21.420
+        gravity = 22.420
         handbrake_force = vehicle_data[4] * (14 * (playerlistSettings.defaultBoostStrength / 100))
         initial_drive_force = vehicle_data[5] * (690 * (playerlistSettings.defaultBoostStrength / 100))   --nice
-        traction_min = 6 + (2 * (playerlistSettings.defaultBoostStrength / 100))   --very high traction. Used without roll_centre modification, the car will constantly flip
+        traction_min = 6 + (2 * (playerlistSettings.defaultBoostStrength / 100))   --very high traction. If used without roll_centre modification, the car will constantly flip
         traction_max = vehicle_data[7] + (2 * (playerlistSettings.defaultBoostStrength / 100))
         traction_bias_front = 0.420
         up_shift = 10000  --huge shift values, causing cars to get stuck in gear and accelerate rapidly
         down_shift = 10000
-        max_flat_vel = 10000
+        max_flat_vel = 100000
         collision_dmg_multiplier = 0
         engine_dmg_multiplier = 0
         local tempStrength = playerlistSettings.defaultBoostStrength
@@ -88,11 +88,11 @@ local function boostVehicle(vehicle_data, vehicle, boost, category)
             roll_centre_front = vehicle_data[14] + (0.18 * (tempStrength / 100)) --these two stop the car from rolling even at high speeds, it rolls inwards instead
             roll_centre_rear = vehicle_data[15] + (0.18 * (tempStrength / 100))
         elseif category == "Off-Road" or category == "Van" then
-            roll_centre_front = vehicle_data[14] + (0.35 * (tempStrength / 100))
-            roll_centre_rear = vehicle_data[15] + (0.35 * (tempStrength / 100))
+            roll_centre_front = vehicle_data[14] + (0.39 * (tempStrength / 100))
+            roll_centre_rear = vehicle_data[15] + (0.39 * (tempStrength / 100))
         elseif category == "Industrial" or category == "Commercials" then
-            roll_centre_front = vehicle_data[14] + (0.420 * (tempStrength / 100))
-            roll_centre_rear = vehicle_data[15] + (0.420 * (tempStrength / 100))
+            roll_centre_front = vehicle_data[14] + (0.45 * (tempStrength / 100))
+            roll_centre_rear = vehicle_data[15] + (0.45 * (tempStrength / 100))
         else
             roll_centre_front = vehicle_data[14] + (0.3 * (tempStrength / 100))
             roll_centre_rear = vehicle_data[15] + (0.3 * (tempStrength / 100))
@@ -101,6 +101,8 @@ local function boostVehicle(vehicle_data, vehicle, boost, category)
         traction_loss_multiplier = 1
         initial_drag_coefficient = 1  --no drag forces
         number_plate_text = "BOOSTEDD"
+        drive_inertia = 42.0  --max change rate cap for the rpm of the engine
+        steering_lock = vehicle_data[21] + (0.19 * tempStrength)  --more steering
     else
         --restore mode
         accel = vehicle_data[1]
@@ -122,6 +124,8 @@ local function boostVehicle(vehicle_data, vehicle, boost, category)
         traction_loss_multiplier = vehicle_data[17]
         initial_drag_coefficient = vehicle_data[18]
         number_plate_text = vehicle_data[19]
+        drive_inertia = vehicle_data[20]
+        steering_lock = vehicle_data[21]
     end
 
     vehicle:set_acceleration(accel)
@@ -142,8 +146,10 @@ local function boostVehicle(vehicle_data, vehicle, boost, category)
     vehicle:set_engine_damage_multiplier(engine_dmg_multiplier)
     vehicle:set_traction_loss_multiplier(traction_loss_multiplier)
     vehicle:set_initial_drag_coeff(initial_drag_coefficient)
-    vehicle:set_max_speed(10000)
+    vehicle:set_max_speed(100000)
     vehicle:set_number_plate_text(number_plate_text)
+    vehicle:set_drive_inertia(drive_inertia)
+    vehicle:set_steering_lock(steering_lock)
 end
 
 local function reloadVehicle(vehicle)
@@ -169,7 +175,7 @@ local function carBoost()
         end
 
         --check if car has been modified already by the modified gravity value, if not, try to save and modify it
-        if current:get_gravity() ~= 21.420 then
+        if current:get_gravity() ~= 22.420 then
             :: retry ::
             --Save car data to map if its not in there already
             if not cars_data[tostring(current:get_model_hash())] then
@@ -192,7 +198,9 @@ local function carBoost()
                     current:get_drive_bias_front(), --16
                     current:get_traction_loss_multiplier(), --17
                     current:get_initial_drag_coeff(), --18
-                    current:get_number_plate_text()       --19
+                    current:get_number_plate_text(),       --19
+                    current:get_drive_inertia(),            --20
+                    current:get_steering_lock()             --21
                 }
                 json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/KNOWN_BOOSTED_CARS.json", cars_data)
             end
@@ -218,7 +226,7 @@ end)
 
 greyText(vehicleOptionsSub, centeredText("----- One-Click-Go-Quick Booster -----"))
 vehicleOptionsSub:add_toggle("ULTIMATE BOOST", function()
-    return localplayer and localplayer:is_in_vehicle() and localplayer:get_current_vehicle():get_gravity() == 21.420
+    return localplayer and localplayer:is_in_vehicle() and localplayer:get_current_vehicle():get_gravity() == 22.420
 end, carBoost)
 vehicleOptionsSub:add_int_range("Car Boost strength |%", 5, 0, 690, function()
     return playerlistSettings.defaultBoostStrength
@@ -228,7 +236,7 @@ end, function(value)
 end)
 vehicleOptionsSub:add_action("Reset all boosted cars", function()
     for veh in replayinterface.get_vehicles() do
-        if veh:get_gravity() == 21.420 and cars_data[tostring(veh:get_model_hash())] then
+        if veh:get_gravity() == 22.420 and cars_data[tostring(veh:get_model_hash())] then
             reloadVehicle(veh)
         end
     end
@@ -297,6 +305,16 @@ end)
 vehicleOptionsSub:add_action("Set Car Mass to 26969", makeCarMassive, function() return localplayer and localplayer:is_in_vehicle() end)
 
 --------------------------------
+--Drift Tyres
+--------------------------------
+vehicleOptionsSub:add_toggle("Enable Drift Tyres", function() return localplayer:is_in_vehicle() and localplayer:get_current_vehicle():get_drift_tyres_enabled() end, function()
+    if localplayer:is_in_vehicle() then
+        localplayer:get_current_vehicle():set_drift_tyres_enabled(not localplayer:get_current_vehicle():get_drift_tyres_enabled())
+    end
+end)
+
+
+--------------------------------
 --Car beyblade
 --------------------------------
 local beybladeEnabled = false
@@ -353,13 +371,13 @@ local function carBeyblade()
 end
 menu.register_callback('startBeyblade', carBeyblade)
 
-vehicleOptionsSub:add_toggle("Beyblade: LET IT RIP!", function() return beybladeEnabled end, function(value)
+vehicleOptionsSub:add_toggle("|Beyblade: LET IT RIP!  ", function() return beybladeEnabled end, function(value)
     if not localplayer:is_in_vehicle() then return end
     beybladeEnabled = value
     if not beybladeRunning and beybladeEnabled then
         menu.emit_event('startBeyblade')
     end
 end)
-vehicleOptionsSub:add_array_item("Beyblade Type:", beybladeModes, function() return beybladeModeSelection end, function(value)
+vehicleOptionsSub:add_array_item("|Beyblade Type: ", beybladeModes, function() return beybladeModeSelection end, function(value)
     beybladeModeSelection = value
 end)
