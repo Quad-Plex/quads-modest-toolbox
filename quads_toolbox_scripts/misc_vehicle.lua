@@ -1,4 +1,6 @@
 greyText(vehicleOptionsSub, "---- Pers. Vehicle Remote Control ----")
+greyText(vehicleOptionsSub, "-- ONLY WORKS ON PERSONAL VEH.! --")
+
 
 ----------------- Remote Control Vehicle -----------------
 local doorStates = {[0]="Driver", "Passenger", "Back Left", "Back Right", "Hood", "Trunk", "All", "None"}
