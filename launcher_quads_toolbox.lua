@@ -2,6 +2,12 @@ finishedLoading = false
 require_game_build(3274)
 
 --Load all required constants
+local folderTest, unused = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/PLAYERLIST_SETTINGS.json")
+if not folderTest then
+	error("\n!!!!!!!!!!! READ THIS !!!!!!!!!!\n\nError! Couldn't find required lua files.\nMake sure that you've extracted the \n'quads_toolbox_scripts' folder aswell as\nthe two .lua files (launcher_quads_toolbox.lua)\nand (loops_quads_toolbox.lua) directly into\nyour modest-menu/scripts folder!")
+	return
+end
+unused = nil
 require("scripts/quads_toolbox_scripts/toolbox_data/enums/WEAPONS")
 require("scripts/quads_toolbox_scripts/toolbox_data/enums/PED_FLAGS")
 require("scripts/quads_toolbox_scripts/toolbox_data/enums/PED_MODELS")

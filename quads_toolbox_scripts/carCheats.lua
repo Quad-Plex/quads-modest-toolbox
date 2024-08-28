@@ -71,7 +71,7 @@ local function boostVehicle(vehicle_data, vehicle, boost, category)
         gravity = 22.420
         handbrake_force = vehicle_data[4] * (14 * (playerlistSettings.defaultBoostStrength / 100))
         initial_drive_force = vehicle_data[5] * (690 * (playerlistSettings.defaultBoostStrength / 100))   --nice
-        traction_min = 6 + (2 * (playerlistSettings.defaultBoostStrength / 100))   --very high traction. If used without roll_centre modification, the car will constantly flip
+        traction_min = 6.5 + (2 * (playerlistSettings.defaultBoostStrength / 100))   --very high traction. If used without roll_centre modification, the car will constantly flip
         traction_max = vehicle_data[7] + (2 * (playerlistSettings.defaultBoostStrength / 100))
         traction_bias_front = 0.420
         up_shift = 10000  --huge shift values, causing cars to get stuck in gear and accelerate rapidly
@@ -102,7 +102,11 @@ local function boostVehicle(vehicle_data, vehicle, boost, category)
         initial_drag_coefficient = 1  --no drag forces
         number_plate_text = "BOOSTEDD"
         drive_inertia = 42.0  --max change rate cap for the rpm of the engine
-        steering_lock = vehicle_data[21] + (0.19 * tempStrength)  --more steering
+        if category ~= "Motorcycle" then
+            steering_lock = vehicle_data[21] + (0.19 * tempStrength)  --more steering
+        else
+            steering_lock = vehicle_data[21] + (0.05 * tempStrength)
+        end
     else
         --restore mode
         accel = vehicle_data[1]

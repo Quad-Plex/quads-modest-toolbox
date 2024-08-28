@@ -1,10 +1,10 @@
 TODO:
-- Add error message about missing folder if requires fail
 - playerlist readme/legend with symbol explanation
 - Add Readme and FAQ description for unclear actions 
 - add automated release procedure
 
 DONE:
+- ~~Add error message about missing folder if requires fail~~
 - ~~Fix missing ped categories causing missing peds~~
 - ~~Don't give back weapons when changing to an animal model~~
 - ~~Add drift tyres toggle~~

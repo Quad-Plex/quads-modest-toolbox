@@ -1,3 +1,10 @@
+local folderTest, unused = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/PLAYERLIST_SETTINGS.json")
+if not folderTest then
+    --We already throw an error for this in the launcher lua so we just silently exit this script
+    return
+end
+unused = nil
+
 require("scripts/quads_toolbox_scripts/toolbox_data/playerlist_loop_functions")
 
 local function checkAndPerformEmergencyStop()

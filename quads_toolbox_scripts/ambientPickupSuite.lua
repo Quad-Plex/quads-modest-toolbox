@@ -104,7 +104,7 @@ local function createCustomPickupWithCustomModel(pickup_hash, model, value, ply)
 	if not value then value = 69 end
 	createPickup(pos + vector3(0,0,2), value)
 	--force the pickup hash fast enough for it to be changed before being picked up
-	while (tries < 2000) do
+	while (tries < 10000) do
 		for pickup in replayinterface.get_pickups() do
 			if pickup:get_amount() == value then
 				pickup:set_pickup_hash(joaat(pickup_hash))
