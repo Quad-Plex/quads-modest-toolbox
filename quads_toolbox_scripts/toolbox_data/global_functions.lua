@@ -1101,10 +1101,16 @@ function setPlayerModel(hash)
                 sleep(playerlistSettings.pedChangerSleepTimeout)
                 globals.set_int(baseGlobals.pedChanger.pedTrigger + 278, getOrSetPlayerPedID())
             end
-            enableWeapons()
-            globals.set_int(baseGlobals.pedChanger.hashGlobal1 + 7 + gender, joaat(default_models[gender]))
-            sleep(playerlistSettings.pedChangerSleepTimeout)
+            if not isAnimalPed(findPedDataFromHash(hash)[2]) then
+                enableWeapons()
+                globals.set_int(baseGlobals.pedChanger.hashGlobal1 + 7 + gender, joaat(default_models[gender]))
+            else
+                disableWeapons()
+                localplayer:set_max_health(328.0)
+                menu.heal_player()
+            end
             tries = tries + 1
+            sleep(0.02)
         end
         ped_is_setting = nil
     end
@@ -1112,7 +1118,11 @@ function setPlayerModel(hash)
 end
 
 function enableWeapons()
-    globals.set_bool(baseGlobals.pedChanger.pedTrigger + 226 + 1, true) --enable weapons
+    globals.set_bool(baseGlobals.pedChanger.pedTrigger + 226 + 1, true)
+end
+
+function disableWeapons()
+    globals.set_bool(baseGlobals.pedChanger.pedTrigger + 226 + 1, false)
 end
 --------------------------------------- SET WAYPOINT ---------------------------------------------
 -----Thanks to rf2007 for the globals! Updated to newest gta version by me
@@ -1161,5 +1171,8 @@ function isSnowTurnedOn()
 end
 
 baseGlobals.snowGlobal.testFunction = function()
-
+    changeSnowGlobal(not isSnowTurnedOn())
 end
+
+--------------------- Set freemode thread priority? ------------------------- TODO:
+--Global_262145.f_32166 /* Tunable: SET_FREEMODE_THREAD_PRIORITY */

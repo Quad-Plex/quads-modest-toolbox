@@ -1,11 +1,12 @@
 TODO:
-- Don't give back weapons when changing to an animal model
 - Add error message about missing folder if requires fail
 - playerlist readme/legend with symbol explanation
 - Add Readme and FAQ description for unclear actions 
 - add automated release procedure
 
 DONE:
+- ~~Fix missing ped categories causing missing peds~~
+- ~~Don't give back weapons when changing to an animal model~~
 - ~~Add drift tyres toggle~~
 - ~~Add snow toggle~~
 - ~~Major rewrite of all loop functions to have them running in the background including json synchronisation~~

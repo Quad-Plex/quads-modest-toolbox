@@ -771,3 +771,9 @@ function checkType(var)
         return 'Other'
     end
 end
+
+------------------------ is animal ped model -----------------------
+function isAnimalPed(internalPedName)
+    if string.find(internalPedName:lower(), "a_c") then return true end
+    return false
+end

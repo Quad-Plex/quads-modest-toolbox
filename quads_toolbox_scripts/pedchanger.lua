@@ -210,7 +210,7 @@ local categorizedPeds = {}
 for _, pedModelData in ipairs(tbl_PedList) do
     local current_category
     for _, pedCategory in ipairs(tbl_PedModelTypes) do
-        if string.find(pedModelData[2], "^" .. pedCategory[1]) then
+        if string.find(pedModelData[2]:lower(), "^" .. pedCategory[1]) then
             current_category = pedCategory[2]
             break
         end

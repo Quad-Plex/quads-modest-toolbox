@@ -147,7 +147,7 @@ teleportType = { [0] = "right on Player", "in Front of Player" }
 teleportTypeSelection = 0
 function tpPedToPlayer(ply, tpType)
     for ped in replayinterface.get_peds() do
-        if ped and ped ~= nil and ped:get_pedtype() >= 4 and not ped:is_in_vehicle() and ped ~= localplayer then
+        if ped and ped ~= nil and ped:get_pedtype() >= 4 and not ped:is_in_vehicle() then
             ped:set_freeze_momentum(true)
             local pos
             if tpType == "in Front of Player" then
