@@ -241,7 +241,8 @@ function addVehicleEntry(vehMenu, vehicle, ply)
             spawnedVehicle = createVehicle(vehicle[1], spawnPos, nil, nil, nil, true, false, false)
         elseif spawnTypes[selection] == "Random Mods" then
             tempMods = generateRandomMods(VEHICLE[vehicle[1]][3])
-            spawnedVehicle = createVehicle(vehicle[1], spawnPos, nil, nil, tempMods, true, true, false)
+            tempExtraMods = generateRandomMods(extra_mods_max)
+            spawnedVehicle = createVehicle(vehicle[1], spawnPos, nil, nil, tempMods, true, false, false, tempExtraMods)
         elseif spawnTypes[selection] == "Max Mods" then
             spawnedVehicle = createVehicle(vehicle[1], spawnPos, nil, nil, VEHICLE[vehicle[1]][3], true, false, true)
         end

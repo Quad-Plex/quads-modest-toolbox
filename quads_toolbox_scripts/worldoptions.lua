@@ -29,6 +29,17 @@ end, function(value)
         json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/LOOPS_STATE.json", loopData)
     end end)
 
+----------------------Respawn State changer----------------------
+greyText(worldOptionsSub, "-------- Unstuck Options --------")
+local stateToSet = 7
+worldOptionsSub:add_int_range("Trigger Respawn (Unstuck) |🔁", 1, -10, 100, function() return stateToSet end, function(n)
+    displayHudBanner("TRI_WARP", "", "", 108)
+    sleep(0.3)
+    stateToSet = n
+    setPlayerRespawnState(getLocalplayerID(), n)
+end)
+
+worldOptionsSub:add_action("Reset Character/Give Back Weapons", function() enableWeapons() end)
 
 greyText(worldOptionsSub, "-------- Map Options --------")
 worldOptionsSub:add_toggle("❄️ Turn Snow On/Off ❄️", function() return isSnowTurnedOn() end, function(n) changeSnowGlobal(n) end)
