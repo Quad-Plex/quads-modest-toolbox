@@ -878,13 +878,53 @@ success, possible_offsets = pcall(json.loadfile, "scripts/quads_toolbox_scripts/
 
 baseGlobals.ridLookup.freemode_base_local = -1
 ridLookupTable = {}
+
+function performRidUpdate(sub, customName)
+    if not customName then
+        greyText(sub, "Starting search...")
+    else
+        greyText(sub, "Searching for " .. customName .. "'s R*ID...")
+    end
+    local min_value = 1
+    local max_value = 9999999
+    local preShortenedCheckName
+    preShortenedCheckName = string.sub(player.get_player_name(getLocalplayerID()), 5)
+    local current_count = math.ceil((max_value - min_value) / 2)
+    local counter = 0
+    local counter2 = 1
+    local step = current_count / 10
+    local freemode_script = script("freemode")
+    if not freemode_script then
+        return
+    end
+    --Only check every second value because the offset is always uneven
+    for i = min_value, max_value, 2 do
+        counter = counter + 1
+        if counter == math.floor(step) then
+            greyText(sub, counter2 * 10 .. "% searched... (" .. formatNumberWithDots(counter2 * math.ceil(step)) .. " Variables)")
+            counter = 0
+            counter2 = counter2 + 1
+        end
+        local shortenedPlyName = freemode_script:get_string(i + (0 * 528) + 3, 30)
+        if shortenedPlyName == preShortenedCheckName then
+            addText(sub, "FOUND! Correct Offset: " .. i)
+            baseGlobals.ridLookup.freemode_base_local = i
+            table.insert(possible_offsets, i)
+            table.sort(possible_offsets)
+            json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/RID_DATA_OFFSETS.json", possible_offsets)
+            triggerRidLookupTableRefresh(player.get_player_name(getLocalplayerID()) or nil)
+            return
+        end
+    end
+    addText(sub, "NOT FOUND! Restart the game and try again")
+end
 function triggerRidLookupTableRefresh(plyname)
     local freemode_script = script("freemode")
     if not freemode_script or not plyname then return end
     --Only update the used offset if it hasn't been determined before
     if baseGlobals.ridLookup.freemode_base_local == -1 then
         for _, offset in pairs(possible_offsets) do
-            local shortenedPlyName = freemode_script:get_string(offset + (0 * 526) + 3, 30)
+            local shortenedPlyName = freemode_script:get_string(offset + (0 * 528) + 3, 30)
             if shortenedPlyName == string.sub(plyname, 5) then
                 baseGlobals.ridLookup.freemode_base_local = offset
                 break
@@ -892,9 +932,9 @@ function triggerRidLookupTableRefresh(plyname)
         end
     end
     if baseGlobals.ridLookup.freemode_base_local == -1 then return end     --Couldn't find the correct offset, exit
-    for i = 0, 100 do
-        local shortenedPlyName = freemode_script:get_string(baseGlobals.ridLookup.freemode_base_local + (i * 526) + 3, 30)
-        local rid = freemode_script:get_int(baseGlobals.ridLookup.freemode_base_local + (i * 526))
+    for i = 0, 200 do
+        local shortenedPlyName = freemode_script:get_string(baseGlobals.ridLookup.freemode_base_local + (i * 528) + 3, 30)
+        local rid = freemode_script:get_int(baseGlobals.ridLookup.freemode_base_local + (i * 528))
         if rid ~= nil and rid > 1 and shortenedPlyName ~= nil then
             ridLookupTable[shortenedPlyName] = rid
         end

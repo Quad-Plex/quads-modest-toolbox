@@ -100,7 +100,10 @@ local function dropVehicleOnPlayer(ply, model)
     createVehicle(joaat(model), ply:get_position() + (ply:get_velocity() * 2.22) + vector3(0, 0, 20), nil, true)
 end
 
+local manipulateRunning = false
 local function manipulatePlayerWithTraffic(ply, action)
+    if manipulateRunning then return end
+    manipulateRunning = true
     local nonPlayerVehicles = getNonPlayerVehicles()
     local pos = ply:get_position() + (ply:get_velocity() * 0.44)
 
@@ -127,6 +130,7 @@ local function manipulatePlayerWithTraffic(ply, action)
         veh:set_godmode(false)
         veh:set_gravity(9.8)
     end
+    manipulateRunning = false
 end
 
 local CageTypes = { "CableCar", "Spawned MOC", "TP invis MOC", "Remove Cages" }
@@ -583,36 +587,7 @@ local function ridList(sub)
         addText(sub, "Make sure you are fully loaded or")
         addText(sub, "Check after a restart if RIDs are found")
         sub:add_action("⚠️ BRUTE FORCE SEARCH (LONG) ⚠️", function()
-            greyText(sub, " 0% searched...")
-            local min_value = 1
-            local max_value = 9999999
-            local playerName = player.get_player_name(getLocalplayerID())
-            local current_count = math.ceil((max_value - min_value) / 2)
-            local counter = 0
-            local counter2 = 1
-            local step = current_count / 10
-            local freemode_script = script("freemode")
-            if not freemode_script then return end
-            --Only check every second value because the offset is always uneven
-            for i = min_value, max_value, 2 do
-                counter = counter + 1
-                if counter == math.floor(step) then
-                    greyText(sub, counter2 * 10 .. "% searched... (" .. formatNumberWithDots(counter2 * math.ceil(step)) .. " Variables)")
-                    counter = 0
-                    counter2 = counter2 + 1
-                end
-                local shortenedPlyName = freemode_script:get_string(i + (0 * 526) + 3, 30)
-                if shortenedPlyName == string.sub(playerName, 5) then
-                    addText(sub, "FOUND! Correct Offset: " .. i)
-                    baseGlobals.ridLookup.freemode_base_local = i
-                    table.insert(possible_offsets, i)
-                    table.sort(possible_offsets)
-                    json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/RID_DATA_OFFSETS.json", possible_offsets)
-                    triggerRidLookupTableRefresh(player.get_player_name(getLocalplayerID()) or nil)
-                    return
-                end
-            end
-            addText(sub, "NOT FOUND! Restart the game and try again")
+            performRidUpdate(sub)
         end)
     else
         greyText(sub, "Names have their first 4 letters cut")
@@ -854,9 +829,17 @@ local function playerInfo(plyId, sub, plyName)
     sub:add_bare_item("", function()
         return "PlyId: " .. plyId
     end, null, null, null)
+    local searching = false
     sub:add_bare_item("", function()
-        return "R* ID: " .. tostring(getRidForPlayer(plyName))
-    end, null, null, null)
+        if getRidForPlayer(plyName) then
+            return "R* ID: " .. getRidForPlayer(plyName)
+        else
+            return searching and "R* ID: searching..." or "R* ID: start search (~2min)"
+        end
+        end, function()
+        performRidUpdate(sub, plyName)
+        return "R* ID: " .. getRidForPlayer(plyName) or "not found :("
+    end, null, null)
 end
 
 local showDisabledFlags = false

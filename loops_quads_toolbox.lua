@@ -196,14 +196,14 @@ local function flyThread()
     local auto_yeet
     local random_direction = vector3(math.random(-2, 2), math.random(-2, 2), 0)
     for mocToYeet in replayinterface.get_vehicles() do
-        if mocToYeet:get_model_hash() == joaat("TrailerLarge") and (distanceBetween(mocToYeet, ply) <= 150) then
+        if mocToYeet:get_model_hash() == joaat("TrailerLarge") and (distanceBetween(mocToYeet, autoPly()) <= 40) then
             auto_yeet = mocToYeet
         end
     end
     sleep(0.1)
     while loopData.auto_fly and auto_yeet and loopData.currentPlayerId and not checkAndPerformEmergencyStop() do
         auto_yeet:set_position(autoPly():get_position() + random_direction + vector3(0, 0, 5))
-        sleep(0.12)
+        sleep(0.11)
         updateLoopData()
     end
 end

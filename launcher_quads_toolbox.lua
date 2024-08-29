@@ -27,6 +27,7 @@ toolboxSub:add_bare_item(centeredText("--__--¯¯-- 100% loaded --¯¯--__--"), 
 require("scripts/quads_toolbox_scripts/ultimate_playerlist")
 require("scripts/quads_toolbox_scripts/ambientPickupSuite")
 
+require("scripts/quads_toolbox_scripts/vehicle_spawner")
 vehicleSpawnMenu = toolboxSub:add_submenu("     ★🚗 Vehicle Spawner ★🚗", function() addVehicleSpawnMenu(localplayer, vehicleSpawnMenu) end)
 
 require("scripts/quads_toolbox_scripts/carMeetHelper")

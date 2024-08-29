@@ -1,4 +1,6 @@
 TODO:
+- when using random spawner, see the generated random mods as tempmods
+- Make vehicle search find favorited vehicles by their display name
 - 'World Options' with remove traffic, remove peds, toggle snow, leave online session, Force Exit Game
 - Add option to save mod data as new favorite vehicle
 - playerlist readme/legend with symbol explanation
