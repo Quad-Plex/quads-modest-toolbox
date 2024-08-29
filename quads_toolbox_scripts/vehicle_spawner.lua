@@ -204,6 +204,8 @@ local enterOnSpawn = false
 local livePreview = false
 function addVehicleEntry(vehMenu, vehicle, ply)
     vehMenu:clear()
+    local tempMods = table.copy(empty_mods)
+    local tempExtraMods = table.copy(extra_mods_base)
     greyText(vehMenu, "|Spawning " .. vehicle[2][1] .. "...")
     local favoriteVehicle = isInFavorites(vehicle[1])
     if favoriteVehicle then
@@ -238,7 +240,8 @@ function addVehicleEntry(vehMenu, vehicle, ply)
         if spawnTypes[selection] == "No Mods" then
             spawnedVehicle = createVehicle(vehicle[1], spawnPos, nil, nil, nil, true, false, false)
         elseif spawnTypes[selection] == "Random Mods" then
-            spawnedVehicle = createVehicle(vehicle[1], spawnPos, nil, nil, generateRandomMods(VEHICLE[vehicle[1]][3]), true, true, false)
+            tempMods = generateRandomMods(VEHICLE[vehicle[1]][3])
+            spawnedVehicle = createVehicle(vehicle[1], spawnPos, nil, nil, tempMods, true, true, false)
         elseif spawnTypes[selection] == "Max Mods" then
             spawnedVehicle = createVehicle(vehicle[1], spawnPos, nil, nil, VEHICLE[vehicle[1]][3], true, false, true)
         end
@@ -316,8 +319,6 @@ function addVehicleEntry(vehMenu, vehicle, ply)
         end
     end)
     greyText(vehMenu, "==== Specific Mods Settings ====")
-    local tempMods = table.copy(empty_mods)
-    local tempExtraMods = table.copy(extra_mods_base)
     for index, maxMods in ipairs(VEHICLE[vehicle[1]][3]) do
         local oldMaxMods = maxMods
         if maxMods > -1 then
@@ -360,7 +361,6 @@ function addVehicleEntry(vehMenu, vehicle, ply)
         end
     end
     for index, maxExtraMods in ipairs(extra_mods_max) do
-        print("Index: " .. index .. " maxMods: " .. tostring(maxExtraMods))
         vehMenu:add_bare_item("", function()
             if not string.find(extra_mods_labels[index]:lower(), "color") then
                 return extra_mods_labels[index] .. "|(0 to " .. string.format("%2d", maxExtraMods) .. ")" .. " ◀ " .. tempExtraMods[index] .. " ▶"

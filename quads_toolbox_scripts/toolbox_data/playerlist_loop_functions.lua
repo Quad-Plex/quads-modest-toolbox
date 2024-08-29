@@ -22,6 +22,7 @@ function emergencyStopLoops()
     loopData.auto_gps = false
     loopData.trafficNoclipToggle = false
     loopData.removeTrafficToggle = false
+    loopData.removeNpcToggle = false
     json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/LOOPS_STATE.json", loopData)
 end
 

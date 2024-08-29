@@ -392,3 +392,32 @@ menu.register_callback('removeTraffic', function()
         saveLoopData()
         removeTrafficThread()
     end end)
+
+local npcRemoverRunning = false
+function removeNpcThread()
+    updateLoopData()
+    while loopData.removeNpcToggle do
+        npcRemoverRunning = true
+        for ped in replayinterface.get_peds() do
+            if ped and ped ~= nil and ped:get_pedtype() >= 4 and not ped:is_in_vehicle() and distanceBetween(localplayer, ped) < 42 then
+                ped:set_health(0)
+                local pedPos = ped:get_position()
+                pedPos.z = pedPos.z - 200
+                ped:set_position(pedPos)
+            end
+        end
+        sleep(0.04)
+        updateLoopData()
+    end
+    npcRemoverRunning = false
+end
+menu.register_callback('autoRemoveNpcs', function()
+    if loopData.removeNpcToggle == true then
+        loopData.removeNpcToggle = false
+        saveLoopData()
+    else
+        updateLoopData()
+        loopData.removeNpcToggle = true
+        saveLoopData()
+        removeNpcThread()
+    end end)

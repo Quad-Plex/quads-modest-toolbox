@@ -279,6 +279,7 @@ end
 
 ------------------------ is animal ped model -----------------------
 function isAnimalPed(internalPedName)
+    if checkType(internalPedName) == "Int" then return false end
     if string.find(internalPedName:lower(), "a_c") then return true end
     return false
 end

@@ -59,10 +59,6 @@ miscOptionsSub:add_action("Refill Inventory |🍪🍫🍾", function()
 	refillInventory()
 end)
 
-greyText(miscOptionsSub, "-------- Map Options --------")
-miscOptionsSub:add_toggle("Turn Snow On/Off", function() return isSnowTurnedOn() end, function(n) changeSnowGlobal(n) end)
-
-
 ----------------------Respawn State changer----------------------
 greyText(miscOptionsSub, "-------- Unstuck Options --------")
 local stateToSet = 7

@@ -34,7 +34,6 @@ require("scripts/quads_toolbox_scripts/carMeetHelper")
 
 vehicleOptionsSub = toolboxSub:add_submenu(centeredText(" 🔧 Vehicle Tools 🔧"))
 greyText(vehicleOptionsSub, centeredText(" ----- 🚗 Vehicle Options 🚗 -----"))
-require("scripts/quads_toolbox_scripts/trafficremover")
 require("scripts/quads_toolbox_scripts/carCheats")
 require("scripts/quads_toolbox_scripts/rainbow_vehicle")
 require("scripts/quads_toolbox_scripts/misc_vehicle")
@@ -49,6 +48,9 @@ require("scripts/quads_toolbox_scripts/gunmenu")
 
 pedChangerSub = toolboxSub:add_submenu(centeredText("    ★🏃 Ped Changer 🏃★"))
 require("scripts/quads_toolbox_scripts/pedchanger")
+
+worldOptionsSub = toolboxSub:add_submenu(centeredText("🌍 World Options 🌍"))
+require("scripts/quads_toolbox_scripts/worldoptions")
 
 miscOptionsSub = toolboxSub:add_submenu(centeredText("❓ Misc Options ❓"))
 greyText(miscOptionsSub, centeredText(" ❓ Misc Options ❓"))
