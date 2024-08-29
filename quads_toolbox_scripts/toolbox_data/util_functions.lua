@@ -268,6 +268,7 @@ local spawnTypeSelectionCurrent = 0
 local spawnTypeSelectionStandard = 0
 local godmodeEnabledSpawn = false
 local enterOnSpawn = false
+local livePreview = false
 function addVehicleEntry(vehMenu, vehicle, ply)
     vehMenu:clear()
     greyText(vehMenu, "|Spawning " .. vehicle[2][1] .. "...")
@@ -379,6 +380,106 @@ function addVehicleEntry(vehMenu, vehicle, ply)
                 end)
                 json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/FAVORITED_CARS.json", favoritedCars)
             end
+        end
+    end)
+    greyText(vehMenu, "==== Specific Mods Settings ====")
+    local tempMods = table.copy(empty_mods)
+    local tempExtraMods = table.copy(extra_mods_base)
+    for index, maxMods in ipairs(VEHICLE[vehicle[1]][3]) do
+        local oldMaxMods = maxMods
+        if maxMods > -1 then
+            vehMenu:add_bare_item("", function()
+                if string.sub(eVehicleModType[index], 5) == "WHEELS" and tempExtraMods[1] == 9 or tempExtraMods[1] == 8 then
+                    maxMods = 217
+                else
+                    maxMods = oldMaxMods
+                end
+                return string.sub(eVehicleModType[index] .. "|(0 to " .. string.format("%2d", maxMods) .. ")",5) .. " ◀ " .. tempMods[index] .. " ▶"
+            end, null, function() --On Left
+                if string.sub(eVehicleModType[index], 5) == "WHEELS" and tempExtraMods[1] == 9 or tempExtraMods[1] == 8 then --Category 8/9 is Bennys wheels, it has a lot more choice
+                    maxMods = 217
+                else
+                    maxMods = oldMaxMods
+                end
+                if tempMods[index] - 1 >= 0 then
+                    tempMods[index] = tempMods[index] - 1
+                end
+                if livePreview then
+                    local spawnPos = ply:get_position() + ply:get_heading() * 7
+                    createVehicle(vehicle[1], spawnPos, nil, nil, tempMods, true, false, false, tempExtraMods)
+                end
+                return string.sub(eVehicleModType[index] .. "|(0 to " .. string.format("%2d", maxMods) .. ")",5) .. " ◀ " .. tempMods[index] .. " ▶"
+            end, function() --on_right
+                if string.sub(eVehicleModType[index], 5) == "WHEELS" and tempExtraMods[1] == 9 or tempExtraMods[1] == 8 then
+                    maxMods = 217
+                else
+                    maxMods = oldMaxMods
+                end
+                if tempMods[index] + 1 <= maxMods then
+                    tempMods[index] = tempMods[index] + 1
+                end
+                if livePreview then
+                    local spawnPos = ply:get_position() + ply:get_heading() * 7
+                    createVehicle(vehicle[1], spawnPos, nil, nil, tempMods, true, false, false, tempExtraMods)
+                end
+                return string.sub(eVehicleModType[index] .. "|(0 to " .. string.format("%2d", maxMods) .. ")",5) .. " ◀ " .. tempMods[index] .. " ▶"
+            end)
+        end
+    end
+    for index, maxExtraMods in ipairs(extra_mods_max) do
+        print("Index: " .. index .. " maxMods: " .. tostring(maxExtraMods))
+        vehMenu:add_bare_item("", function()
+            if not string.find(extra_mods_labels[index]:lower(), "color") then
+                return extra_mods_labels[index] .. "|(0 to " .. string.format("%2d", maxExtraMods) .. ")" .. " ◀ " .. tempExtraMods[index] .. " ▶"
+            else
+                return extra_mods_labels[index] .. "| ◀ " .. string.sub(eVehicleColor[tempExtraMods[index]] .. " ▶", 13)
+            end
+        end, null, function() --On Left
+            if tempExtraMods[index] - 1 >= 0 then
+                tempExtraMods[index] = tempExtraMods[index] - 1
+            end
+            if livePreview then
+                local spawnPos = ply:get_position() + ply:get_heading() * 7
+                createVehicle(vehicle[1], spawnPos, nil, nil, tempMods, true, false, false, tempExtraMods)
+            end
+            if not string.find(extra_mods_labels[index]:lower(), "color") then
+                return extra_mods_labels[index] .. "|(0 to " .. string.format("%2d", maxExtraMods) .. ")" .. " ◀ " .. tempExtraMods[index] .. " ▶"
+            else
+                return extra_mods_labels[index] .. "| ◀ " .. string.sub(eVehicleColor[tempExtraMods[index]] .. " ▶", 13)
+            end
+        end, function() --on_right
+            if tempExtraMods[index] + 1 <= maxExtraMods then
+                tempExtraMods[index] = tempExtraMods[index] + 1
+            end
+            if livePreview then
+                local spawnPos = ply:get_position() + ply:get_heading() * 7
+                createVehicle(vehicle[1], spawnPos, nil, nil, tempMods, true, false, false, tempExtraMods)
+            end
+            if not string.find(extra_mods_labels[index]:lower(), "color") then
+                return extra_mods_labels[index] .. "|(0 to " .. string.format("%2d", maxExtraMods) .. ")" .. " ◀ " .. tempExtraMods[index] .. " ▶"
+            else
+                return extra_mods_labels[index] .. "| ◀ " .. string.sub(eVehicleColor[tempExtraMods[index]] .. " ▶", 13)
+            end
+        end)
+    end
+    greyText(vehMenu, "-----------------------")
+    vehMenu:add_toggle("Live Preview", function() return livePreview end, function(toggle) livePreview = toggle end)
+    vehMenu:add_action("Spawn with specified mods", function()
+        local oldVehNetId = getNetIDOfLastSpawnedVehicle()
+        local spawnPos = ply:get_position() + ply:get_heading() * 7
+
+        local spawnedVehicle
+        spawnedVehicle = createVehicle(vehicle[1], spawnPos, nil, nil, tempMods, true, false, false, tempExtraMods)
+
+        if (vehicle[4] == nil and enterOnSpawn) or (vehicle[4] ~= nil and vehicle[4]) and spawnedVehicle ~= oldVehNetId then
+            setPedIntoVehicle(spawnedVehicle, localplayer:get_position())
+        end
+        if (vehicle[3] == nil and godmodeEnabledSpawn) or (vehicle[3] ~= nil and vehicle[3]) then
+            if (vehicle[4] == nil and enterOnSpawn) or (vehicle[4] ~= nil and vehicle[4]) then
+                sleep(3) --there is a weird timeout after tping into a car where it will be godmoded, but lose godmode after ~3sec, so we need to wait for that long to re-apply gm so it sticks
+            end
+            sleep(0.2)
+            findAndEnableGodmodeForVehicle(vehicle[1], spawnPos)
         end
     end)
 end

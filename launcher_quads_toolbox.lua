@@ -8,6 +8,7 @@ if not folderTest then
 	return
 end
 unused = nil
+require("scripts/quads_toolbox_scripts/toolbox_data/enums/VEHICLE_ENUMS")
 require("scripts/quads_toolbox_scripts/toolbox_data/enums/WEAPONS")
 require("scripts/quads_toolbox_scripts/toolbox_data/enums/PED_FLAGS")
 require("scripts/quads_toolbox_scripts/toolbox_data/enums/PED_MODELS")

@@ -119,7 +119,7 @@ function getNetIDOfLastSpawnedVehicle()
     return globals.get_int(baseGlobals.vehicleSpawnerNetID.vehNetIDGlobal + 6799)
 end
 
-function createVehicle(modelHash, pos, heading, skip_remove_current, mod, alternative_spawn_toggle, random_details, max_details)
+function createVehicle(modelHash, pos, heading, skip_remove_current, mod, alternative_spawn_toggle, random_details, max_details, custom_details_table)
     if not type(modelHash):match("number") then
         modelHash = joaat(modelHash)
     end
@@ -144,29 +144,27 @@ function createVehicle(modelHash, pos, heading, skip_remove_current, mod, altern
     if not vehicle_is_creating then
         vehicle_is_creating = true
         --if (not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 2) and not globals.get_bool(baseGlobals.vehicleSpawner2.baseGlobal2 + 5)) then
-            local primaryColor = random_details and math.random(0, 160) or (max_details and 159 or 0)
+            local primaryColor = custom_details_table and custom_details_table[3] or (random_details and math.random(0, 161)) or (max_details and 159) or 0
             globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 5, primaryColor) --primary color selection (see eVehicleColor)
-            local secondaryColor = random_details and math.random(0, 160) or (max_details and 159 or 0)
+            local secondaryColor = custom_details_table and custom_details_table[4] or (random_details and math.random(0, 161)) or (max_details and 159) or 0
             globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 6, secondaryColor) --secondary color selection
-            local pearlescentColor = random_details and math.random(0, 160) or (max_details and 159 or 0)
+            local pearlescentColor = custom_details_table and custom_details_table[5] or (random_details and math.random(0, 161)) or (max_details and 159) or 0
             globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 7, pearlescentColor) --pearlescent color selection
-            local wheelColor = random_details and math.random(0, 160) or (max_details and 159 or 0)
+            local wheelColor = custom_details_table and custom_details_table[6] or (random_details and math.random(0, 161)) or (max_details and 159) or 0
             globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 8, wheelColor) --wheel color selection
-            if not mod then
-                mod = noMods
-            end
+            if not mod then mod = noMods end
             --Write each mod integer into the globals in an array
             for i = 1, globals.get_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 9) do
                 --see eVehicleModType
-                globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 9 + i, mod[i])
+                globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 9 + i, mod[i] or 0)
             end
             globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 62, math.random(0, 255)) --VEHICLE::SET_VEHICLE_TYRE_SMOKE_COLOR Red
             globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 63, math.random(0, 255)) --Green
             globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 64, math.random(0, 255)) --Blue
-            local windowTint = random_details and math.random(0, 4) or (max_details and 3 or 0)
+            local windowTint = custom_details_table and custom_details_table[2] or (random_details and math.random(0, 4)) or (max_details and 3) or 0
             globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 65, windowTint) --Window Tint
             globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 66, modelHash) --veh hash
-            local vehWheelType = random_details and math.random(0, 12) or (max_details and 12 or 0)
+            local vehWheelType = custom_details_table and custom_details_table[1] or (random_details and math.random(0, 12)) or (max_details and 12) or 0
             globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 69, vehWheelType) --veh wheel type (category) see eVehicleWheelType
             --globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 71, math.random(0, 255)) --Custom Primary/Secondary Color Red
             --globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 72, math.random(0, 255)) --Green
@@ -179,9 +177,9 @@ function createVehicle(modelHash, pos, heading, skip_remove_current, mod, altern
             globals.set_float(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 80, 0) --Dirt Level (Float between 0 and 1.0)
             globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 94, 0) --switch-case: 0: nil, 1: set decor player_vehicle, 2: set decor veh_modded_by_player
             globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 95, 15) --Bit-Storage that gets checked when previous global sets 1 or 2 (setting all to true 1111 is the easiest way)
-            local interiorColor = random_details and math.random(0, 160) or (max_details and 159 or 0)
+            local interiorColor = custom_details_table and custom_details_table[7] or (random_details and math.random(0, 161)) or (max_details and 159) or 0
             globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 97, interiorColor) --Interior Color
-            local dashboardColor = random_details and math.random(0, 160) or (max_details and 159 or 0)
+            local dashboardColor = custom_details_table and custom_details_table[8] or (random_details and math.random(0, 161)) or (max_details and 159) or 0
             globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 97, dashboardColor) --Dashboard Interior Color
             --local wheelType = random_details and math.random(1, 3) or (max_details and 1 or 2)
             globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 102, 1) --Wheel Upgrade (2=Standard, 1=Bulletproof, 3=drift tyres)

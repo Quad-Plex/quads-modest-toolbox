@@ -1,9 +1,12 @@
 TODO:
+- 'World Options' with remove traffic, remove peds, toggle snow, leave online session, Force Exit Game
+- Add option to save mod data as new favorite vehicle
 - playerlist readme/legend with symbol explanation
 - Add Readme and FAQ description for unclear actions 
 - add automated release procedure
 
 DONE:
+- ~~Add full customizable mod options to vehicle spawner~~
 - ~~Add error message about missing folder if requires fail~~
 - ~~Fix missing ped categories causing missing peds~~
 - ~~Don't give back weapons when changing to an animal model~~
