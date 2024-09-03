@@ -19,7 +19,7 @@
   },
   {
     "event": "ToggleCarjumpHotkey",
-    "keycode": 110,
+    "keycode": 18,
     "name": "Carjump",
     "toggleVar": true
   },
