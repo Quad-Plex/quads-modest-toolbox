@@ -13,7 +13,7 @@ end
 
 local function searchForPed(searchString)
     local results = {}
-    for index, ped in ipairs(tbl_PedList) do
+    for _, ped in ipairs(tbl_PedList) do
         if string.find(ped[3]:lower(), searchString:lower()) then
             table.insert(results, ped)
         end
@@ -32,6 +32,8 @@ local function stringChangerSearch(sub, results, oldSearch)
         searchString = oldSearch
     end
     sub:clear()
+    greyText(sub, "Add letters using the button below,")
+    greyText(sub, "then press the 'Search for' button")
     sub:add_action("||⌫ Backspace ⌫|", function()
         searchString = string.sub(searchString, 1, -2)
     end)
@@ -51,7 +53,7 @@ local function stringChangerSearch(sub, results, oldSearch)
                 return "Add Letter: ◀ " .. showLettersForPosition(selectedLetterPos, lowercaseLetters, true) .. " ▶"
             end)
     sub:add_bare_item("", function()
-        return "Search for " .. searchString
+        return "Search for: " .. searchString
     end, function()
         local newResults = searchForPed(searchString)
         if #newResults > 0 then
@@ -230,7 +232,7 @@ for _, pedModelData in ipairs(tbl_PedList) do
 end
 
 -- Sort each category table by display_name
-for category, pedList in pairs(categorizedPeds) do
+for _, pedList in pairs(categorizedPeds) do
     table.sort(pedList, function(a, b)
         return a[3] < b[3]  -- Sort by display_name (3rd element in pedModelData)
     end)
