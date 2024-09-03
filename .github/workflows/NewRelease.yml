@@ -22,7 +22,7 @@ jobs:
 
       - name: Create Zip Archive of all script files
         run: |
-          zip -r quads-modest-toolbox-${{ github.event.inputs.version }}.zip .
+          zip -r quads-modest-toolbox-${{ github.event.inputs.version }}.zip . -x ".git/*" ".github/*"
 
       - name: Create Release
         id: create_release
