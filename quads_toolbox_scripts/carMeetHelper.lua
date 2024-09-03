@@ -182,16 +182,110 @@ local function saveCarMeet(empty)
     json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/CARMEET_DATA.json", carMeetData)
 end
 
-function addCarMeetHelper(sub)
+local function addPredefinedCarmeetsSub(sub)
     local subMenus = {}
     sub:clear()
-    sub:add_action("+ Save nearby cars as new carmeet +", function()
+    success, carMeetData = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/CARMEET_DATA.json")
+    local carMeetDataSortedKeys = {}
+    for key in pairs(carMeetData) do
+        table.insert(carMeetDataSortedKeys, key)
+    end
+    table.sort(carMeetDataSortedKeys)
+    for _, name in ipairs(carMeetDataSortedKeys) do
+        subMenus[name] = sub:add_submenu(name)
+        greyText(subMenus[name], "Creating Car Meet: " .. name)
+        local renameSub
+        renameSub = subMenus[name]:add_submenu("Rename Carmeet", function()
+            stringChangerCarmeet(renameSub, name)
+        end)
+        greyText(subMenus[name], "-----------------------------")
+        subMenus[name]:add_action("Teleport to Carmeet", function()
+            nativeTeleport(getLocationFromCarMeetData(carMeetData[name]), getHeadingFromCarMeetData(carMeetData[name]))
+        end)
+        subMenus[name]:add_action("Spawn predefined cars", function()
+            spawnCarMeet(carMeetData[name], false, subMenus[name])
+        end)
+        subMenus[name]:add_action("Spawn randomized cars", function()
+            spawnCarMeet(carMeetData[name], true, subMenus[name])
+        end)
+        greyText(subMenus[name], "-----------------------------")
+        subMenus[name]:add_action("Spawn random Car Meet Vehicle", function()
+            local selection = math.random(#curatedCarMeetVehicles)
+            createVehicle(curatedCarMeetVehicles[selection][1], localplayer:get_position() + localplayer:get_heading() * 8.7, nil, false, generateRandomMods(VEHICLE[curatedCarMeetVehicles[selection][1]][3]), true, true, false)
+        end)
+        subMenus[name]:add_action("TP into last spawned car", function()
+            local vehicleNetID = getNetIDOfLastSpawnedVehicle()
+            if vehicleNetID then
+                setPedIntoVehicle(getNetIDOfLastSpawnedVehicle())
+            end
+        end)
+        subMenus[name]:add_action("++ Add current veh/pos to car meet ++", function()
+            local veh = localplayer:get_current_vehicle()
+            for id, data in pairs(carMeetData[name]) do
+                if tableCount(data) == 0 then
+                    break
+                end
+                local spawnPos = vector3(data[3][1], data[3][2], data[3][3])
+                if distanceBetween(veh, spawnPos, true) < 8.05 then
+                    greyText(subMenus[name], "Too Close to " .. data[1])
+                    subMenus[name]:add_action("Replace " .. data[1] .. "?", function()
+                        table.remove(carMeetData[name], id)
+                        local carData = { VEHICLE[veh:get_model_hash()][1], veh:get_model_hash(), { veh:get_position().x, veh:get_position().y, veh:get_position().z }, { veh:get_rotation().x, veh:get_rotation().y, veh:get_rotation().z } }
+                        table.insert(carMeetData[name], carData)
+                        table.sort(carMeetData, function(a, b)
+                            return a[1]:upper() < b[1]:upper()
+                        end)
+                        json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/CARMEET_DATA.json", carMeetData)
+                        greyText(subMenus[name], VEHICLE[veh:get_model_hash()][1] .. " added to carmeet")
+                    end)
+                    return
+                end
+            end
+            local carData = { VEHICLE[veh:get_model_hash()][1], veh:get_model_hash(), { veh:get_position().x, veh:get_position().y, veh:get_position().z }, { veh:get_rotation().x, veh:get_rotation().y, veh:get_rotation().z } }
+            table.insert(carMeetData[name], carData)
+            table.sort(carMeetData, function(a, b)
+                return a[1]:upper() < b[1]:upper()
+            end)
+            json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/CARMEET_DATA.json", carMeetData)
+            greyText(subMenus[name], VEHICLE[veh:get_model_hash()][1] .. " added to carmeet")
+        end, function()
+            return localplayer:is_in_vehicle()
+        end)
+        greyText(subMenus[name], "-----------------------------")
+        subMenus[name]:add_toggle("⚠️ Remove nearby traffic ⚠️", function()
+            return removeTrafficToggle
+        end, function(value)
+            removeTrafficToggle = value
+            if not trafficRemoverRunning then
+                menu.emit_event('removeTraffic')
+            end
+        end)
+        greyText(subMenus[name], "---------------------------")
+        local added
+        subMenus[name]:add_action("⚠️ !! Remove Car Meet Data !! ⚠️", function()
+            if not added then
+                subMenus[name]:add_action("!!!! Press me to confirm!!!!", function()
+                    carMeetData[name] = nil
+                    json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/CARMEET_DATA.json", carMeetData)
+                    menu.send_key_press(keycodes.NUMERIC_KEYPAD_0)
+                end)
+                added = true
+            end
+        end)
+    end
+    greyText(sub, "--------------------")
+    sub:add_action("+ Save nearby cars to carmeet data +", function()
         saveCarMeet(false)
+        addPredefinedCarmeetsSub(sub)
     end)
-    sub:add_action("+ Create new empty carmeet here +", function()
+    sub:add_action("+ Create new empty carmeet data here +", function()
         saveCarMeet(true)
+        addPredefinedCarmeetsSub(sub)
     end)
-    greyText(sub, "---------------------------")
+end
+
+local function addCarMeetHelper(sub)
+    sub:clear()
     sub:add_action("Spawn random Car Meet Vehicle", function()
         local selection = math.random(#curatedCarMeetVehicles)
         createVehicle(curatedCarMeetVehicles[selection][1], localplayer:get_position() + localplayer:get_heading() * 8.7, nil, false, generateRandomMods(VEHICLE[curatedCarMeetVehicles[selection][1]][3]), true, true, false)
@@ -207,80 +301,7 @@ function addCarMeetHelper(sub)
     local vehicleSpawnMenu = sub:add_submenu("Spawn Specific Vehicle:")
     if tableCount(carMeetData) > 0 then
         local predefinedCarmeetsSub
-        predefinedCarmeetsSub = sub:add_submenu("Spawn predefined Car meet:", function()
-            success, carMeetData = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/CARMEET_DATA.json")
-            local carMeetDataSortedKeys = {}
-            for key in pairs(carMeetData) do table.insert(carMeetDataSortedKeys, key) end
-            table.sort(carMeetDataSortedKeys)
-            predefinedCarmeetsSub:clear()
-            for _, name in ipairs(carMeetDataSortedKeys) do
-                subMenus[name] = predefinedCarmeetsSub:add_submenu(name)
-                greyText(subMenus[name], "Creating Car Meet: " .. name )
-                local renameSub
-                renameSub = subMenus[name]:add_submenu("Rename Carmeet", function() stringChangerCarmeet(renameSub, name) end)
-                greyText(subMenus[name], "-----------------------------")
-                subMenus[name]:add_action("Teleport to Carmeet", function() nativeTeleport(getLocationFromCarMeetData(carMeetData[name]), getHeadingFromCarMeetData(carMeetData[name])) end)
-                subMenus[name]:add_action("Spawn predefined cars", function() spawnCarMeet(carMeetData[name], false, subMenus[name]) end)
-                subMenus[name]:add_action("Spawn randomized cars", function() spawnCarMeet(carMeetData[name], true, subMenus[name]) end)
-                greyText(subMenus[name], "-----------------------------")
-                subMenus[name]:add_action("Spawn random Car Meet Vehicle", function()
-                    local selection = math.random(#curatedCarMeetVehicles)
-                    createVehicle(curatedCarMeetVehicles[selection][1], localplayer:get_position() + localplayer:get_heading() * 8.7, nil, false, generateRandomMods(VEHICLE[curatedCarMeetVehicles[selection][1]][3]), true, true, false)
-                end)
-                subMenus[name]:add_action("TP into last spawned car", function()
-                    local vehicleNetID = getNetIDOfLastSpawnedVehicle()
-                    if vehicleNetID then setPedIntoVehicle(getNetIDOfLastSpawnedVehicle()) end
-                end)
-                subMenus[name]:add_action("++ Add current veh/pos to car meet ++", function()
-                    local veh = localplayer:get_current_vehicle()
-                    for id, data in pairs(carMeetData[name]) do
-                        if tableCount(data) == 0 then break end
-                        local spawnPos = vector3(data[3][1], data[3][2], data[3][3])
-                        if distanceBetween(veh, spawnPos, true) < 8.05 then
-                            greyText(subMenus[name], "Too Close to " .. data[1])
-                            subMenus[name]:add_action("Replace " .. data[1] .. "?", function()
-                                table.remove(carMeetData[name], id)
-                                local carData = { VEHICLE[veh:get_model_hash()][1], veh:get_model_hash(), { veh:get_position().x, veh:get_position().y, veh:get_position().z }, { veh:get_rotation().x, veh:get_rotation().y, veh:get_rotation().z } }
-                                table.insert(carMeetData[name], carData)
-                                table.sort(carMeetData, function(a, b)
-                                    return a[1]:upper() < b[1]:upper()
-                                end)
-                                json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/CARMEET_DATA.json", carMeetData)
-                                greyText(subMenus[name], VEHICLE[veh:get_model_hash()][1] .. " added to carmeet")
-                            end)
-                            return
-                        end
-                    end
-                    local carData = { VEHICLE[veh:get_model_hash()][1], veh:get_model_hash(), { veh:get_position().x, veh:get_position().y, veh:get_position().z }, { veh:get_rotation().x, veh:get_rotation().y, veh:get_rotation().z } }
-                    table.insert(carMeetData[name], carData)
-                    table.sort(carMeetData, function(a, b)
-                        return a[1]:upper() < b[1]:upper()
-                    end)
-                    json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/CARMEET_DATA.json", carMeetData)
-                    greyText(subMenus[name], VEHICLE[veh:get_model_hash()][1] .. " added to carmeet")
-                end, function() return localplayer:is_in_vehicle() end)
-                greyText(subMenus[name], "-----------------------------")
-                subMenus[name]:add_toggle("⚠️ Remove nearby traffic ⚠️", function()
-                    return removeTrafficToggle
-                end, function(value)
-                    removeTrafficToggle = value
-                    if not trafficRemoverRunning then
-                        menu.emit_event('removeTraffic')
-                    end
-                end)
-                greyText(subMenus[name], "---------------------------")
-                local added
-                subMenus[name]:add_action("⚠️ !! Remove Car Meet Data !! ⚠️", function()
-                    if not added then
-                        subMenus[name]:add_action("!!!! Press to confirm!!!!", function()
-                            carMeetData[name] = nil
-                            json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/CARMEET_DATA.json", carMeetData)
-                        end)
-                        added = true
-                    end
-                end)
-            end
-        end)
+        predefinedCarmeetsSub = sub:add_submenu("Spawn predefined Car meet:", function() addPredefinedCarmeetsSub(predefinedCarmeetsSub) end)
     end
     addVehicleSpawnMenu(localplayer, vehicleSpawnMenu)
     greyText(sub, "-------- loop helpers --------")
