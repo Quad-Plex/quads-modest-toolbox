@@ -599,7 +599,9 @@ local function ridList(sub)
     end
 end
 
+
 --Generates specific info about the player
+local ridSearched = false
 local function playerInfo(plyId, sub, plyName)
     local oldPly
     local function ply()
@@ -829,16 +831,17 @@ local function playerInfo(plyId, sub, plyName)
     sub:add_bare_item("", function()
         return "PlyId: " .. plyId
     end, null, null, null)
-    local searching = false
     sub:add_bare_item("", function()
         if getRidForPlayer(plyName) then
             return "R* ID: " .. getRidForPlayer(plyName)
         else
-            return searching and "R* ID: searching..." or "R* ID: start search (~2min)"
+            return ridSearched and "R* ID: not found :(..." or "R* ID: start search (~2min)"
         end
         end, function()
         performRidUpdate(sub, plyName)
-        return "R* ID: " .. getRidForPlayer(plyName) or "not found :("
+        ridSearched = true
+        local rid = getRidForPlayer(plyName) or "not found :(..."
+        return "R* ID: " .. rid
     end, null, null)
 end
 
