@@ -24,14 +24,11 @@ jobs:
         run: |
           zip -r quads-modest-toolbox-${{ github.event.inputs.version }}.zip . -x ".git/*" ".github/*"
 
-      - name: Get Previous Tag
-        id: get_previous_tag
-        run: echo "::set-output name=tag::$(git describe --tags --abbrev=0 HEAD^)"
-
       - name: Get Commit Messages
         id: get_commit_messages
         run: |
-          commits=$(git log ${{ steps.get_previous_tag.outputs.tag }}..HEAD --pretty=format:"* %s")
+          lasttag=$(git describe --tags --abbrev=0)
+          commits=$(git log ${{ lasttag }}..HEAD --oneline)
           echo "commit_messages=$commits" >> $GITHUB_ENV
           echo "commit_messages=$commits"
 
