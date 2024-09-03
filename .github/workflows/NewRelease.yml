@@ -16,6 +16,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Replace 'true' with 'false' in a specific file
+        run: |
+          sed -i 's/true/false/g' quads_toolbox_scripts/toolbox_data/SAVEDATA/HOTKEY_CONFIG.json  # Replace with the actual file path
+
       - name: Create Zip Archive of Repository
         run: |
           zip -r quads-modest-toolbox-${{ github.event.inputs.version }}.zip .
