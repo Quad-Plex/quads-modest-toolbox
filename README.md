@@ -1,4 +1,5 @@
 TODO:
+- Add Installation Instructions
 - playerlist readme/legend with symbol explanation
 - Add Readme and FAQ description for unclear actions
 

@@ -85,8 +85,8 @@ local function changeVehicleColor(vehicle, colorFunc)
     else
         red2, green2, blue2 = colorFunc(red2, green2, blue2)
         --Make sure to actually produce non-uniform colors
-        if math.abs(red2 - red) < 20 and math.abs(blue2 - blue) < 20 and math.abs(green2 - green) < 20 then
-            red2, blue2, green2 = 255, 0, 125
+        if math.abs(red2 - red) < 30 and math.abs(blue2 - blue) < 30 and math.abs(green2 - green) < 30 then
+            red2, blue2, green2 = math.random(0,255), math.random(0,255), math.random(0,255)
         end
         vehicle:set_custom_secondary_colour(red2, green2, blue2)
     end
@@ -104,7 +104,7 @@ end, function(value)
         menu.emit_event("rainbowRunner")
     end
 end)
-vehicleOptionsSub:add_toggle("Mix primary/secondary colors", function()
+vehicleOptionsSub:add_toggle("Same primary/secondary colors", function()
     return uniform
 end, function(value)
     uniform = value
