@@ -12,19 +12,6 @@ table.sort(favoritedCars, function(a, b)
     return a[2][1]:upper() < b[2][1]:upper()
 end)
 
---Pre-sort this table in order to only do it once
-sorted_vehicles = {}
-for hash, vehicle in pairs(VEHICLE) do
-    table.insert(sorted_vehicles, { hash, vehicle })
-end
---sort by Name if classes are the same, otherwise sort by class
-table.sort(sorted_vehicles, function(a, b)
-    if a[2][2] == b[2][2] then
-        return a[2][1]:upper() < b[2][1]:upper()
-    end
-    return a[2][2] < b[2][2]
-end)
-
 local function isInFavorites(veh_hash)
     for i, favVehicle in ipairs(favoritedCars) do
         if favVehicle[1] == veh_hash then
@@ -38,9 +25,14 @@ end
 ------------------- Vehicle Search ----------------------
 local function searchForVehicle(searchString)
     local results = {}
-    for _, vehicle in ipairs(sorted_vehicles) do
+    for _, vehicle in ipairs(sorted_vehicles) do --search normal cars
         if string.find(vehicle[2][1]:lower(), searchString:lower()) then
             table.insert(results, vehicle)
+        end
+    end
+    for _, favoriteVehicle in ipairs(favoritedCars) do --search fav car list, too
+        if string.find(favoriteVehicle[2][1]:lower(), searchString:lower()) and favoriteVehicle[1] ~= VEHICLE[favoriteVehicle[1]][1] then --only include fav cars whose name has been changed manually
+            table.insert(results, favoriteVehicle)
         end
     end
     return results
@@ -131,6 +123,8 @@ local function stringChangerSearch(sub, ply, results, oldSearch)
         searchString = oldSearch
     end
     sub:clear()
+    greyText(sub, "Add letters using the button below,")
+    greyText(sub, "then press the 'Search for' button")
     sub:add_action("||⌫ Backspace ⌫|", function()
         searchString = string.sub(searchString, 1, -2)
     end)
@@ -150,7 +144,7 @@ local function stringChangerSearch(sub, ply, results, oldSearch)
                 return "Add Letter: ◀ " .. showLettersForPosition(selectedLetterPos, lowercaseLetters, true) .. " ▶"
             end)
     sub:add_bare_item("", function()
-        return "Search for " .. searchString
+        return "Search for: " .. searchString
     end, function()
         local newResults = searchForVehicle(searchString)
         if #newResults > 0 then
@@ -175,25 +169,6 @@ local function stringChangerSearch(sub, ply, results, oldSearch)
     greyText(sub, "---------------------------")
 end
 
-function generateRandomMods(inputTable)
-    local newTable = {}
-    for i, value in ipairs(inputTable) do
-        if value == -1 then
-            -- If the value is -1, keep it unchanged
-            newTable[i] = value
-        else
-            local lowerLimit
-            if value > 1 then
-                lowerLimit = 1
-            else
-                lowerLimit = 0
-            end
-            newTable[i] = math.random(lowerLimit, value)
-        end
-    end
-    return newTable
-end
-
 --Create Vehicle Spawn Menu
 local spawnTypes = { [0]="No Mods", "Random Mods", "Max Mods"}
 local spawnTypeSelectionNearest = 0
@@ -204,13 +179,30 @@ local enterOnSpawn = false
 local livePreview = false
 function addVehicleEntry(vehMenu, vehicle, ply)
     vehMenu:clear()
-    local tempMods = table.copy(empty_mods)
-    local tempExtraMods = table.copy(extra_mods_base)
+    local tempMods
+    local tempExtraMods
     greyText(vehMenu, "|Spawning " .. vehicle[2][1] .. "...")
     local favoriteVehicle = isInFavorites(vehicle[1])
     if favoriteVehicle then
         local renameSub
         renameSub = vehMenu:add_submenu("Rename " .. vehicle[2][1], function() stringChangerFavVehicle(renameSub, vehicle[2][1], vehicle) end)
+        if not vehicle[5] or not vehicle[6] then
+            vehicle[5] = empty_mods
+            vehicle[6] = extra_mods_empty
+            local oldModData = vehicle[2][3]
+            vehicle[2][3] = nil --Don't want the mod data to be copied into the favorited_vehicles json so we exclude it temporarily from the object
+            table.sort(favoritedCars, function(a, b) --sort before saving otherwise the order gets corrupted
+                return a[2][1]:upper() < b[2][1]:upper()
+            end)
+            json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/FAVORITED_CARS.json", favoritedCars)
+            vehicle[2][3] = oldModData
+        end
+
+        tempMods = table.copy(vehicle[5])
+        tempExtraMods = table.copy(vehicle[6])
+    else
+        tempMods = table.copy(empty_mods)
+        tempExtraMods = table.copy(extra_mods_empty)
     end
     vehMenu:add_action("Spawn using Method #1", function()
         local oldVehNetId = getNetIDOfLastSpawnedVehicle()
@@ -266,7 +258,7 @@ function addVehicleEntry(vehMenu, vehicle, ply)
     end, function(n)
         if vehicle[3] ~= nil then
             local oldModData = vehicle[2][3]
-            vehicle[2][3] = nil --Don't want the mod data to be copied into the favorited_vehicles json so we exclude it temporarily from the object
+            vehicle[2][3] = nil --Don't want the max mod data to be copied into the favorited_vehicles json so we exclude it temporarily from the object
             vehicle[3] = n
             table.sort(favoritedCars, function(a, b)
                 return a[2][1]:upper() < b[2][1]:upper()
@@ -287,7 +279,7 @@ function addVehicleEntry(vehMenu, vehicle, ply)
             local oldModData = vehicle[2][3]
             vehicle[2][3] = nil --Don't want the mod data to be copied into the favorited_vehicles json so we exclude it temporarily from the object
             vehicle[4] = n
-            table.sort(favoritedCars, function(a, b)
+            table.sort(favoritedCars, function(a, b) --sort before saving otherwise the order gets corrupted
                 return a[2][1]:upper() < b[2][1]:upper()
             end)
             json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/FAVORITED_CARS.json", favoritedCars)
@@ -345,7 +337,7 @@ function addVehicleEntry(vehMenu, vehicle, ply)
                 end
                 return string.sub(eVehicleModType[index] .. "|(0 to " .. string.format("%2d", maxMods) .. ")",5) .. " ◀ " .. tempMods[index] .. " ▶"
             end, function() --on_right
-                if string.sub(eVehicleModType[index], 5) == "WHEELS" and tempExtraMods[1] == 9 or tempExtraMods[1] == 8 then
+                if string.sub(eVehicleModType[index], 5) == "WHEELS" and tempExtraMods[1] == 9 or tempExtraMods[1] == 8 then --Category 8/9 is Bennys wheels, it has a lot more choice
                     maxMods = 217
                 else
                     maxMods = oldMaxMods
@@ -416,6 +408,17 @@ function addVehicleEntry(vehMenu, vehicle, ply)
             findAndEnableGodmodeForVehicle(vehicle[1], spawnPos)
         end
     end)
+    vehMenu:add_action("Save mods for this fav vehicle", function()
+        vehicle[5] = tempMods
+        vehicle[6] = tempExtraMods
+        local oldModData = vehicle[2][3]
+        vehicle[2][3] = nil --Don't want the mod data to be copied into the favorited_vehicles json so we exclude it temporarily from the object
+        table.sort(favoritedCars, function(a, b) --sort before saving otherwise the order gets corrupted
+            return a[2][1]:upper() < b[2][1]:upper()
+        end)
+        json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/FAVORITED_CARS.json", favoritedCars)
+        vehicle[2][3] = oldModData
+    end, function() return isInFavorites(vehicle[1]) ~= false end)
 end
 
 local function buildFavoriteVehiclesSub(player, categorySub)

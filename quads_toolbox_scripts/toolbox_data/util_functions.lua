@@ -283,3 +283,37 @@ function isAnimalPed(internalPedName)
     if string.find(internalPedName:lower(), "a_c") then return true end
     return false
 end
+
+-------------------- Sorted vehicle list --------------------------
+--Pre-sort this table in order to only do it once
+sorted_vehicles = {}
+for hash, vehicle in pairs(VEHICLE) do
+    table.insert(sorted_vehicles, { hash, vehicle })
+end
+--sort by Name if classes are the same, otherwise sort by class
+table.sort(sorted_vehicles, function(a, b)
+    if a[2][2] == b[2][2] then
+        return a[2][1]:upper() < b[2][1]:upper()
+    end
+    return a[2][2] < b[2][2]
+end)
+
+------------------- generate random mods ------------------------------------------------------------
+function generateRandomMods(inputTable)
+    local newTable = {}
+    for i, value in ipairs(inputTable) do
+        if value == -1 then
+            -- If the value is -1, keep it unchanged
+            newTable[i] = value
+        else
+            local lowerLimit
+            if value > 1 then
+                lowerLimit = 1
+            else
+                lowerLimit = 0
+            end
+            newTable[i] = math.random(lowerLimit, value)
+        end
+    end
+    return newTable
+end

@@ -1,8 +1,8 @@
 empty_mods = {[1]=0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 --                         0            1             2               3              4             5             6                 7
 extra_mods_labels = { "Wheel Type", "Window Tint", "1st Color", "2nd Color", "Pearl. Color", "Wheel Color", "Interior Color", "Dash Color" }
-extra_mods_base = { 0, 0, 0, 0, 0, 0, 0, 0}
-extra_mods_max = { 12, 4, 161, 161, 161, 161, 161, 161 }
+extra_mods_empty = { 0, 0, 0, 0, 0, 0, 0, 0}
+extra_mods_max = { 12, 4, 161, 161, 161, 161, 161, 161 } --Max values for the extra mod categories
 
 VEHICLE = {}
 --Sometimes the name is the display name, sometimes the model name. Don't rely on these for spawning, use the hashes instead
