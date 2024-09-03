@@ -24,13 +24,15 @@ jobs:
         run: |
           zip -r quads-modest-toolbox-${{ github.event.inputs.version }}.zip . -x ".git/*" ".github/*"
 
+      - name: Get Previous Tag
+        id: get_previous_tag
+        run: echo "last_tag=$(git describe --tags --abbrev=0 HEAD^)" >> $GITHUB_ENV
+
       - name: Get Commit Messages
         id: get_commit_messages
         run: |
-          lasttag=$(git describe --tags --abbrev=0)
-          commits=$(git log ${{ lasttag }}..HEAD --oneline)
+          commits=$(git log ${{ env.last_tag }}..HEAD --pretty=format:"* %s")
           echo "commit_messages=$commits" >> $GITHUB_ENV
-          echo "commit_messages=$commits"
 
       # - name: Create Release
       #   id: create_release
