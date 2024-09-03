@@ -24,7 +24,7 @@ jobs:
         id: create_release
         uses: actions/create-release@v1
         with:
-          token: ${{ secrets.RELEASE_TOKEN }}
+          github-token:: ${{ secrets.RELEASE_TOKEN }}
           tag_name: ${{ github.event.inputs.version }}
           release_name: Release ${{ github.event.inputs.version }}
           draft: false
