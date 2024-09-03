@@ -24,6 +24,23 @@ jobs:
         run: |
           zip -r quads-modest-toolbox-${{ github.event.inputs.version }}.zip . -x ".git/*" ".github/*"
 
+      - name: Create Git Tag
+        run: |
+          git tag ${{ github.event.inputs.version }}
+          git push origin ${{ github.event.inputs.version }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+
+      - name: Get Previous Tag
+        id: get_previous_tag
+        run: echo "::set-output name=tag::$(git describe --tags --abbrev=0 HEAD^)"
+
+      - name: Get Commit Messages
+        id: get_commit_messages
+        run: |
+          commits=$(git log ${{ steps.get_previous_tag.outputs.tag }}..HEAD --pretty=format:"* %s")
+          echo "commit_messages=$commits" >> $GITHUB_ENV
+
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -33,14 +50,8 @@ jobs:
           draft: false
           prerelease: false
           body: |
-            This release includes the full contents of the repository.
-        env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-
-      - name: Create Git Tag
-        run: |
-          git tag ${{ github.event.inputs.version }}
-          git push origin ${{ github.event.inputs.version }}
+            Changes in this release:
+            ${{ env.commit_messages }}
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
 
