@@ -4,6 +4,7 @@ TODO:
 - add automated release procedure
 
 DONE:
+- ~~Add tiny player toggle~~
 - ~~Add option to save mod data as default for favorited vehicle~~
 - ~~Make vehicle search find favorited vehicles by their display name~~
 - ~~'World Options' with remove traffic, remove peds, toggle snow, leave online session, Force Exit Game~~
@@ -15,6 +16,7 @@ DONE:
 - ~~Add drift tyres toggle~~
 - ~~Add snow toggle~~
 - ~~Major rewrite of all loop functions to have them running in the background including json synchronisation~~
+
 - ~~Add Give Back Weapons~~
 - ~~add text search for peds~~
 - ~~add text search for cars~~
