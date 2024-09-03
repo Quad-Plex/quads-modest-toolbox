@@ -897,7 +897,7 @@ end
 -- auto-close submenu in case a player leaves while their info is open
 local function refreshPlayer(plyName, plyId)
     if player.get_player_name(plyId) ~= plyName then
-        menu.send_key_press(96)
+        menu.send_key_press(keycodes.NUMERIC_KEYPAD_0)
     end
 end
 
