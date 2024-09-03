@@ -77,7 +77,7 @@ local function collectPickups(singlePickup)
 	sleep(0.3)
 
 	--Teleport back using stock teleport, otherwise battle crate pickups wont get carried over
-	for i=0, 100 do
+	for _=0, 100 do
 		localplayer:set_position(oldPos)
 	end
 
@@ -254,15 +254,18 @@ local function initializePickups(sub)
 	greyText(sub, "--------- Nearby Pickups: --------")
 	local pickupArray = sortAndFillPickupArrayByDistance()
 
-	for _, pickup in pairs(pickupArray) do
-		if SortStyles[SortStyle] == "Pickup Names" then
-			displayName = string.gsub(getPickupName(pickup[1]), "PICKUP_", "")
-		else
-			displayName = getModelName(pickup[1])
+	if #pickupArray > 0 then
+		for _, pickup in pairs(pickupArray) do
+			if SortStyles[SortStyle] == "Pickup Names" then
+				displayName = string.gsub(getPickupName(pickup[1]), "PICKUP_", "")
+			else
+				displayName = getModelName(pickup[1])
+			end
+			ambientSubs[_] = sub:add_submenu(displayName .. "|"..pickup[2].."m".." "..pickup[3], function() pickupOptions(ambientSubs[_], pickup) end)
 		end
-		ambientSubs[_] = sub:add_submenu(displayName .. "|"..pickup[2].."m".." "..pickup[3], function() pickupOptions(ambientSubs[_], pickup) end)
+	else
+		greyText(sub, "🚫 No nearby pickups visible! 🚫")
 	end
-
 
 	if #pickupArray > 0 then
 		greyText(sub, "-----------------")
