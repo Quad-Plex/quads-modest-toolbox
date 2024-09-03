@@ -1,9 +1,9 @@
 TODO:
 - playerlist readme/legend with symbol explanation
-- Add Readme and FAQ description for unclear actions 
-- add automated release procedure
+- Add Readme and FAQ description for unclear actions
 
 DONE:
+- ~~add automated release procedure~~
 - ~~Add tiny player toggle~~
 - ~~Add option to save mod data as default for favorited vehicle~~
 - ~~Make vehicle search find favorited vehicles by their display name~~
@@ -16,7 +16,6 @@ DONE:
 - ~~Add drift tyres toggle~~
 - ~~Add snow toggle~~
 - ~~Major rewrite of all loop functions to have them running in the background including json synchronisation~~
-
 - ~~Add Give Back Weapons~~
 - ~~add text search for peds~~
 - ~~add text search for cars~~
