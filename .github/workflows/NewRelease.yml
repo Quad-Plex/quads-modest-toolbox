@@ -16,11 +16,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Replace 'true' with 'false' in a specific file
+      - name: Turn off all Hotkeys in the config
         run: |
-          sed -i 's/true/false/g' quads_toolbox_scripts/toolbox_data/SAVEDATA/HOTKEY_CONFIG.json  # Replace with the actual file path
+          sed -i 's/true/false/g' quads_toolbox_scripts/toolbox_data/SAVEDATA/HOTKEY_CONFIG.json
 
-      - name: Create Zip Archive of Repository
+      - name: Create Zip Archive of all script files
         run: |
           zip -r quads-modest-toolbox-${{ github.event.inputs.version }}.zip .
 
@@ -46,3 +46,6 @@ jobs:
           asset_content_type: application/zip
         env:  
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          
+      - name: Print Release URL
+        run: echo ${{ steps.create_release.outputs.html_url }}
