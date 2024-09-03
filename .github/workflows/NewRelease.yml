@@ -26,7 +26,7 @@ jobs:
 
       - name: Get Previous Tag
         id: get_previous_tag
-        run: echo "last_tag=$(git describe --tags --abbrev=0 HEAD^)" >> $GITHUB_ENV
+        run: echo "last_tag=$($(git describe --tags --abbrev=0))" >> $GITHUB_ENV
 
       - name: Get Commit Messages
         id: get_commit_messages
