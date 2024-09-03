@@ -114,7 +114,7 @@ vehicleOptionsSub:add_toggle("Affect traffic", function()
 end, function(value)
     affect_traffic = value
 end)
-vehicleOptionsSub:add_int_range("Rainbow Speed Multiplier|x", 1, 1, 69, function()
+vehicleOptionsSub:add_int_range("|Speed Multiplier x", 1, 1, 69, function()
     return mul
 end, function(value)
     mul = value

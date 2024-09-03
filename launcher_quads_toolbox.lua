@@ -49,6 +49,9 @@ require("scripts/quads_toolbox_scripts/gunmenu")
 pedChangerSub = toolboxSub:add_submenu(centeredText("    ★🏃 Ped Changer 🏃★"))
 require("scripts/quads_toolbox_scripts/pedchanger")
 
+playerOptionsSub = toolboxSub:add_submenu(centeredText("👤 Player Options 👤"))
+require("scripts/quads_toolbox_scripts/playeroptions")
+
 worldOptionsSub = toolboxSub:add_submenu(centeredText("🌍 World Options 🌍"))
 require("scripts/quads_toolbox_scripts/worldoptions")
 
