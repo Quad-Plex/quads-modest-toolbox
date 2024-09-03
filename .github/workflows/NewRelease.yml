@@ -34,7 +34,8 @@ jobs:
         id: get_commit_messages
         run: |
           commits=$(git log ${{ env.last_tag }}..HEAD --pretty=format:"* %s")
-          echo "$commits" > commit_messages.txt
+          cleaned_commits=$(echo "$commits" | sed -E 's/[^a-zA-Z0-9 ,.-]/_/g')
+          echo "commit_messages=$cleaned_commits" >> $GITHUB_ENV
           
       - name: Create Release
         id: create_release
@@ -46,7 +47,7 @@ jobs:
           prerelease: false
           body: |
             Changes in this release:
-            $(cat commit_messages.txt)
+            ${{ env.commit_messages }}
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
           
