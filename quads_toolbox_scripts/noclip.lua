@@ -56,7 +56,7 @@ end
 
 local oldGrav
 local oldGodmode
-local function NoClip(toggle)
+function noclip(toggle, skipBanner)
 	if localplayer ~= nil then
 		if toggle then
 			if localplayer:is_in_vehicle() then
@@ -95,7 +95,9 @@ local function NoClip(toggle)
 				menu.register_hotkey(keycodes.ADD_KEY, function() adjustSpeed(2) end),
 				menu.register_hotkey(keycodes.SUBTRACT_KEY, function() adjustSpeed(0.5) end)
 			}
-			displayHudBanner("SG_CLIP", "PIM_NCL_PRIV1", "", 108)
+			if not skipBanner then
+				displayHudBanner("SG_CLIP", "PIM_NCL_PRIV1", "", 108)
+			end
 		else
 			speed = 2
 			if oldGrav and localplayer:is_in_vehicle() and localplayer:get_current_vehicle():get_gravity() == 0 then
@@ -108,7 +110,9 @@ local function NoClip(toggle)
 				menu.remove_hotkey(hotkey)
 			end
 			hotkeys = {}
-			displayHudBanner("SG_CLIP", "PIM_NCL_PRIV0", "", 108)
+			if not skipBanner then
+				displayHudBanner("SG_CLIP", "PIM_NCL_PRIV0", "", 108)
+			end
 			oldGrav = nil
 			sleep(0.3)
 			if localplayer:is_in_vehicle() then
@@ -127,7 +131,7 @@ local function NoClip(toggle)
 	end
 end
 
-miscOptionsSub:add_toggle("Noclip:|🚀", function() return noclipToggle end, function(n) noclipToggle = n NoClip(noclipToggle)  end)
+miscOptionsSub:add_toggle("Noclip:|🚀", function() return noclipToggle end, function(n) noclipToggle = n noclip(noclipToggle)  end)
 miscOptionsSub:add_int_range("|Noclip Speed: ", 1, 0, 100, function() return speed end, function(v) speed=v end)
 
 
@@ -137,7 +141,7 @@ menu.register_callback('ToggleNoclipHotkey', function()
 	if not noclipHotkey then
 		noclipHotkey = menu.register_hotkey(find_keycode("ToggleNoclipHotkey"), function()
 			noclipToggle = not noclipToggle
-			NoClip(noclipToggle)
+			noclip(noclipToggle)
 		end)
 	else
 		menu.remove_hotkey(noclipHotkey)

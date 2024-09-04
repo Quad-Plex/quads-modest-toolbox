@@ -399,8 +399,10 @@ local function modCheck(ply, plyName, plyId, skipVehCheck)
             return true
         end
     end
-    if ply:is_in_vehicle() and ply:get_seatbelt() and not interior_bool then
-        return true
+    if not skipVehCheck then
+        if ply:is_in_vehicle() and ply:get_seatbelt() and not interior_bool then
+            return true
+        end
     end
     if ply:get_model_hash() ~= joaat("mp_m_freemode_01") and ply:get_model_hash() ~= joaat("mp_f_freemode_01") then
         return true
