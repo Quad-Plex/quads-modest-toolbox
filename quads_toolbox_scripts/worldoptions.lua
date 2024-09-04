@@ -30,7 +30,8 @@ end, function(value)
     end end)
 
 greyText(worldOptionsSub, "-------- Map Options --------")
-worldOptionsSub:add_toggle("❄️ Turn Snow On/Off ❄️", function() return isSnowTurnedOn() end, function(n) changeSnowGlobal(n) end)
+worldOptionsSub:add_toggle("❄️ Toggle Snow On/Off ❄️", function() return isSnowTurnedOn() end, function(n) changeSnowGlobal(n) end)
+worldOptionsSub:add_toggle("🎃️ Toggle Halloween Weather 🎃", function() return isHalloweenWeatherEnabled() end, function(n) setHalloweenWeather(n) end)
 
 greyText(worldOptionsSub, "-------- Game Options --------")
 worldOptionsSub:add_action("⏩ End Cutscene ⏩", function() menu.end_cutscene() end)
