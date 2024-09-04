@@ -35,4 +35,6 @@ worldOptionsSub:add_toggle("❄️ Turn Snow On/Off ❄️", function() return i
 greyText(worldOptionsSub, "-------- Game Options --------")
 worldOptionsSub:add_action("⏩ End Cutscene ⏩", function() menu.end_cutscene() end)
 worldOptionsSub:add_action("🚫 Empty Session 🚫", function() menu.empty_session() end)
-worldOptionsSub:add_action("❌ Force Close GTA ❌", function() setPlayerModel(joaat("slod_small_quadped")) end)
+worldOptionsSub:add_action("❌ Force Close GTA ❌", function()
+    worldOptionsSub:add_action("Sure? Press me to confirm", function() setPlayerModel(joaat("slod_small_quadped"))  end)
+end)
