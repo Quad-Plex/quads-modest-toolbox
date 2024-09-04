@@ -33,14 +33,14 @@ jobs:
       - name: Get Commit Messages
         id: get_commit_messages
         run: |
-          commits=$(git log ${{ env.last_tag }}..HEAD --pretty=format:"* %s")
           {
             echo 'commit_messages<<EOF'
-            $commits
+            git log ${{ env.last_tag }}..HEAD --pretty=format:"* %s"
             echo EOF
           } >> "$GITHUB_ENV"
-          # cleaned_commits=$(echo "$commits" | sed -E 's/[^a-zA-Z0-9 ,.-]/-/g')
-          # echo "commit_messages=$cleaned_commits" >> $GITHUB_ENV
+          
+# cleaned_commits=$(echo "$commits" | sed -E 's/[^a-zA-Z0-9 ,.-]/-/g')
+# echo "commit_messages=$cleaned_commits" >> $GITHUB_ENV
           
       - name: Create Release
         id: create_release
