@@ -2,6 +2,8 @@
 --HIDE NAME FROM LIST AND BLIP
 --------------------------------
 greyText(playerOptionsSub, "-------- Player Options --------")
+playerOptionsSub:add_action("Remove Blood from player", function() clearBlood() end)
+
 playerOptionsSub:add_toggle("Tiny Player", function()
     if not localplayer then return nil	end
     return localplayer:get_config_flag(223) --see PED_FLAG_TABLE[223] = "Shrink"

@@ -1212,5 +1212,18 @@ baseGlobals.snowGlobal.testFunction = function()
     changeSnowGlobal(not isSnowTurnedOn())
 end
 
---------------------- Set freemode thread priority? ------------------------- TODO:
+--------------------- Set freemode thread priority? -------------------------
+--TODO:
 --Global_262145.f_32166 /* Tunable: SET_FREEMODE_THREAD_PRIORITY */
+
+----------------------------- Clear Blood ----------------------------------
+-----Thanks to Alice2333 and LUKY6464!
+baseGlobals.clearBlood = {}
+baseGlobals.clearBlood.baseGlobal = 2685444
+function clearBlood()
+    globals.set_int(baseGlobals.clearBlood.baseGlobal + 2847 + 54, 2)
+    globals.set_int(baseGlobals.clearBlood.baseGlobal + 2847 + 4, 7)
+    globals.set_bool(baseGlobals.clearBlood.baseGlobal + 2847 + 19, false)
+    globals.set_bool(baseGlobals.clearBlood.baseGlobal + 2847 + 55, true)
+    globals.set_int(baseGlobals.clearBlood.baseGlobal + 2847 + 14, 2)
+end
