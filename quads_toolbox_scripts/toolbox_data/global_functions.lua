@@ -1197,19 +1197,19 @@ end
 --------------------- Snow Global ------------------------------
 --Global_262145.f_4413 /* Tunable: TURN_SNOW_ON_OFF */
 baseGlobals.snowGlobal = {}
-baseGlobals.snowGlobal.baseGlobal = 262145 + 4413
+baseGlobals.snowGlobal.baseGlobal = 262145
 baseGlobals.snowGlobal.testFunctionExplanation = "Toggle snow"
+baseGlobals.snowGlobal.testFunction = function()
+    changeSnowGlobal(not isSnowTurnedOn())
+end
 
 function changeSnowGlobal(bool)
-    globals.set_bool(baseGlobals.snowGlobal.baseGlobal, bool)
+    globals.set_bool(baseGlobals.snowGlobal.baseGlobal + 9435, not bool) --Disable Snowballs Tunable
+    globals.set_bool(baseGlobals.snowGlobal.baseGlobal + 4413, bool)
 end
 
 function isSnowTurnedOn()
-    return globals.get_bool(baseGlobals.snowGlobal.baseGlobal)
-end
-
-baseGlobals.snowGlobal.testFunction = function()
-    changeSnowGlobal(not isSnowTurnedOn())
+    return globals.get_bool(baseGlobals.snowGlobal.baseGlobal + 4413)
 end
 
 --------------------- Set freemode thread priority? -------------------------
@@ -1220,6 +1220,11 @@ end
 -----Thanks to Alice2333 and LUKY6464!
 baseGlobals.clearBlood = {}
 baseGlobals.clearBlood.baseGlobal = 2685444
+baseGlobals.clearBlood.testFunctionExplanation = "Clear Blood"
+baseGlobals.clearBlood.testFunction = function()
+    clearBlood()
+end
+
 function clearBlood()
     globals.set_int(baseGlobals.clearBlood.baseGlobal + 2847 + 54, 2)
     globals.set_int(baseGlobals.clearBlood.baseGlobal + 2847 + 4, 7)
@@ -1243,4 +1248,22 @@ function triggerScriptWithId(scriptId)
         globals.set_int(baseGlobals.triggerScripts.baseGlobal + 2, 6)
         globals.set_int(baseGlobals.triggerScripts.baseGlobal, 1)
     end
+end
+
+------------------------------------- Halloween Weather Toggle ----------------------------------
+baseGlobals.halloween = {}
+baseGlobals.halloween.baseGlobal = 262145
+baseGlobals.clearBlood.testFunctionExplanation = "Toggle halloween Weather"
+baseGlobals.clearBlood.testFunction = function()
+    setHalloweenWeather(not isHalloweenWeatherEnabled())
+end
+
+function setHalloweenWeather(bool)
+    globals.set_bool(baseGlobals.halloween.baseGlobal + 32084, bool)
+    globals.set_bool(baseGlobals.halloween.baseGlobal + 32157, bool)
+    globals.set_bool(baseGlobals.halloween.baseGlobal + 32158, bool)
+end
+
+function isHalloweenWeatherEnabled()
+    return globals.get_bool(baseGlobals.halloween.baseGlobal + 32158)
 end
