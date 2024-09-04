@@ -196,7 +196,14 @@ local teleportWaypointHotkey
 menu.register_callback('ToggleTeleportToWaypointHotkey', function()
     if not teleportWaypointHotkey then
         teleportWaypointHotkey = menu.register_hotkey(find_keycode("ToggleTeleportToWaypointHotkey"), function()
+            localplayer:set_freeze_momentum(true)
+            localplayer:set_no_ragdoll(true)
+            localplayer:set_config_flag(292, true)
+            nativeTeleport(localplayer:get_position())
             menu.teleport_to_waypoint()
+            localplayer:set_freeze_momentum(false)
+            localplayer:set_no_ragdoll(false)
+            localplayer:set_config_flag(292, false)
         end)
     else
         menu.remove_hotkey(teleportWaypointHotkey)
@@ -208,7 +215,14 @@ local teleportObjectiveHotkey
 menu.register_callback('ToggleTeleportToObjectiveHotkey', function()
     if not teleportObjectiveHotkey then
         teleportObjectiveHotkey = menu.register_hotkey(find_keycode("ToggleTeleportToObjectiveHotkey"), function()
+            localplayer:set_freeze_momentum(true)
+            localplayer:set_no_ragdoll(true)
+            localplayer:set_config_flag(292, true)
+            nativeTeleport(localplayer:get_position())
             menu.teleport_to_objective()
+            localplayer:set_freeze_momentum(false)
+            localplayer:set_no_ragdoll(false)
+            localplayer:set_config_flag(292, false)
         end)
     else
         menu.remove_hotkey(teleportObjectiveHotkey)
