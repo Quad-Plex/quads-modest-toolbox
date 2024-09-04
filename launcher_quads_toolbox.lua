@@ -75,6 +75,12 @@ end, function(n)
 	displayboxtype = n
 	displayHudBanner("EPS_CASH", "~s~", 0, n, true)
 end)
+local scriptSelection = 0
+debugToolsSub:add_int_range("Trigger Script ID: (need to be host)",1, 0, 255, function() return scriptSelection end,
+	function(n)
+		scriptSelection = n
+		triggerScriptWithId(scriptSelection)
+end)
 local function saveClosestVehicleModData(lastSpawnedVehicleHash)
 	local currentMods = {}
 	for i = 1, globals.get_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 9) do
@@ -127,13 +133,14 @@ addText(creditsSub, "AdventureBox the wise man")
 addText(creditsSub, "Yimura for YIMMenu as documentation")
 addText(creditsSub, "DMKiller's work on the forums")
 addText(creditsSub, "HUGE thanks to book4 for globals")
-addText(creditsSub, "LUKY6464 for help in Megathread")
+addText(creditsSub, "LUKY6464 for lua help")
 addText(creditsSub, "gfsdjvbsio for PlayerVehicleBlipType")
 addText(creditsSub, "Don Reagan for help debugging globals")
 addText(creditsSub, "--------------- Testers: ----------------")
 addText(creditsSub, "Ronald Weaselby")
 addText(creditsSub, "ErGabibbo")
 addText(creditsSub, "PΛNTHΞRΛ")
+addText(creditsSub, "Pilot225")
 addText(creditsSub, "-----------------------------------")
 addText(creditsSub, "Surely others I've forgotten, please")
 addText(creditsSub, "contact me if you feel that your")

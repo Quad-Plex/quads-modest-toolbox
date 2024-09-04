@@ -1227,3 +1227,20 @@ function clearBlood()
     globals.set_bool(baseGlobals.clearBlood.baseGlobal + 2847 + 55, true)
     globals.set_int(baseGlobals.clearBlood.baseGlobal + 2847 + 14, 2)
 end
+
+----------------------------- Start freemode script events? --------------------------
+baseGlobals.triggerScripts = {}
+baseGlobals.triggerScripts.baseGlobal = 2699171
+baseGlobals.triggerScripts.scriptLocal = 238
+
+function triggerScriptWithId(scriptId)
+    local am_launcher = script("am_launcher")
+    if am_launcher and am_launcher:is_active() then
+        am_launcher:set_int(baseGlobals.triggerScripts.scriptLocal + 1 + (getLocalplayerID()), 1)
+        am_launcher:set_int(baseGlobals.triggerScripts.scriptLocal + 1 + (getLocalplayerID()) + 1, 0)
+        globals.set_int(baseGlobals.triggerScripts.baseGlobal + 3 + 1, scriptId)
+        am_launcher:set_int(baseGlobals.triggerScripts.scriptLocal + 1 + (getLocalplayerID()) + 2, 6)
+        globals.set_int(baseGlobals.triggerScripts.baseGlobal + 2, 6)
+        globals.set_int(baseGlobals.triggerScripts.baseGlobal, 1)
+    end
+end
