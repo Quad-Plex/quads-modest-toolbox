@@ -5,29 +5,15 @@ greyText(miscOptionsSub, "-------- Nightclub --------")
 
 function mpx() return "MP" .. stats.get_int("MPPLY_LAST_MP_CHAR") .. "_" end
 
-local safeLoopEnabled = false
-local function safeLoop()
-	while safeLoopEnabled do
-		stats.set_int(mpx() .. "CLUB_POPULARITY", 1000)
-		stats.set_int(mpx() .. "CLUB_PAY_TIME_LEFT", -1)
-		sleep(5)
-	end
-end
-menu.register_callback("startSafeLoop", safeLoop)
-
-miscOptionsSub:add_toggle("$ Nightclub Safe Loop (100k/5s) $", function() return safeLoopEnabled
-end, function(value)
-	safeLoopEnabled = value
-	if value then
-		menu.emit_event("startSafeLoop")
-	end
-end)
-
 miscOptionsSub:add_action("Make Nightclub Popular |🪩🕺🏻", function()
 	stats.set_int(mpx() .. "CLUB_POPULARITY", 1000)
 	displayHudBanner("BB_BM_PC_SUCC_S", "", "", 108)
 end)
 
+miscOptionsSub:add_action("$ Fill Nightclub Safe (!DONT ABUSE!) $", function()
+	stats.set_int(mpx() .. "CLUB_POPULARITY", 1000)
+	stats.set_int(mpx() .. "CLUB_PAY_TIME_LEFT", -1)
+end)
 ---------------------- Sessanta Options ----------------------
 greyText(miscOptionsSub, "-------- Sessanta Options --------")
 
