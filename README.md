@@ -5,6 +5,7 @@ TODO:
 
 DONE:
 - ~~add automated release procedure~~
+  - ~~Including automatic changelog from commit messages for release~~ 
 - ~~Add tiny player toggle~~
 - ~~Add option to save mod data as default for favorited vehicle~~
 - ~~Make vehicle search find favorited vehicles by their display name~~

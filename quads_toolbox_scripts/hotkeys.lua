@@ -57,6 +57,7 @@ menu.register_callback('ToggleHealthAndArmorHotkey', function()
         maxHealthArmorHotkey = menu.register_hotkey(find_keycode("ToggleHealthAndArmorHotkey"), function()
             menu.heal_all()
             menu.max_all_ammo()
+            clearBlood()
             displayHudBanner("CHEAT_HEALTH_ARMOR", "PIM_FULL1", "", 108)
         end)
     else

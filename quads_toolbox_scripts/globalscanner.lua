@@ -10,7 +10,7 @@ local freezeNumberFloat
 
 local ScannerTypes = {[0]="Int", "Float", "String"}
 local scannerSelection = 0
-local ScriptTypes = {[0]="Global", "freemode", "shop_controller", "casino_lucky_wheel", "blackjack", "casinoroulette", "casino_slots", "three_card_poker"}
+local ScriptTypes = {[0]="Global", "freemode", "am_launcher", "shop_controller", "casino_lucky_wheel", "blackjack", "casinoroulette", "casino_slots", "three_card_poker"}
 local scriptSelection = 0
 
 local methodNames = {
