@@ -1010,6 +1010,12 @@ function addSubActions(sub, plyName, plyId)
         current_bounty_number = n
         sendBounty(plyId, bounty_numbers[current_bounty_number], false)
     end)
+    trollSub:add_array_item("Hire Mugger/Mercenaries", mugger_selection, function()
+        return current_mugger_choice
+    end, function(n)
+        current_mugger_choice = n
+        hireMuggerOrMercenary(plyId, current_mugger_choice)
+    end)
     if getScriptHostPlayerID() == getLocalplayerID() then
         trollSub:add_action("\u{26A0} Host Kick " .. plyName .. " \u{26A0}", function()
             hostKick(plyId)

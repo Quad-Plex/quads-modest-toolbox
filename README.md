@@ -1,9 +1,12 @@
 TODO:
 - Add Installation Instructions
+- Generate Hotkey json outside of script folder next to modest-menu.exe to have it survive a script update
 - playerlist readme/legend with symbol explanation
 - Add Readme and FAQ description for unclear actions
 
 DONE:
+- ~~add money remover with make it rain global~~
+- ~~Add Mercenaries/Mugger to trolling options~~
 - ~~add automated release procedure~~
   - ~~Including automatic changelog from commit messages for release~~ 
 - ~~Add tiny player toggle~~

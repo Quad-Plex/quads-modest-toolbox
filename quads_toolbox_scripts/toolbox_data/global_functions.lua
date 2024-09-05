@@ -1233,7 +1233,9 @@ function clearBlood()
     globals.set_int(baseGlobals.clearBlood.baseGlobal + 2847 + 14, 2)
 end
 
------------------------------ Start freemode script events? --------------------------
+----------------------------- Start freemode script events --------------------------
+-----Note: only works if you are host of a session and is very buggy in general
+----- event 20 starts the gta online intro scene
 baseGlobals.triggerScripts = {}
 baseGlobals.triggerScripts.baseGlobal = 2699171
 baseGlobals.triggerScripts.scriptLocal = 238
@@ -1266,4 +1268,31 @@ end
 
 function isHalloweenWeatherEnabled()
     return globals.get_bool(baseGlobals.halloween.baseGlobal + 32158)
+end
+
+------------------------------ Change 'Make it Rain' Money Spent-------------------------
+--Global_262145.f_25485
+baseGlobals.makeItRain = {}
+baseGlobals.makeItRain.baseGlobal = 262145 + 25485
+
+function setMakeItRainAmount(amount)
+    globals.set_int(baseGlobals.makeItRain.baseGlobal, amount)
+end
+
+function getMakeItRainAmount()
+    return globals.get_int(baseGlobals.makeItRain.baseGlobal)
+end
+
+--------------------------------- Mugger / Mercenary Hire ---------------------------------
+--Big thanks to book4 for posting 1.61 globals for this!
+--Global_1845281[iVar1 /*883*/].f_141 --true=mugger/false=mercenary
+--Global_1845281[iVar1 /*883*/].f_142 --playerID to send to
+mugger_selection = {[1]="Mugger", [2]="Mercenaries", }
+current_mugger_choice = 1
+baseGlobals.hireMugger = {}
+baseGlobals.hireMugger.baseGlobal = 1845281
+
+function hireMuggerOrMercenary(plyId, muggerBool)
+    globals.set_int(baseGlobals.hireMugger.baseGlobal + 1 + (getLocalplayerID() * 883) + 142, plyId)
+    globals.set_int(baseGlobals.hireMugger.baseGlobal + 1 + (getLocalplayerID() * 883) + 141, muggerBool)
 end

@@ -76,7 +76,7 @@ end, function(n)
 	displayHudBanner("EPS_CASH", "~s~", 0, n, true)
 end)
 local scriptSelection = 0
-debugToolsSub:add_int_range("Trigger Script ID: (need to be host)",1, 0, 255, function() return scriptSelection end,
+debugToolsSub:add_int_range("start freemode script: (only host)", 1, 0, 255, function() return scriptSelection end,
 	function(n)
 		scriptSelection = n
 		triggerScriptWithId(scriptSelection)
