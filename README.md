@@ -1,4 +1,6 @@
 TODO:
+- Add more text labels for car mod categorie selections (like horns, xenon colors, etc)
+- make neon color controllable (rgb is currently random)
 - Add Installation Instructions
 - Generate Hotkey json outside of script folder next to modest-menu.exe to have it survive a script update
 - playerlist readme/legend with symbol explanation

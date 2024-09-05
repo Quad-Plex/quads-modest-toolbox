@@ -236,6 +236,8 @@ function addVehicleEntry(vehMenu, vehicle, ply)
             tempExtraMods = generateRandomMods(extra_mods_max)
             spawnedVehicle = createVehicle(vehicle[1], spawnPos, nil, nil, tempMods, true, false, false, tempExtraMods)
         elseif spawnTypes[selection] == "Max Mods" then
+            tempMods = VEHICLE[vehicle[1]][3]
+            tempExtraMods = extra_mods_max
             spawnedVehicle = createVehicle(vehicle[1], spawnPos, nil, nil, VEHICLE[vehicle[1]][3], true, false, true)
         end
 
@@ -312,21 +314,22 @@ function addVehicleEntry(vehMenu, vehicle, ply)
         end
     end)
     greyText(vehMenu, "==== Specific Mods Settings ====")
+    local oldMaxMods = {}
     for index, maxMods in ipairs(VEHICLE[vehicle[1]][3]) do
-        local oldMaxMods = maxMods
+        oldMaxMods[index] = maxMods
         if maxMods > -1 then
             vehMenu:add_bare_item("", function()
-                if string.sub(eVehicleModType[index], 5) == "WHEELS" and tempExtraMods[1] == 9 or tempExtraMods[1] == 8 then
+                if string.sub(eVehicleModType[index], 5) == "WHEELS" and (tempExtraMods[1] == 9 or tempExtraMods[1] == 8) then
                     maxMods = 217
                 else
-                    maxMods = oldMaxMods
+                    maxMods = oldMaxMods[index]
                 end
                 return string.sub(eVehicleModType[index] .. "|(0 to " .. string.format("%2d", maxMods) .. ")",5) .. " ◀ " .. tempMods[index] .. " ▶"
             end, null, function() --On Left
-                if string.sub(eVehicleModType[index], 5) == "WHEELS" and tempExtraMods[1] == 9 or tempExtraMods[1] == 8 then --Category 8/9 is Bennys wheels, it has a lot more choice
+                if string.sub(eVehicleModType[index], 5) == "WHEELS" and (tempExtraMods[1] == 9 or tempExtraMods[1] == 8) then --Category 8/9 is Bennys wheels, it has a lot more choice
                     maxMods = 217
                 else
-                    maxMods = oldMaxMods
+                    maxMods = oldMaxMods[index]
                 end
                 if tempMods[index] - 1 >= 0 then
                     tempMods[index] = tempMods[index] - 1
@@ -337,10 +340,10 @@ function addVehicleEntry(vehMenu, vehicle, ply)
                 end
                 return string.sub(eVehicleModType[index] .. "|(0 to " .. string.format("%2d", maxMods) .. ")",5) .. " ◀ " .. tempMods[index] .. " ▶"
             end, function() --on_right
-                if string.sub(eVehicleModType[index], 5) == "WHEELS" and tempExtraMods[1] == 9 or tempExtraMods[1] == 8 then --Category 8/9 is Bennys wheels, it has a lot more choice
+                if string.sub(eVehicleModType[index], 5) == "WHEELS" and (tempExtraMods[1] == 9 or tempExtraMods[1] == 8) then --Category 8/9 is Bennys wheels, it has a lot more choice
                     maxMods = 217
                 else
-                    maxMods = oldMaxMods
+                    maxMods = oldMaxMods[index]
                 end
                 if tempMods[index] + 1 <= maxMods then
                     tempMods[index] = tempMods[index] + 1
