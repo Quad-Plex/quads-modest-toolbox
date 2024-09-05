@@ -1,12 +1,23 @@
+## INSTALLATION INSTRUCTION:
+Take EVERYTHING from the release .zip file and drop it into your modest-menu /scripts folder. The structure of the folder 
+should look like this afterwards:
+
+├💾 modest-menu.exe
+├📁 scripts 
+├── 📁 quads_toolbox_scripts
+├── 📝 launcher_quads_toolbox.lua
+├── 📝 loops_quads_toolbox.lua
+└── <other script files>
+
 TODO:
 - Add more text labels for car mod categorie selections (like horns, xenon colors, etc)
 - make neon color controllable (rgb is currently random)
-- Add Installation Instructions
 - Generate Hotkey json outside of script folder next to modest-menu.exe to have it survive a script update
 - playerlist readme/legend with symbol explanation
 - Add Readme and FAQ description for unclear actions
 
 DONE:
+- ~~add installation isntructions~~
 - ~~add livery data for all vehicles~~
 - ~~add money remover with make it rain global~~
 - ~~Add Mercenaries/Mugger to trolling options~~
