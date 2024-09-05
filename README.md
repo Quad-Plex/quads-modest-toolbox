@@ -5,6 +5,7 @@ TODO:
 - Add Readme and FAQ description for unclear actions
 
 DONE:
+- ~~add livery data for all vehicles~~
 - ~~add money remover with make it rain global~~
 - ~~Add Mercenaries/Mugger to trolling options~~
 - ~~add automated release procedure~~

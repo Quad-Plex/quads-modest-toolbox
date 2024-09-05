@@ -181,7 +181,6 @@ function createVehicle(modelHash, pos, heading, skip_remove_current, mod, altern
             globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 97, interiorColor) --Interior Color
             local dashboardColor = custom_details_table and custom_details_table[8] or (random_details and math.random(0, 161)) or (max_details and 159) or 0
             globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 97, dashboardColor) --Dashboard Interior Color
-            --local wheelType = random_details and math.random(1, 3) or (max_details and 1 or 2)
             globals.set_int(baseGlobals.vehicleSpawner2.baseGlobal2 + 27 + 102, 1) --Wheel Upgrade (2=Standard, 1=Bulletproof, 3=drift tyres)
             if not skip_remove_current then
                 globals.set_float(baseGlobals.vehicleSpawner2.baseGlobal2 + 7 + 0, pos.x) --Spawn location xyz
@@ -1292,7 +1291,7 @@ current_mugger_choice = 1
 baseGlobals.hireMugger = {}
 baseGlobals.hireMugger.baseGlobal = 1845281
 
-function hireMuggerOrMercenary(plyId, muggerBool)
+function hireMuggerOrMercenary(plyId, muggerSelection)
     globals.set_int(baseGlobals.hireMugger.baseGlobal + 1 + (getLocalplayerID() * 883) + 142, plyId)
-    globals.set_int(baseGlobals.hireMugger.baseGlobal + 1 + (getLocalplayerID() * 883) + 141, muggerBool)
+    globals.set_int(baseGlobals.hireMugger.baseGlobal + 1 + (getLocalplayerID() * 883) + 141, muggerSelection)
 end
