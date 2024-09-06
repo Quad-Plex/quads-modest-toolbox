@@ -2,12 +2,14 @@
 Take EVERYTHING from the release .zip file and drop it into your modest-menu /scripts folder. The structure of the folder 
 should look like this afterwards:
 
+```
 ├💾 modest-menu.exe
 ├📁 scripts 
 ├── 📁 quads_toolbox_scripts
 ├── 📝 launcher_quads_toolbox.lua
 ├── 📝 loops_quads_toolbox.lua
 └── <other script files>
+```
 
 TODO:
 - Add more text labels for car mod categorie selections (like horns, xenon colors, etc)
