@@ -2,6 +2,7 @@
 Take EVERYTHING from the release .zip file and drop it into your modest-menu /scripts folder. The structure of the folder 
 should look like this afterwards:
 
+```
 ├💾 modest-menu.exe
 ├📁 scripts 
 ├── 📁 quads_toolbox_scripts
@@ -9,6 +10,7 @@ should look like this afterwards:
 ├── 📝 loops_quads_toolbox.lua
 ├── 📝 README.md
 └── <other script files>
+```
 
 If you want to, you can delete the `README.md` file if you don't need it anymore.
 
