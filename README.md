@@ -7,7 +7,16 @@ should look like this afterwards:
 ├── 📁 quads_toolbox_scripts
 ├── 📝 launcher_quads_toolbox.lua
 ├── 📝 loops_quads_toolbox.lua
+├── 📝 README.md
 └── <other script files>
+
+If you want to, you can delete the `README.md` file if you don't need it anymore.
+
+## Feature List:
+
+TBD
+
+## TODO LOG (development history):
 
 TODO:
 - Add more text labels for car mod categorie selections (like horns, xenon colors, etc)
