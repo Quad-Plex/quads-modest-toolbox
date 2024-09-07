@@ -1,6 +1,13 @@
+# Quads-Modest-Toolbox for modest-menu
+
+Quads-Modest-Toolbox is a collection of scripts for modest-menu aimed at providing features for freemode gameplay,
+rather than to just provide simple ways to earn money. The collection includes a playerlist with modder detection and trolling options,
+options for ambient pickups, the ability to spawn/save vehicles with certain mods, a ped changer, player/world options and more.
+
 ## INSTALLATION INSTRUCTION:
-Take EVERYTHING from the release .zip file and drop it into your modest-menu /scripts folder. The structure of the folder 
-should look like this afterwards:
+Take EVERYTHING from the [latest release .zip file](https://github.com/Quad-Plex/quads-modest-toolbox/releases) 
+(look for the quads-modest-toolbox-<version>.zip file) and drop it into your modest-menu /scripts folder. 
+The structure of the folder should look like this afterwards:
 
 ```
 ├💾 modest-menu.exe
@@ -14,20 +21,127 @@ should look like this afterwards:
 
 If you want to, you can delete the `README.md` file if you don't need it anymore.
 
-## Feature List:
+## Full Feature List:
 
-TBD
+- <ins>**Playerlist**</ins>
+  - Player Info (Player Stats like K/D, Money, Health, Vehicle etc)
+    - Sort by Modders/Distance
+  - Modder Detection (Godmode outside interior, Dev DLC, Changed Ped Model, Seatbelt, ghost health < 0)
+    - automatically marks people as modders who appear as modding for an extended amount of time
+  - Trolling Options
+    - vehicle trolling, some (bad) cage options, ped trolling
+    - freemode trolling (Mugger/Mercenaries/Bounty/Wanted Level)
+  - RID finder
+  - Session Stats
+- <ins>**Pickup-Suite**</ins>
+  - Create Money/Collectibles/Weapon Pickups
+  - Find Pickups in freemode (Nearby Pickups/Business Battle Crates and similar stuff)
+  - Auto-Collect Feature
+- <ins>**Vehicle-Spawner**</ins>
+  - Two vehicle spawner implementations
+    - Spawn with specific/random/max car mods
+    - TP into spawned car
+    - Force godmode on spawned car
+  - Mark vehicle as favorite
+    - Rename favorite cars
+  - Search for vehicle by name
+  - Spawn random car with random mods
+- <ins>**Car Meet Helper (Beta)**</ins>
+  - Quickly spawn a randomized car for car meets
+  - Spawn festival bus
+  - Force godmode on nearby cars (Anti-Carmeet-Troll Protection)
+  - (!Buggy!) Save nearby vehicles as predefined car-meet
+    - This will save all nearby cars to a file and allow you to quickly spawn and teleport the cars
+      to their respective locations with one button press.
+    - Cars sometimes despawn or remove other cars when spawner, it's a work-in-progress
+- <ins>**Vehicle Tools**</ins>
+  - Disable Traffic/Player Collisions (Sometimes doesn't work with mission cars or similar)
+  - Speedometer (Metric or Imperial)
+  - One-Click extreme speed boost for all vehicles, has good handling
+  - Quick vehicle jump
+  - Set car mass to 26969
+  - Enable drift tyres
+  - BEYBLADE: LET IT RIP!
+    - Don't touch WASD while using, will throw your car up in the air and make it spin
+  - Car Color changer
+    - Multiple color modes (Rainbow, Random, Strobelight)
+  - Personal Vehicle Remote Control
+    - control Doors/Lights/engine etc
+    - Loop for Flappy Vehicle Doors
+    - Loop for Strobe Vehicle Lights
+- <ins>**Gun Scripts**</ins>
+  - Change gun Bullets (Atomizer/Explosion/Fire/Water/Smoke)
+  - Car-A-Pult (Will spawn cars in front of you while shooting and throw them really far when shot)
+  - Weapon Stats quick-change menu
+- <ins>**Ped Changer**</ins>
+  - 1069 Ped Models included
+  - save peds as favorite
+  - search for ped by string
+  - Working weapons and hair after ped change
+  - configurable sleep for reliability
+- <ins>**Player Options**</ins>
+  - Remove blood from player
+  - Tiny player toggle
+  - Hide name from other's playerlist/from Map
+  - Disable Phone completely
+  - Refill Inventory
+  - Unstuck Options
+    - Trigger different types of respawn
+    - Reset ped model/give back weapons
+    - (Untested) Fix stuck loading screen
+  - Money Remover
+    - You can set how much money is used when you perform the 'Make it rain' gesture (throwing money around).
+      Normally, it only costs 1000$, with this you can remove millions at once if you want
+  - Change Player Stats
+    - Change stats like Stamina, Strength, Stealth etc
+    - Can also modify online Mental State
+- <ins>**World Options**</ins>
+  - Remove nearby traffic (Unreliable when other players are around)
+  - Remove nearby NPCs
+  - Toggle Snow On/Off
+  - Toggle Halloween Weather
+  - End Cutscene shortcut
+  - Empty Session shortcut
+  - Force Close GTA
+    - Will try to change your ped model to an invalid ped, causing an immediate game crash
+- <ins>**Misc Options**</ins>
+  - Noclip (Always works, even in water, in air, in vehicles etc.)
+  - Make Nightclub popular
+  - Fill Nightclub Safe
+  - Trigger Sessanta Vehicle Delivery
+  - Get Weekly Export Vehicles
+    - Can spawn any of the 10 weekly special export vehicles
+    - places a GPS to the docks upon entering
+    - 'TP to Docks' feature
+  - Change Casino Podium Vehicle
+    - Can change the current podium vehicle to any vehicle you want, you need to win it through normal modest-menu afterward
+    - WARNING!!! You can fuck up your garages e.g. by winning a Kosatka and placing it somewhere, so don't blame me if that happens...
+- <ins>**Hotkey Configuration**</ins>
+  - Fully customizable hotkeys for many options, no need to reload/edit any files
+  - Improved TP to Waypoint/Objective, **recommend highly** to use these rather than old modest hotkeys, as they work while moving/in water etc.
+- <ins>**Debug Tools**</ins>
+  - Global Scanner 
+    - Ability to scan freemode variables similar to how cheat engine works, mostly useful for devs
+  - Global Updater
+    - Tool used by myself to test/update globals after a gta update
+  - start freemode script
+    - work-in-progress, can only work while you are host
+    - scripts are still unlabeled, see func_6 in am_launcher for labels
+    - very buggy, not sure if this is ever going to be useful
+  - Print Mod data for closest vehicle
+    - Used by me to extract the mod data from vehicles spawned with modest-menu's "Spawn Anonymous Max" options, prints the data to console
+
 
 ## TODO LOG (development history):
 
 TODO:
-- Add more text labels for car mod categorie selections (like horns, xenon colors, etc)
-- make neon color controllable (rgb is currently random)
-- Generate Hotkey json outside of script folder next to modest-menu.exe to have it survive a script update
+- Add more text labels for car mod category selections (like horns, xenon colors, etc)
+- make neon color/wheel smoke color controllable (currently random rgb values)
 - playerlist readme/legend with symbol explanation
 - Add Readme and FAQ description for unclear actions
 
 DONE:
+- ~~Generate Hotkey json outside of script folder next to modest-menu.exe to have it survive a script update~~
 - ~~add installation isntructions~~
 - ~~add livery data for all vehicles~~
 - ~~add money remover with make it rain global~~
