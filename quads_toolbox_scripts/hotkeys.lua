@@ -1,9 +1,126 @@
 -------------------- Define the hotkeys data ------------------------------------------------
-success, hotkeysData = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/HOTKEY_CONFIG.json")
+success, hotkeysData = pcall(json.loadfile, "HOTKEY_CONFIG.json")
 if success then
     print("Hotkey Configuration loaded successfully!!")
 else
-    error("Error loading Hotkey Configuration!", 0)
+    print("Couldn't find hotkey configuration, creating a new one...")
+    hotkeysData = {
+        {
+            event = "ToggleAtomizerHotkey",
+            keycode = 161,
+            name = "Atomizer Gun",
+            toggleVar = false
+        },
+        {
+            event = "ToggleCarapultHotkey",
+            keycode = 106,
+            name = "Car-A-Pult",
+            toggleVar = false
+        },
+        {
+            event = "ToggleCarBoostHotkey",
+            keycode = 45,
+            name = "CarBoost",
+            toggleVar = false
+        },
+        {
+            event = "ToggleCarjumpHotkey",
+            keycode = 18,
+            name = "Carjump",
+            toggleVar = false
+        },
+        {
+            event = "ToggleEnterPVHotkey",
+            keycode = 114,
+            name = "Enter PV",
+            toggleVar = false
+        },
+        {
+            event = "ToggleExplosionGunHotkey",
+            keycode = 163,
+            name = "Explosive Gun",
+            toggleVar = false
+        },
+        {
+            event = "ToggleGodmodeRagdollHotkey",
+            keycode = 120,
+            name = "Godmode/Ragdoll/Inf Ammo",
+            toggleVar = false
+        },
+        {
+            event = "ToggleHealthAndArmorHotkey",
+            keycode = 117,
+            name = "Health/Armor Refill",
+            toggleVar = false
+        },
+        {
+            event = "ToggleMassiveCarHotkey",
+            keycode = 123,
+            name = "MassiveCar",
+            toggleVar = false
+        },
+        {
+            event = "ToggleNoclipHotkey",
+            keycode = 111,
+            name = "Noclip",
+            toggleVar = false
+        },
+        {
+            event = "ToggleRandomVehicleHotkey",
+            keycode = 122,
+            name = "Random Veh. Spawner",
+            toggleVar = false
+        },
+        {
+            event = "ToggleWantedLevelHotkey",
+            keycode = 46,
+            name = "Remove Cops",
+            toggleVar = false
+        },
+        {
+            event = "ToggleRepairVehicleHotkey",
+            keycode = 118,
+            name = "Repair Vehicle",
+            toggleVar = false
+        },
+        {
+            event = "ToggleLoopStopHotkey",
+            keycode = 110,
+            name = "Stop Loop Actions",
+            toggleVar = false
+        },
+        {
+            event = "ToggleSuicideHotkey",
+            keycode = 115,
+            name = "Suicide",
+            toggleVar = false
+        },
+        {
+            event = "ToggleTeleportToObjectiveHotkey",
+            keycode = 113,
+            name = "TP to Objective",
+            toggleVar = false
+        },
+        {
+            event = "ToggleTeleportToWaypointHotkey",
+            keycode = 112,
+            name = "TP to Waypoint",
+            toggleVar = false
+        },
+        {
+            event = "ToggleOffradarHotkey",
+            keycode = 121,
+            name = "Offradar",
+            toggleVar = false
+        },
+        {
+            event = "ToggleVehicleGodmodeHotkey",
+            keycode = 119,
+            name = "Vehicle Godmode",
+            toggleVar = false
+        }
+    }
+    json.savefile("HOTKEY_CONFIG.json", hotkeysData)
 end
 
 table.sort(hotkeysData, function(a, b)
@@ -41,7 +158,8 @@ menu.register_callback('ToggleWantedLevelHotkey', function()
     if not loseWantedLevelHotkey then
         loseWantedLevelHotkey = menu.register_hotkey(find_keycode("ToggleWantedLevelHotkey"), function()
             menu.clear_wanted_level()
-            menu.set_bribe_authorities(not menu.get_bribe_authorities())
+            --menu.set_bribe_authorities(not menu.get_bribe_authorities())
+            menu.set_cops_turn_blind_eye(not menu.get_cops_turn_blind_eye())
             displayHudBanner("LOSE_WANTED", "LEST_NCOPS", "", 108)
         end)
     else
@@ -238,7 +356,7 @@ local function addHotkeyToggles(hotkeyMenu)
         end, function(toggle)
             hotkeyData.toggleVar = toggle
             hotkeysData[i]=hotkeyData
-            json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/HOTKEY_CONFIG.json", hotkeysData)
+            json.savefile("HOTKEY_CONFIG.json", hotkeysData)
             if hotkeyData.toggleVar then
                 displayHudBanner("PM_PANE_KEYS", "CANNON_CAM_ACTIVE", "", 108)
             else
@@ -251,7 +369,7 @@ local function addHotkeyToggles(hotkeyMenu)
         end, function(value)
             hotkeyData.keycode = value
             hotkeysData[i]=hotkeyData
-            json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/HOTKEY_CONFIG.json", hotkeysData)
+            json.savefile("HOTKEY_CONFIG.json", hotkeysData)
             if hotkeyData.toggleVar then
                 displayHudBanner("PM_PANE_KEYS", "HEIST_IB_NAV2", "", 108)
                 --Hotkey is already enabled, so to toggle it twice to un-set it and then set it to the new keycode
