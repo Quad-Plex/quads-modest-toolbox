@@ -393,7 +393,7 @@ function addVehicleEntry(vehMenu, vehicle, ply)
     end
     greyText(vehMenu, "-----------------------")
     vehMenu:add_toggle("Live Preview", function() return livePreview end, function(toggle) livePreview = toggle end)
-    vehMenu:add_action("Spawn with specified mods", function()
+    vehMenu:add_action("+++ Spawn with specified mods +++", function()
         local oldVehNetId = getNetIDOfLastSpawnedVehicle()
         local spawnPos = ply:get_position() + ply:get_heading() * 7
 

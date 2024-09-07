@@ -1471,12 +1471,12 @@ local function playerListInitializer(sub)
 end
 
 local playerMenu
-playerMenu = menu.add_player_submenu(centeredText("====== ULTIMATE Player List ======"), function()
+playerMenu = menu.add_player_submenu(centeredText("====== Player List ======"), function()
     playerListInitializer(playerMenu)
 end)
 
 local playerMenu2
-playerMenu2 = toolboxSub:add_submenu(centeredText("====== ULTIMATE Player List ======"), function()
+playerMenu2 = toolboxSub:add_submenu(centeredText("====== Player List ======"), function()
     if finishedLoading then
         playerListInitializer(playerMenu2)
     end

@@ -68,13 +68,13 @@ debugToolsSub = toolboxSub:add_submenu(centeredText(" 📟 Debug Tools 📟"))
 greyText(debugToolsSub, centeredText(" 📟 Debug Tools "))
 require("scripts/quads_toolbox_scripts/globalscanner")
 require("scripts/quads_toolbox_scripts/globalupdater")
-displayboxtype = 108
-debugToolsSub:add_int_range("Display Box Type Tester", 1, -100, 500, function()
-	return displayboxtype
-end, function(n)
-	displayboxtype = n
-	displayHudBanner("EPS_CASH", "~s~", 0, n, true)
-end)
+--displayboxtype = 108
+--debugToolsSub:add_int_range("Display Box Type Tester", 1, -100, 500, function()
+--	return displayboxtype
+--end, function(n)
+--	displayboxtype = n
+--	displayHudBanner("EPS_CASH", "~s~", 0, n, true)
+--end)
 local scriptSelection = 0
 debugToolsSub:add_int_range("start freemode script: (only host)", 1, 0, 255, function() return scriptSelection end,
 	function(n)

@@ -18,10 +18,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Turn off all Hotkeys in the config
-        run: |
-          sed -i 's/true/false/g' quads_toolbox_scripts/toolbox_data/SAVEDATA/HOTKEY_CONFIG.json
-
       - name: Create Zip Archive of all script files
         run: |
           zip -r quads-modest-toolbox-${{ github.event.inputs.version }}.zip . -x ".git/*" ".github/*"
