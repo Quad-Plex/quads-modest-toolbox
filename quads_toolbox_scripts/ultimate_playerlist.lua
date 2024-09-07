@@ -135,7 +135,7 @@ end
 
 local CageTypes = { "CableCar", "Spawned MOC", "TP invis MOC", "Remove Cages" }
 local CageType = 1
-local prepared = true
+local prepared = false
 local function cagePlayer(ply, type)
     if not ply or ply == nil then
         return
@@ -840,6 +840,7 @@ local function playerInfo(plyId, sub, plyName)
             return ridSearched and "R* ID: not found :(..." or "R* ID: start search (~2min)"
         end
         end, function()
+        if getRidForPlayer(plyName) then return end
         performRidUpdate(sub, plyName)
         ridSearched = true
         local rid = getRidForPlayer(plyName) or "not found :(..."
