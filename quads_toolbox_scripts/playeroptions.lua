@@ -80,6 +80,15 @@ end)
 
 playerOptionsSub:add_action("Reset Character/Give Back Weapons", function() enableWeapons() end)
 
+playerOptionsSub:add_action("\u{26A0} Fix Stuck Loading Screen \u{26A0}", function()
+    clearBlood()
+    enableWeapons()
+    noclip(true, true)
+    sleep(0.1)
+    noclip(false, true)
+    fixPedVehTeleport()
+end)
+
 
 ---------------- Money Remover -------------------
 greyText(playerOptionsSub, "------ Money Remover ------")
