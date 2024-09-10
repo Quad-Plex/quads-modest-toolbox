@@ -87,8 +87,8 @@ local function boostVehicle(vehicle_data, vehicle, boost, category)
         gravity = 22.420
         handbrake_force = vehicle_data[4] * (14 * (playerlistSettings.defaultBoostStrength / 100))
         initial_drive_force = vehicle_data[5] * (690 * (playerlistSettings.defaultBoostStrength / 100))   --nice
-        traction_min = 6.5 + (2 * (playerlistSettings.defaultBoostStrength / 100))   --very high traction. If used without roll_centre modification, the car will constantly flip
-        traction_max = vehicle_data[7] + (2 * (playerlistSettings.defaultBoostStrength / 100))
+        traction_min = 6.5 + (2 * (math.min(playerlistSettings.defaultBoostStrength, 420) / 100))   --very high traction. If used without roll_centre modification, the car will constantly flip
+        traction_max = vehicle_data[7] + (2 * (math.min(playerlistSettings.defaultBoostStrength, 420) / 100))
         traction_bias_front = 0.420
         up_shift = 10000  --huge shift values, causing cars to get stuck in gear and accelerate rapidly
         down_shift = 10000
@@ -385,7 +385,9 @@ local function carBeyblade()
     menu.send_key_up(keycodes.S_KEY)
     menu.send_key_up(keycodes.A_KEY)
     menu.send_key_up(keycodes.D_KEY)
-    localplayer:get_current_vehicle():set_gravity(oldGrav)
+    if localplayer:is_in_vehicle() then
+        localplayer:get_current_vehicle():set_gravity(oldGrav)
+    end
     beybladeRunning = false
     beybladeEnabled = false
 end
