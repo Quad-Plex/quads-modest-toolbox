@@ -35,8 +35,8 @@ local function rotate(amount, pitch)
 		initialHeading = entity:get_heading()
 	else
 		if not pitch then
-			nativeTeleport(initialPos, vector3(initialYawAngle + amount * 90, 0, initialPitchAngle))
 			initialYawAngle = initialYawAngle + amount * 90
+			nativeTeleport(initialPos, vector3(initialYawAngle, 0, initialPitchAngle))
 			initialHeading = entity:get_heading()
 		else
 			initialPitchAngle = initialPitchAngle + amount * 90

@@ -100,16 +100,14 @@ function distanceBetween(one, two, vector, km)
 end
 
 -------------------Direction Function----------------------------
-function getDirectionToThing(thing)
-    if not thing then
-        return
-    end
+function getAngleToThing(toThing, fromThing)
+    if not toThing then return end
+    if not fromThing then fromThing = player.get_player_ped() end
+    local fromPos = fromThing:get_position()
+    local toPos = toThing:get_position()
 
-    local my_pos = player.get_player_ped():get_position()
-    local player_pos = thing:get_position()
-
-    local vec1 = player.get_player_ped():get_heading()
-    local vec2 = vector3(player_pos.x - my_pos.x, player_pos.y - my_pos.y, 0)
+    local vec1 = fromThing:get_heading()
+    local vec2 = vector3(toPos.x - fromPos.x, toPos.y - fromPos.y, 0)
     local angleBetween = math.atan(vec2.y, vec2.x) - math.atan(vec1.y, vec1.x)
     angleBetween = ((angleBetween + math.pi) % (2 * math.pi)) - math.pi
     return math.deg(angleBetween)

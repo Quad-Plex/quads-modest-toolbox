@@ -190,7 +190,7 @@ local function sortAndFillPickupArrayByDistance()
 	for pickup in replayinterface.get_pickups() do
 		if pickup then
 			--pickup_array[n] = {pickupobj, pickup_name, distance, direction}
-			table.insert(pickup_array, {pickup, distanceBetween(localplayer, pickup), getDirectionalArrow(getDirectionToThing(pickup))})
+			table.insert(pickup_array, {pickup, distanceBetween(localplayer, pickup), getDirectionalArrow(getAngleToThing(pickup))})
 		end
 	end
 	table.sort(pickup_array, function(a, b) return a[3] < b[3] end)
@@ -215,7 +215,7 @@ local function pickupOptions(sub, pickup)
 	sub:add_bare_item("", function() return "Model Hash:  "..pickup[1]:get_model_hash() end, null, null, null)
 	sub:add_bare_item("", function() return "Model:  ".. getModelName(pickup[1]) end, null, null, null)
 	modelSub = sub:add_submenu("|\u{26A0} Change Model Hash (doesn't show)", function() modelSub:clear() modelChanger(pickup[1], modelSub) end)
-	sub:add_bare_item("", function() return "Direction:  "..distanceBetween(localplayer, pickup[1]).."m".."  "..getDirectionalArrow(getDirectionToThing(pickup[1])) end, null, null, null)
+	sub:add_bare_item("", function() return "Direction:  "..distanceBetween(localplayer, pickup[1]).."m".."  "..getDirectionalArrow(getAngleToThing(pickup[1])) end, null, null, null)
 	greyText(sub, "-----------------")
 	sub:add_action("(Debug) Print to Console", function() printToConsole(pickup) end)
 

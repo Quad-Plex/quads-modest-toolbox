@@ -80,7 +80,7 @@ end)
 
 playerOptionsSub:add_action("Reset Character/Give Back Weapons", function() enableWeapons() end)
 
-playerOptionsSub:add_action("\u{26A0} Fix Stuck Loading Screen \u{26A0}", function()
+playerOptionsSub:add_action("🚧 Fix Stuck Loading Screen 🚧", function()
     clearBlood()
     enableWeapons()
     noclip(true, true)

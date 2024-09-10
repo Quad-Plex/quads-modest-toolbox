@@ -202,12 +202,7 @@ local function cagePlayer(ply, type)
 end
 
 --spawn a ramp buggy in front of the player, turned such that he will ramp over it if he's driving
-local rampPly
-local function giveRamp()
-    if not rampPly or rampPly == nil then
-        return
-    end
-
+local function giveRamp(rampPly)
     local currentVehicle
     local plyVehicle
     local tries = 0
@@ -765,7 +760,7 @@ local function playerInfo(plyId, sub, plyName)
     greyText(sub, centeredText("--- Distance / Speed / Direction ---"))
     sub:add_bare_item("", function()
         local distanceStr = formatStyles[playerlistSettings.stringFormat] == "Metric (EU)" and " km/h" or " mph"
-        return "    " .. distanceBetween(localplayer, ply()) .. " m    " .. updateSpeed(ply()) .. distanceStr .. "   " .. getDirectionalArrow(getDirectionToThing(ply())) .. "    "
+        return "    " .. distanceBetween(localplayer, ply()) .. " m    " .. updateSpeed(ply()) .. distanceStr .. "   " .. getDirectionalArrow(getAngleToThing(ply())) .. "    "
     end, null, null, null)
     sub:add_bare_item("", function()
         return "Pos: " .. printPlayerPos(ply())
@@ -1054,8 +1049,7 @@ function addSubActions(sub, plyName, plyId)
     end)
     greyText(trollSub, centeredText("--------Vehicle Trolling---------"))
     trollSub:add_action("RAMP player with ramp buggy", function()
-        rampPly = ply()
-        menu.emit_event('giveRamp')
+        giveRamp(ply())
     end)
     trollSub:add_array_item("LAUNCH " .. plyName .. ":", LaunchTypes, function()
         return LaunchType
