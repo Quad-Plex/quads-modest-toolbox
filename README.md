@@ -136,6 +136,7 @@ If you want to, you can delete the `README.md` file if you don't need it anymore
 
 TODO:
 - Add more text labels for car mod category selections (like horns, xenon colors, etc)
+- Add script names for freemode script starter as it actually works when host
 - make neon color/wheel smoke color controllable (currently random rgb values)
 - playerlist readme/legend with symbol explanation
 - Add Readme and FAQ description for unclear actions

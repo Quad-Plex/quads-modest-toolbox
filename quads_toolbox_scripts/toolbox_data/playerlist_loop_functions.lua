@@ -23,6 +23,7 @@ function emergencyStopLoops()
     loopData.trafficNoclipToggle = false
     loopData.removeTrafficToggle = false
     loopData.removeNpcToggle = false
+    loopData.auto_slap = false
     json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/LOOPS_STATE.json", loopData)
 end
 
@@ -42,6 +43,48 @@ function setLoopPlayer(plyId, plyName)
     loopData.currentPlayerName = plyName
     json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/LOOPS_STATE.json", loopData)
 end
+
+function rocketSlap(ply)
+    local currentVehicle
+    local plyVehicle
+    if localplayer:is_in_vehicle() then currentVehicle = localplayer:get_current_vehicle() end
+    if ply:is_in_vehicle() then plyVehicle = ply:get_current_vehicle() end
+
+    local angle = math.random() * (2 * math.pi) -- Random angle in radians
+    local x = math.cos(angle) * 30
+    local y = math.sin(angle) * 30
+    local plyPos = ply:get_position()
+    local newPos = vector3(plyPos.x + x, plyPos.y + y, plyPos.z + 5)
+
+    createVehicle(joaat("voltic2"), newPos)
+    for veh in replayinterface.get_vehicles() do
+        if (veh:get_model_hash() == joaat("voltic2")) and (not currentVehicle or currentVehicle ~= veh) and (not plyVehicle or plyVehicle ~= veh) and distanceBetween(veh, newPos, true) <= 7 then
+            veh:set_boost(1000)
+            veh:set_gravity(20)
+            veh:set_traction_curve_min(0)
+            veh:set_traction_curve_max(0)
+
+            for i=0, 200 do
+                local turn_amount = getAngleToThing(ply, veh)
+                local turn_amount_adjusted = (turn_amount / 360) * (2 * math.pi)
+                local rot = veh:get_rotation()
+                rot.x = rot.x + turn_amount_adjusted
+                veh:set_rotation(rot)
+                if i > 5 then
+                    veh:set_boost_enabled(true)
+                    veh:set_boost_active(true)
+                end
+                if distanceBetween(ply, veh) < 5 then return end
+                sleep(0.01)
+            end
+            veh:set_boost(0)
+            veh:set_gravity(19.4)
+            veh:set_brake_force(2)
+            return
+        end
+    end
+end
+
 
 function giveRandomVehicle(ply, pos, skip_remove, firstSpawner)
     if not ply or ply == nil then return end

@@ -1,9 +1,9 @@
 {
-  "defaultBoostStrength": 80,
+  "defaultBoostStrength": 90,
   "defaultSortingMethod": 0,
   "disableModdersWarning": false,
   "disableSpectatorWarning": false,
   "pedChangerSleepTimeout": 0.020000,
-  "speedDisplaySelection": "Banner",
+  "speedDisplaySelection": "License Plate",
   "stringFormat": 0
 }

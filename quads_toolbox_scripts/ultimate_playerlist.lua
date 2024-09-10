@@ -257,7 +257,6 @@ local function giveRamp(rampPly)
         sleep(0.1)
     end
 end
-menu.register_callback('giveRamp', giveRamp)
 
 local function getPlayerStateText(ply, plyId)
     if not ply or not plyId then
@@ -1051,6 +1050,9 @@ function addSubActions(sub, plyName, plyId)
     trollSub:add_action("RAMP player with ramp buggy", function()
         giveRamp(ply())
     end)
+    trollSub:add_action("        ROCKET SLAP   ", function()
+        rocketSlap(ply())
+    end)
     trollSub:add_array_item("LAUNCH " .. plyName .. ":", LaunchTypes, function()
         return LaunchType
     end, function(value)
@@ -1116,6 +1118,18 @@ function addSubActions(sub, plyName, plyId)
             menu.emit_event('autoBikeSpam')
         else
             loopData.auto_bike = false
+            json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/LOOPS_STATE.json", loopData)
+        end
+    end)
+    trollSub:add_toggle("|🤚🏻 CONSTANT ROCKET SLAP 🤚🏻", function()
+        return loopData.auto_slap
+    end, function(value)
+        if value then
+            loopData.auto_slap = true
+            setLoopPlayer(plyId, plyName)
+            menu.emit_event('autoSlapSpam')
+        else
+            loopData.auto_slap = false
             json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/LOOPS_STATE.json", loopData)
         end
     end)
