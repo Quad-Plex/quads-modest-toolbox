@@ -377,7 +377,7 @@ local function modCheck(ply, plyName, plyId, skipVehCheck)
     if (plyName and marked_modders[plyName] == "detected") or hasDevDLC(plyId) or ply:get_max_health() < 100 then
         return true
     end
-    if getPlayerRespawnState(plyId) ~= 99 or ply:is_in_cutscene() then
+    if getPlayerRespawnState(plyId) ~= 99 or ply:is_in_cutscene() or (getPlayerBlipType(plyId) == "LOADING") then --avoid false positives
         return false
     end
     local interior_bool = isInInterior(ply, plyId)
@@ -834,7 +834,7 @@ local function playerInfo(plyId, sub, plyName)
             return ridSearched and "R* ID: not found :(..." or "R* ID: start search (~2min)"
         end
         end, function()
-        if getRidForPlayer(plyName) then return end
+        if getRidForPlayer(plyName) or ridSearched then return end
         performRidUpdate(sub, plyName)
         ridSearched = true
         local rid = getRidForPlayer(plyName) or "not found :(..."
