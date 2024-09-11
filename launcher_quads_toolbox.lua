@@ -7,6 +7,53 @@ if not folderTest then
 	error("\n!!!!!!!!!!! READ THIS !!!!!!!!!!\n\nError! Couldn't find required lua files.\nMake sure that you've extracted the \n'quads_toolbox_scripts' folder aswell as\nthe two .lua files (launcher_quads_toolbox.lua)\nand (loops_quads_toolbox.lua) directly into\nyour modest-menu/scripts folder!")
 	return
 end
+
+
+--Insert my own theme into theme.json without removing existing themes, or write the themes.json file if for some reason it doesn't exist
+local themeResult, themes = pcall(json.loadfile, "themes.json")
+if not themeResult then
+	local newThemeJson = {
+		CustomThemes = {
+			{
+				Name = "Quad_Tools_Theme",
+				FontName = "Cascadia Mono",
+				ItemColor = "0d091d",
+				TextColor = "ffffff",
+				SelectedItemColor = "ff0048",
+				SelectedTextColor = "ffffff",
+				BackgroundColor = "0c081b",
+				TransparencyColorKey = "000000",
+				ItemHeight = 20,
+				ItemWidth = 380,
+				ItemSpacing = 0
+			}
+		}
+	}
+	json.savefile("themes.json", newThemeJson)
+else
+	local found
+	for _, theme in ipairs(themes.CustomThemes) do
+		if theme.Name == "Quad_Tools_Theme" then found = true end
+	end
+	if not found then
+		local playerlistTheme =     {
+			Name = "Quad_Tools_Theme",
+			FontName = "Cascadia Mono",
+			ItemColor = "0d091d",
+			TextColor = "ffffff",
+			SelectedItemColor = "ff0048",
+			SelectedTextColor = "ffffff",
+			BackgroundColor = "0c081b",
+			TransparencyColorKey = "000000",
+			ItemHeight = 20,
+			ItemWidth = 380,
+			ItemSpacing = 0
+		}
+		table.insert(themes.CustomThemes, playerlistTheme)
+		json.savefile("themes.json", themes)
+	end
+end
+
 unused = nil
 require("scripts/quads_toolbox_scripts/toolbox_data/enums/VEHICLE_ENUMS")
 require("scripts/quads_toolbox_scripts/toolbox_data/enums/WEAPONS")

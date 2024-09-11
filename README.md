@@ -138,10 +138,12 @@ TODO:
 - Add more text labels for car mod category selections (like horns, xenon colors, etc)
 - Add script names for freemode script starter as it actually works when host
 - make neon color/wheel smoke color controllable (currently random rgb values)
+- Add screenshots
 - playerlist readme/legend with symbol explanation
 - Add Readme and FAQ description for unclear actions
 
 DONE:
+- ~~Insert theme from lua~~
 - ~~Generate Hotkey json outside of script folder next to modest-menu.exe to have it survive a script update~~
 - ~~add installation isntructions~~
 - ~~add livery data for all vehicles~~
