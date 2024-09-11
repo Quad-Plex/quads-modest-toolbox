@@ -72,7 +72,7 @@ end
 ------------------JSON HOTKEY/KEYCODE DATA-------------------
 -------------------------------------------------------------
 function find_keycode(event_name)
-    success, hotkeysData = pcall(json.loadfile, "HOTKEY_CONFIG.json")
+    success, hotkeysData = pcall(json.loadfile, "QUAD_TOOLBOX_HOTKEYS.json")
     for i=1, #hotkeysData do
         if hotkeysData[i].event == event_name then
             return hotkeysData[i].keycode

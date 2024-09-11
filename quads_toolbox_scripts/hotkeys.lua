@@ -1,5 +1,5 @@
 -------------------- Define the hotkeys data ------------------------------------------------
-success, hotkeysData = pcall(json.loadfile, "HOTKEY_CONFIG.json")
+success, hotkeysData = pcall(json.loadfile, "QUAD_TOOLBOX_HOTKEYS.json")
 if success then
     print("Hotkey Configuration loaded successfully!!")
 else
@@ -120,7 +120,7 @@ else
             toggleVar = false
         }
     }
-    json.savefile("HOTKEY_CONFIG.json", hotkeysData)
+    json.savefile("QUAD_TOOLBOX_HOTKEYS.json", hotkeysData)
 end
 
 table.sort(hotkeysData, function(a, b)
@@ -356,7 +356,7 @@ local function addHotkeyToggles(hotkeyMenu)
         end, function(toggle)
             hotkeyData.toggleVar = toggle
             hotkeysData[i]=hotkeyData
-            json.savefile("HOTKEY_CONFIG.json", hotkeysData)
+            json.savefile("QUAD_TOOLBOX_HOTKEYS.json", hotkeysData)
             if hotkeyData.toggleVar then
                 displayHudBanner("PM_PANE_KEYS", "CANNON_CAM_ACTIVE", "", 108)
             else
@@ -369,7 +369,7 @@ local function addHotkeyToggles(hotkeyMenu)
         end, function(value)
             hotkeyData.keycode = value
             hotkeysData[i]=hotkeyData
-            json.savefile("HOTKEY_CONFIG.json", hotkeysData)
+            json.savefile("QUAD_TOOLBOX_HOTKEYS.json", hotkeysData)
             if hotkeyData.toggleVar then
                 displayHudBanner("PM_PANE_KEYS", "HEIST_IB_NAV2", "", 108)
                 --Hotkey is already enabled, so to toggle it twice to un-set it and then set it to the new keycode
