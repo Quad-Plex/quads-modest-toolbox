@@ -264,11 +264,11 @@ local function getPlayerStateText(ply, plyId)
     end
 
     if ply:get_model_hash() ~= joaat("mp_m_freemode_01") and ply:get_model_hash() ~= joaat("mp_f_freemode_01") then
-        return "PED "
+        return "!PED! "
     end
 
     if ply:get_max_health() <= 0 then
-        return "MOD "
+        return "!GHST! "
     end
 
     local healthPercent = (ply:get_health() / ply:get_max_health()) * 100
@@ -287,11 +287,7 @@ local function getPlayerStateText(ply, plyId)
         return "!DEV!"
     end
 
-    if healthPercent < 0 then
-        return "MOD "
-    end
-
-    return math.floor(healthPercent + 0.5) .. "\u{2665}"
+    return math.floor(healthPercent + 0.5) .. "♥"
 end
 
 local function isInInterior(ply, plyId)
@@ -494,17 +490,17 @@ local function addPlayerOption(playerData, optionSub, distancePly)
         local displayName = playerName
         local nameAddons = ""
         if hasBounty(playerId) then
-            nameAddons = "\u{1F480}" .. nameAddons
+            nameAddons = "💀" .. nameAddons
         end
         if player == localplayer then
             displayName = "--You--"
         elseif amISpectating(playerId) then
-            nameAddons = "\u{24E2}" .. nameAddons
+            nameAddons = "ⓢ" .. nameAddons
         elseif isSpectatingMe(playerId) then
-            nameAddons = "\u{1F142}" .. nameAddons
+            nameAddons = "🅂" .. nameAddons
         end
         if getScriptHostPlayerID() == playerId then
-            nameAddons = "\u{1F137}" .. nameAddons
+            nameAddons = "🄷" .. nameAddons
         end
         if nameAddons ~= "" then
             displayName = nameAddons .. " " .. displayName
@@ -1323,7 +1319,27 @@ local function addSettingsMenu(sub)
         playerlistSettings.stringFormat = value
         json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/PLAYERLIST_SETTINGS.json", playerlistSettings)
     end)
+end
 
+local function addHelpMenu(sub)
+    sub:clear()
+    addText(sub, "        ❓️  FAQ/HELP  ❓️")
+    greyText(sub, "-------- Symbol explanation: --------")
+    addText(sub, " 🄷 : Player is host of this session")
+    addText(sub, " 🅂 : Player is spectating YOU")
+    addText(sub, " ⓢ : YOU are spectating this player")
+    addText(sub, "💀 : Player has a bounty")
+    greyText(sub, "-------- Label explanation: --------")
+    addText(sub, "!PED!: Modded ped model")
+    addText(sub, "!GHST!: Modded Ghost (0 Health)")
+    addText(sub, "!DEV!: Dev DLC active (modder/admin)")
+    greyText(sub, "----------- FAQs -----------")
+    addText(sub, "Invis Cage:")
+    addText(sub, " Teleports an unloaded MOC trailer")
+    addText(sub, " to cage the player. Teleports a bunch")
+    addText(sub, " of traffic aswell to get collision ")
+    addText(sub, " working. \"invis cage has collision\"")
+    addText(sub, " prevents the traffic teleport")
 end
 
 local function getSortedPlayers()
@@ -1358,7 +1374,7 @@ local function getSortedPlayers()
 end
 
 local updateable = true
-local function SubMenus(playerList)
+local function initializePlayerlist(playerList)
     updateable = false
     playerList:clear()
     triggerRidLookupTableRefresh(player.get_player_name(getLocalplayerID()) or -1)
@@ -1369,7 +1385,7 @@ local function SubMenus(playerList)
         if updateable then
             playerlistSettings.defaultSortingMethod = value
             json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/PLAYERLIST_SETTINGS.json", playerlistSettings)
-            SubMenus(playerList)
+            initializePlayerlist(playerList)
             return
         end
     end)
@@ -1389,6 +1405,9 @@ local function SubMenus(playerList)
 
     local settingsMenuSub
     settingsMenuSub = playerList:add_submenu("      ⚙️ Playerlist Settings ⚙️", function() addSettingsMenu(settingsMenuSub) end)
+
+    local helpSub
+    helpSub = playerList:add_submenu("        ❓️  FAQ/HELP  ❓️", function() addHelpMenu(helpSub) end)
 end
 
 --F11 Random Vehicle
@@ -1474,7 +1493,7 @@ menu.register_callback('startModWatcher', modWatcher)
 
 local function playerListInitializer(sub)
     if updateable then
-        SubMenus(sub)
+        initializePlayerlist(sub)
         return
     end
 end

@@ -1,13 +1,15 @@
-# Quads-Modest-Toolbox for modest-menu
+# <ins>Quads-Modest-Toolbox for modest-menu</ins>
 
 Quads-Modest-Toolbox is a collection of scripts for modest-menu aimed at providing features for freemode gameplay,
 rather than to just provide simple ways to earn money. The collection includes a playerlist with modder detection and trolling options,
 options for ambient pickups, the ability to spawn/save vehicles with certain mods, a ped changer, player/world options and more.
 
-## INSTALLATION INSTRUCTION:
-Take EVERYTHING from the [latest release .zip file](https://github.com/Quad-Plex/quads-modest-toolbox/releases) 
-(look for the quads-modest-toolbox-<version>.zip file) and drop it into your modest-menu /scripts folder. 
-The structure of the folder should look like this afterwards:
+## <ins>INSTALLATION INSTRUCTION:</ins>
+### Scripts:
+
+Get the [latest release .zip file](https://github.com/Quad-Plex/quads-modest-toolbox/releases) 
+(look for the quads-modest-toolbox-\<version>.zip file) and copy EVERYTHING FROM INSIDE into your modest-menu /scripts folder. 
+The structure of the folder/files should look like this afterward:
 
 ```
 ├💾 modest-menu.exe
@@ -19,9 +21,22 @@ The structure of the folder should look like this afterwards:
 └── <other script files>
 ```
 
-If you want to, you can delete the `README.md` file if you don't need it anymore.
+### Hotkeys:
 
-## Full Feature List:
+- All Hotkeys are configured through the submenu, under 'Hotkey Configuration'
+- Most Hotkeys trigger a 'banner' message showing they've been enabled/disabled (the messages to use are quite limited, I had to get creative here...)
+- **The Teleport (Objective/Waypoint) Hotkeys in here are much improved! They work mid-air, in water etc., I highly recommend you use these instead of the menu default**
+
+### Theme (`Quad_Tools_Theme`):
+
+- First time you start the menu with the scripts, it will add a new theme (`Quad_Tools_Theme`) to the menu settings
+- Press 'Reload Themes' once for it to appear if you can't see it
+- I **highly recommend** switching to this theme, as some scripts are designed to look best with it (playerlist for example)
+
+If you want to, you can delete the `README.md` file if you don't need it anymore after this.
+
+
+## <ins>Full Feature List:</ins>
 
 - <ins>**Playerlist**</ins>
   - Player Info (Player Stats like K/D, Money, Health, Vehicle etc)
@@ -138,11 +153,9 @@ TODO:
 - Add more text labels for car mod category selections (like horns, xenon colors, etc)
 - Add script names for freemode script starter as it actually works when host
 - make neon color/wheel smoke color controllable (currently random rgb values)
-- Add screenshots
-- playerlist readme/legend with symbol explanation
-- Add Readme and FAQ description for unclear actions
 
 DONE:
+- ~~playerlist readme/legend with symbol explanation~~
 - ~~Insert theme from lua~~
 - ~~Generate Hotkey json outside of script folder next to modest-menu.exe to have it survive a script update~~
 - ~~add installation isntructions~~
