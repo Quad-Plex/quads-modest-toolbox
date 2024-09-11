@@ -54,13 +54,18 @@ function rocketSlap(ply)
     local x = math.cos(angle) * 30
     local y = math.sin(angle) * 30
     local plyPos = ply:get_position()
-    local newPos = vector3(plyPos.x + x, plyPos.y + y, plyPos.z + 5)
+    local newPos = vector3(plyPos.x + x, plyPos.y + y, plyPos.z + 6)
 
-    createVehicle(joaat("voltic2"), newPos)
+    local spawnDirection = vector3(plyPos.x - newPos.x, plyPos.y - newPos.y, 0)
+    local spawnAngle = math.deg(math.atan(spawnDirection.y, spawnDirection.x)) - 90
+    spawnAngle = (spawnAngle + 360) % 360
+
+    createVehicle(joaat("voltic2"), newPos, spawnAngle, true, nil, nil, true)
     for veh in replayinterface.get_vehicles() do
         if (veh:get_model_hash() == joaat("voltic2")) and (not currentVehicle or currentVehicle ~= veh) and (not plyVehicle or plyVehicle ~= veh) and distanceBetween(veh, newPos, true) <= 7 then
             veh:set_boost(1000)
             veh:set_gravity(20)
+            veh:set_brake_force(-1)
             veh:set_traction_curve_min(0)
             veh:set_traction_curve_max(0)
 
@@ -77,7 +82,6 @@ function rocketSlap(ply)
                 if distanceBetween(ply, veh) < 5 then return end
                 sleep(0.01)
             end
-            veh:set_boost(0)
             veh:set_gravity(19.4)
             veh:set_brake_force(2)
             return
