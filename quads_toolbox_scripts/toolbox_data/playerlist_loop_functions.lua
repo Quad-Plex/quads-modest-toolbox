@@ -71,13 +71,13 @@ function rocketSlap(ply)
     createVehicle(joaat("voltic2"), newPos, spawnAngle, true, nil, nil, true)
     for veh in replayinterface.get_vehicles() do
         if (veh:get_model_hash() == joaat("voltic2")) and (not currentVehicle or currentVehicle ~= veh) and (not plyVehicle or plyVehicle ~= veh) and distanceBetween(veh, newPos, true) <= 7 then
-            veh:set_boost(1000)
+            veh:set_boost(2000)
             veh:set_gravity(20)
-            veh:set_brake_force(-1)
+            veh:set_brake_force(-10)
             veh:set_traction_curve_min(0)
             veh:set_traction_curve_max(0)
 
-            for i=0, 200 do
+            for i=0, 100 do
                 local turn_amount = getAngleToThing(ply, veh)
                 local turn_amount_adjusted = (turn_amount / 360) * (2 * math.pi)
                 local rot = veh:get_rotation()
@@ -89,10 +89,9 @@ function rocketSlap(ply)
                 end
                 veh:set_rotation(rot)
                 if distanceBetween(ply, veh) < 5 then return end
-                sleep(0.01)
+                sleep(0.02)
                 veh:set_rotation(rot)
             end
-            veh:set_gravity(19.4)
             veh:set_brake_force(2)
             return
         end

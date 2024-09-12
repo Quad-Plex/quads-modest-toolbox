@@ -202,10 +202,11 @@ local function cagePlayer(ply, type)
 end
 
 --spawn a ramp buggy in front of the player, turned such that he will ramp over it if he's driving
-local function giveRamp(rampPly)
+local rampType = {[0]="Front", "Behind"}
+local rampSelection = 0
+local function giveRamp(rampPly, type)
     local currentVehicle
     local plyVehicle
-    local tries = 0
     local distanceMul
 
     if localplayer:is_in_vehicle() then
@@ -217,44 +218,74 @@ local function giveRamp(rampPly)
     end
 
     local plyVelocity = rampPly:get_velocity()
+    local plyVelocityMagnitude = math.sqrt(plyVelocity.x^2 + plyVelocity.y^2 + plyVelocity.z^2)
+    if plyVelocityMagnitude < 2 then plyVelocity = rampPly:get_heading() * 12 end
     local plyHeading = rampPly:get_heading()
-    local angle = math.deg(math.atan(plyHeading.y, plyHeading.x)) + 90
+    local angle
+    if type == "Front" then
+        angle = math.deg(math.atan(plyHeading.y, plyHeading.x)) + 90
+    else
+        angle = math.deg(math.atan(plyHeading.y, plyHeading.x)) - 90
+    end
     angle = (angle + 360) % 360
 
-    if localplayer:is_in_vehicle() then
-        distanceMul = 1
-    else
-        distanceMul = 0.45
-    end
-    createVehicle(joaat("dune5"), rampPly:get_position() + (plyVelocity * distanceMul) + vector3(0, 0, 0.89), angle)
-    local found = false
-    while (not found and tries < 20) do
-        for veh in replayinterface.get_vehicles() do
-            if (veh:get_model_hash() == joaat("dune5")) and (veh:get_gravity() ~= 10) and (not currentVehicle or currentVehicle ~= veh) and (not plyVehicle or plyVehicle ~= veh) and distanceBetween(veh, rampPly) <= 180 then
-                found = true
-                veh:set_gravity(10)
-                --createVehicle will use the alternative spawning method if we're in a vehicle,
-                --which doesn't support setting the heading, so the following only needs to be done in that case
-                if localplayer:is_in_vehicle() then
-                    local rot = rampPly:get_rotation()
-                    --to rotate the buggy by 180°, add 1 PI to its x rotation as it's in radians
-                    --and in order to tilt it properly if the player is e.g. driving upwards, take the inverse of the player's z rotation
-                    rot = vector3(rot.x + math.pi, rot.y, rot.z * -1)
-                    for _ = 0, 200000 do
-                        veh:set_rotation(rot)
-                    end
-                end
-                sleep(1.2)
-                veh:set_health(-1)
-                local removePos = rampPly:get_position() + vector3(0, 0, -300)
-                for _ = 0, 100 do
-                    veh:set_position(removePos)
-                end
-                return
-            end
+    if type == "Front" then
+        if localplayer:is_in_vehicle() then
+            distanceMul = 1.7
+        else
+            distanceMul = 1.2
         end
-        tries = tries + 1
-        sleep(0.1)
+    else
+        if localplayer:is_in_vehicle() then
+            distanceMul = 1
+        else
+            distanceMul = 0.5
+        end
+    end
+    if type == "Front" then
+        createVehicle(joaat("dune5"), rampPly:get_position() + (plyVelocity * distanceMul) + vector3(0, 0, 0.89), angle)
+    else
+        createVehicle(joaat("dune5"), rampPly:get_position() + ((plyVelocity * distanceMul) * -1) + vector3(0, 0, 0.89), angle)
+    end
+    local forced
+    for veh in replayinterface.get_vehicles() do
+        if (veh:get_model_hash() == joaat("dune5")) and (veh:get_gravity() ~= 10) and (not currentVehicle or currentVehicle ~= veh) and (not plyVehicle or plyVehicle ~= veh) and distanceBetween(veh, rampPly) <= 180 then
+            local oldBrakeForce = veh:get_brake_force()
+            local oldHandbrakeForce = veh:get_handbrake_force()
+            found = true
+            veh:set_gravity(10)
+            veh:set_brake_force(-100000)
+            veh:set_handbrake_force(-100000)
+            --createVehicle will use the alternative spawning method if we're in a vehicle,
+            --which doesn't support setting the heading, so the following only needs to be done in that case
+            if localplayer:is_in_vehicle() then
+                local rot = rampPly:get_rotation()
+                --to rotate the buggy by 180°, add 1 PI to its x rotation as it's in radians
+                --and in order to tilt it properly if the player is e.g. driving upwards, take the inverse of the player's z rotation
+                if type == "Front" then
+                    rot = vector3(rot.x + math.pi, rot.y, rot.z * -1)
+                end
+                for _ = 0, 200 do
+                    veh:set_rotation(rot)
+                    veh:set_brake_force(-100000)
+                    veh:set_handbrake_force(-100000)
+                    sleep(0.02)
+                end
+                forced = true
+            end
+            if not forced then
+                sleep(2)
+            end
+            veh:set_brake_force(oldBrakeForce)
+            veh:set_handbrake_force(oldHandbrakeForce)
+            local removePos = rampPly:get_position() + vector3(0, 0, -300)
+            for _ = 0, 20 do
+                veh:set_position(removePos)
+                sleep(0.05)
+            end
+            veh:set_health(-1)
+            return
+        end
     end
 end
 
@@ -1019,7 +1050,7 @@ function addSubActions(sub, plyName, plyId)
         teleportTypeSelection = value
         tpPedToPlayer(ply(), teleportType[value])
     end)
-    trollSub:add_array_item("CAGE " .. plyName .. "", CageTypes, function()
+    trollSub:add_array_item("𐂺 CAGE " .. plyName .. " 𐂺", CageTypes, function()
         return CageType
     end, function(value)
         CageType = value
@@ -1030,7 +1061,7 @@ function addSubActions(sub, plyName, plyId)
     end, function(value)
         prepared = value
     end)
-    trollSub:add_toggle("Send Cage flying", function()
+    trollSub:add_toggle("↑ Send invis Cage flying ↑", function()
         return loopData.auto_fly
     end, function(value)
         if value then
@@ -1043,49 +1074,50 @@ function addSubActions(sub, plyName, plyId)
         end
     end)
     greyText(trollSub, centeredText("--------Vehicle Trolling---------"))
-    trollSub:add_action("RAMP player with ramp buggy", function()
-        giveRamp(ply())
+    trollSub:add_array_item("◢ RAMP player ◢", rampType, function() return rampSelection end, function(type)
+        rampSelection = type
+        giveRamp(ply(), rampType[type])
     end)
-    trollSub:add_action("        ROCKET SLAP   ", function()
+    trollSub:add_action("    🚀✋   ROCKET SLAP    🚀✋ ", function()
         rocketSlap(ply())
     end)
-    trollSub:add_array_item("LAUNCH " .. plyName .. ":", LaunchTypes, function()
+    trollSub:add_array_item("⬆️ LAUNCH " .. plyName .. " ⬆️ with:", LaunchTypes, function()
         return LaunchType
     end, function(value)
         LaunchType = value
         launchOnce(ply())
     end)
-    trollSub:add_action("Give Random Vehicle to " .. plyName, function()
+    trollSub:add_action("|Give Random Vehicle", function()
         giveRandomVehicle(ply())
     end)
-    trollSub:add_action("DROP Random Vehicle on " .. plyName, function()
+    trollSub:add_action("|DROP Random Vehicle", function()
         randomVehicleRain(ply())
     end)
-    trollSub:add_array_item("SPAWN Above " .. plyName .. ":", dropVehicles, function()
+    trollSub:add_array_item("|Drop:", dropVehicles, function()
         return selectedDropType
     end, function(value)
         selectedDropType = value
         dropVehicleOnPlayer(ply(), dropVehicles[value])
     end)
     trollSub:add_bare_item("GEEET DUMPED OONN!!", function()
-        return centeredText("GEEET DUMPED OONN!!")
+        return centeredText("💀 GEEET DUMPED OONN!! 💀")
     end, function()
         slamPly = ply()
         menu.emit_event('preciseSlam')
     end, null, null)
-    trollSub:add_action("Traffic Launcher", function()
+    trollSub:add_action("⬆️ Traffic Launcher ⬆️", function()
         manipulatePlayerWithTraffic(ply(), "launch")
     end)
-    trollSub:add_action("SLAM " .. plyName .. " with traffic", function()
+    trollSub:add_action("⬇️ Traffic SLAM ⬇️", function()
         manipulatePlayerWithTraffic(ply(), "slam")
     end)
-    trollSub:add_int_range("TP Vehicles to " .. plyName .. " |Range:", 1, 0, 10, function()
+    trollSub:add_int_range("✨ TP Vehicles ✨ |Radius:", 1, 0, 10, function()
         return vehicleDistance
     end, function(n)
         vehicleDistance = n
         teleportVehiclesToPlayer(ply(), n, false)
     end)
-    trollSub:add_int_range("EXPLODE " .. plyName .. " |Range:", 1, 0, 10, function()
+    trollSub:add_int_range("💥 EXPLODE 💥 |Radius:", 1, 0, 10, function()
         return vehicleDistance
     end, function(n)
         vehicleDistance = n
@@ -1093,7 +1125,7 @@ function addSubActions(sub, plyName, plyId)
     end)
     greyText(trollSub, centeredText("--------Loop Actions--------"))
     trollSub:add_action("\u{26A0} EMERGENCY STOP ALL LOOPS \u{26A0}", function() emergencyStopLoops() end)
-    trollSub:add_toggle("|CONSTANT PEDS", function()
+    trollSub:add_toggle("|🚶🚶 CONSTANT PEDS 🚶🚶", function()
         return loopData.auto_peds
     end, function(value)
         if value then

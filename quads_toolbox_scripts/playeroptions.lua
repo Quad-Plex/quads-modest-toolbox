@@ -89,13 +89,12 @@ playerOptionsSub:add_action("🚧 Fix Stuck Loading Screen 🚧", function()
     fixPedVehTeleport()
 end)
 
-
 ---------------- Money Remover -------------------
 greyText(playerOptionsSub, "------ Money Remover ------")
 greyText(playerOptionsSub, "This changes how much money you lose")
 greyText(playerOptionsSub, "from the 'Make it Rain' gesture")
 greyText(playerOptionsSub, "Can be used to remove money quick")
-playerOptionsSub:add_int_range("Increase Make It Rain amount", 100000, 0, 5000000, function() return getMakeItRainAmount() end, function(n) setMakeItRainAmount(n) end)
+playerOptionsSub:add_int_range("Increase Make It Rain amount|$", 100000, 0, 5000000, function() return getMakeItRainAmount() end, function(n) setMakeItRainAmount(n) end)
 playerOptionsSub:add_action("Reset Make It Rain to 1000$", function() setMakeItRainAmount(1000) end)
 
 
