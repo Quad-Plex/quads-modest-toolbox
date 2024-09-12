@@ -725,7 +725,7 @@ local function playerInfo(plyId, sub, plyName)
         local bankAmount = math.max(0, getPlayerBankAmount(plyId) - playerWallet)
         local formattedWallet = formatNumberWithDots(playerWallet) .. "$"
         local formattedBank = formatNumberWithDots(bankAmount) .. "$"
-        return "Wallet: " .. formattedWallet .. "|Bank: " .. formattedBank
+        return "Wallet " .. formattedWallet .. "|Bank " .. formattedBank
     end, null, null, null)
 
     sub:add_bare_item("", function()
@@ -1091,8 +1091,8 @@ function addSubActions(sub, plyName, plyId)
         vehicleDistance = n
         teleportVehiclesToPlayer(ply():get_position(), n, true, true)
     end)
-    trollSub:add_action("\u{26A0} EMERGENCY STOP ALL LOOPS \u{26A0}", function() emergencyStopLoops() end)
     greyText(trollSub, centeredText("--------Loop Actions--------"))
+    trollSub:add_action("\u{26A0} EMERGENCY STOP ALL LOOPS \u{26A0}", function() emergencyStopLoops() end)
     trollSub:add_toggle("|CONSTANT PEDS", function()
         return loopData.auto_peds
     end, function(value)
@@ -1335,6 +1335,7 @@ local function addHelpMenu(sub)
     addText(sub, "!DEV!: Dev DLC active (modder/admin)")
     greyText(sub, "----------- FAQs -----------")
     addText(sub, "Invis Cage:")
+    addText(sub, " Doesn't always work.")
     addText(sub, " Teleports an unloaded MOC trailer")
     addText(sub, " to cage the player. Teleports a bunch")
     addText(sub, " of traffic aswell to get collision ")

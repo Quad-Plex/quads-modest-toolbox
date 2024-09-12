@@ -14,13 +14,13 @@ else
         {
             event = "ToggleCarapultHotkey",
             keycode = 106,
-            name = "Car-A-Pult",
+            name = "Car Launcher",
             toggleVar = false
         },
         {
             event = "ToggleCarBoostHotkey",
             keycode = 45,
-            name = "CarBoost",
+            name = "Car Boost",
             toggleVar = false
         },
         {
@@ -56,7 +56,7 @@ else
         {
             event = "ToggleMassiveCarHotkey",
             keycode = 123,
-            name = "MassiveCar",
+            name = "Massive Car",
             toggleVar = false
         },
         {
