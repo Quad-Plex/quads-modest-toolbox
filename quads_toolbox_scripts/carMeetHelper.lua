@@ -1,4 +1,4 @@
-local godmodeToggle = false
+godmodeToggle = false
 local nearbyGodmodeRunning = false
 local success, carMeetData = pcall(json.loadfile, "scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/CARMEET_DATA.json")
 table.sort(carMeetData, function(a, b)

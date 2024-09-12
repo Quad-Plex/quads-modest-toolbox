@@ -2,9 +2,9 @@
 --- RAINBOW CAR SCRIPT by Quad_Plex ---
 ---------------------------------------
 
-local rainbow = false
-local random = false
-local strobelight = false
+rainbowcolorToggle = false
+randomcolorToggle = false
+strobecolorToggle = false
 local uniform = true
 local mul = 5
 local affect_traffic = false
@@ -55,22 +55,22 @@ end
 
 local function toggleColorFunction(colorFunc)
     if colorFunc == "Rainbow" then
-        rainbow = not rainbow
-        if rainbow then
-            strobelight = false
-            random = false
+        rainbowcolorToggle = not rainbowcolorToggle
+        if rainbowcolorToggle then
+            strobecolorToggle = false
+            randomcolorToggle = false
         end
     elseif colorFunc == "Strobelight" then
-        strobelight = not strobelight
-        if strobelight then
-            rainbow = false
-            random = false
+        strobecolorToggle = not strobecolorToggle
+        if strobecolorToggle then
+            rainbowcolorToggle = false
+            randomcolorToggle = false
         end
     elseif colorFunc == "Random" then
-        random = not random
-        if random then
-            rainbow = false
-            strobelight = false
+        randomcolorToggle = not randomcolorToggle
+        if randomcolorToggle then
+            rainbowcolorToggle = false
+            strobecolorToggle = false
         end
     end
 end
@@ -121,7 +121,7 @@ end, function(value)
 end)
 
 function RainBowRunner()
-    while rainbow or strobelight or random do
+    while rainbowcolorToggle or strobecolorToggle or randomcolorToggle do
         isRunning = true;
         local myPlayer = player.get_player_ped()
         local vehicle = myPlayer:get_current_vehicle()
@@ -138,19 +138,19 @@ function RainBowRunner()
             sleep(0.6 / mul)
 
             if not myPlayer:is_in_vehicle() and not affect_traffic then
-                rainbow = false
-                strobelight = false
-                random = false
+                rainbowcolorToggle = false
+                strobecolorToggle = false
+                randomcolorToggle = false
             end
         end
 
-        while rainbow do
+        while rainbowcolorToggle do
             applyColor(nextRainbowColor)
         end
-        while strobelight do
+        while strobecolorToggle do
             applyColor(strobeLight)
         end
-        while random do
+        while randomcolorToggle do
             applyColor(randomColor)
         end
     end

@@ -18,7 +18,7 @@ end)
 --Speedometer (Banner or license plate)
 ---------------------------------------------------------------------------
 
-local speedDisplayEnabled = false
+speedDisplayEnabled = false
 local speedDisplayRunning= false
 function speedDisplay()
     local myPlayer = player.get_player_ped()
@@ -337,7 +337,7 @@ end)
 --------------------------------
 --Car beyblade
 --------------------------------
-local beybladeEnabled = false
+beybladeEnabled = false
 local beybladeRunning = false
 local beybladeModes = {[0]="Hover", "Drop Down"}
 local beybladeModeSelection = 0

@@ -25,6 +25,14 @@ function emergencyStopLoops()
     loopData.removeNpcToggle = false
     loopData.auto_slap = false
     json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/LOOPS_STATE.json", loopData)
+    beybladeEnabled = false
+    godmodeToggle = false
+    speedDisplayEnabled = false
+    flappyDoors = false
+    strobeLights = false
+    rainbowcolorToggle = false
+    randomcolorToggle = false
+    strobecolorToggle = false
 end
 
 loopData = {}
@@ -79,8 +87,10 @@ function rocketSlap(ply)
                     veh:set_boost_enabled(true)
                     veh:set_boost_active(true)
                 end
+                veh:set_rotation(rot)
                 if distanceBetween(ply, veh) < 5 then return end
                 sleep(0.01)
+                veh:set_rotation(rot)
             end
             veh:set_gravity(19.4)
             veh:set_brake_force(2)
