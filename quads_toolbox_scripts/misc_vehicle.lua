@@ -234,20 +234,22 @@ greyText(vehicleOptionsSub, "------------ Misc -----------")
 --Unlock all car doors
 --------------------------------
 ---From: https://github.com/flotwig/GTAV-Motion/blob/master/GTAV-Motion/inc/enums.h
----enum eVehicleLockStatus
---{
---	VehicleLockStatusNone = 0,
---	VehicleLockStatusUnlocked = 1,
---	VehicleLockStatusLocked = 2,
---	VehicleLockStatusLockedForPlayer = 3,
---	VehicleLockStatusStickPlayerInside = 4,
---	VehicleLockStatusCanBeBrokenInto = 7,
---	VehicleLockStatusCanBeBrokenIntoPersist = 8,
---	VehicleLockStatusCannotBeTriedToEnter = 10
+--enum eVehicleLockState {
+--    VEHICLELOCK_NONE = 0, // No specific lock state, vehicle behaves according to the game's default settings.
+--    VEHICLELOCK_UNLOCKED = 1, // Vehicle is fully unlocked, allowing free entry by players and NPCs.
+--    VEHICLELOCK_LOCKED = 2, // Vehicle is locked, preventing entry by players and NPCs.
+--    VEHICLELOCK_LOCKOUT_PLAYER_ONLY = 3, // Vehicle locks out only players, allowing NPCs to enter.
+--    VEHICLELOCK_LOCKED_PLAYER_INSIDE = 4, // Vehicle is locked once a player enters, preventing others from entering.
+--    VEHICLELOCK_LOCKED_INITIALLY = 5, // Vehicle starts in a locked state, but may be unlocked through game events.
+--    VEHICLELOCK_FORCE_SHUT_DOORS = 6, // Forces the vehicle's doors to shut and lock.
+--    VEHICLELOCK_LOCKED_BUT_CAN_BE_DAMAGED = 7, // Vehicle is locked but can still be damaged.
+--    VEHICLELOCK_LOCKED_BUT_BOOT_UNLOCKED = 8, // Vehicle is locked, but its trunk/boot remains unlocked.
+--    VEHICLELOCK_LOCKED_NO_PASSENGERS = 9, // Vehicle is locked and does not allow passengers, except for the driver.
+--    VEHICLELOCK_CANNOT_ENTER = 10 // Vehicle is completely locked, preventing entry entirely, even if previously inside.
 --};
 local openTypes = { [0]="Unlock All", "Lock All"}
 local openType = 0
-vehicleOptionsSub:add_array_item("Car Doors State:", openTypes, function() return openType end, function(value)
+vehicleOptionsSub:add_array_item("Car Door Locks (Buggy):", openTypes, function() return openType end, function(value)
     openType = value
     for veh in replayinterface.get_vehicles() do
         if openTypes[openType] == "Unlock All" then
