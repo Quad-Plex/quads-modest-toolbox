@@ -150,6 +150,8 @@ If you want to, you can delete the `README.md` file if you don't need it anymore
 ## TODO LOG (development history):
 
 TODO:
+- Check freemode script for why spawner#1 doesn't work when in a car (maybe there's a bypass)
+  - or figure out if spawner#2 can somehow control spawn heading 
 - Add more text labels for car mod category selections (like horns, xenon colors, etc)
 - Add script names for freemode script starter as it actually works when host
 - make neon color/wheel smoke color controllable (currently random rgb values)
