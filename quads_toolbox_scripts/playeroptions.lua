@@ -68,6 +68,26 @@ playerOptionsSub:add_action("Refill Inventory |🍪🍫🍾", function()
     refillInventory()
 end)
 
+greyText(playerOptionsSub, "-------- TP Options --------")
+playerOptionsSub:add_action("TP to Objective", function()
+    menu.teleport_to_objective()
+    local tpPos = localplayer:get_position()
+    tpPos.z = -200
+    nativeTeleport(tpPos)
+    sleep(0.1)
+    nativeTeleport(tpPos)
+end)
+
+playerOptionsSub:add_action("TP to Waypoint", function()
+    menu.teleport_to_waypoint()
+    local tpPos = localplayer:get_position()
+    tpPos.z = -200
+    nativeTeleport(tpPos)
+    sleep(0.1)
+    nativeTeleport(tpPos)
+end)
+
+
 ----------------------Respawn State changer----------------------
 greyText(playerOptionsSub, "-------- Unstuck Options --------")
 local stateToSet = 7
