@@ -104,8 +104,8 @@ local function boostVehicle(vehicle_data, vehicle, boost, category)
             roll_centre_front = vehicle_data[14] + (0.18 * (tempStrength / 100)) --these two stop the car from rolling even at high speeds, it rolls inwards instead
             roll_centre_rear = vehicle_data[15] + (0.18 * (tempStrength / 100))
         elseif category == "Off-Road" or category == "Van" then
-            roll_centre_front = vehicle_data[14] + (0.39 * (tempStrength / 100))
-            roll_centre_rear = vehicle_data[15] + (0.39 * (tempStrength / 100))
+            roll_centre_front = vehicle_data[14] + (0.36 * (tempStrength / 100))
+            roll_centre_rear = vehicle_data[15] + (0.36 * (tempStrength / 100))
         elseif category == "Industrial" or category == "Commercials" then
             roll_centre_front = vehicle_data[14] + (0.45 * (tempStrength / 100))
             roll_centre_rear = vehicle_data[15] + (0.45 * (tempStrength / 100))
