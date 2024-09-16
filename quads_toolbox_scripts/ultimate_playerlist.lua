@@ -444,6 +444,7 @@ end
 --marked_modders[plyName] = ((marked_modders[plyName] == "detected") and nil) or "detected"
 
 local function getModderSymbol(ply, plyName, plyId)
+    if ply:get_config_flag(420) then return "🚨" end
     if not modCheck(ply, plyName, plyId) then
         return " "
     end
@@ -1476,6 +1477,7 @@ end)
 
 local function checkObviousModder(ply, plyName, i)
     if not ply then return end
+    if ply:get_config_flag(420) then displayHudBanner("IAA_USER", "TR_HUD_TAIL", 0, 90, true) marked_modders[plyName] = "detected" return true end
     if ply:get_max_health() <= 0 or hasDevDLC(i) then
         marked_modders[plyName] = "detected"
         if not playerlistSettings.disableModdersWarning then
