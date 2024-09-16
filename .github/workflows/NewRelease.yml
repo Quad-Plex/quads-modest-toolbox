@@ -37,10 +37,6 @@ jobs:
           echo 'commit_messages<<EOF' >> "$GITHUB_ENV"
           echo "$commits" >> "$GITHUB_ENV"
           echo EOF >> "$GITHUB_ENV"
-           
-          
-# cleaned_commits=$(echo "$commits" | sed -E 's/[^a-zA-Z0-9 ,.-]/-/g')
-# echo "commit_messages=$cleaned_commits" >> $GITHUB_ENV
           
       - name: Create Release
         id: create_release
