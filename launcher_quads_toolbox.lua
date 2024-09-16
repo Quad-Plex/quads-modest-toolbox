@@ -8,7 +8,6 @@ if not folderTest then
 	return
 end
 
-
 --Insert my own theme into theme.json without removing existing themes, or write the themes.json file if for some reason it doesn't exist
 local themeResult, themes = pcall(json.loadfile, "themes.json")
 if not themeResult then
@@ -60,6 +59,11 @@ require("scripts/quads_toolbox_scripts/toolbox_data/enums/WEAPONS")
 require("scripts/quads_toolbox_scripts/toolbox_data/enums/PED_FLAGS")
 require("scripts/quads_toolbox_scripts/toolbox_data/enums/PED_MODELS")
 require("scripts/quads_toolbox_scripts/toolbox_data/enums/KEYCODE_CONSTANTS")
+returnHotkey = keycodes.NUMERIC_KEYPAD_0
+local loadConfig, modestConfig = pcall(json.loadfile, "config.json")
+if loadConfig then
+	returnHotkey = modestConfig.Menu.KeyBindings.BackKey
+end
 require("scripts/quads_toolbox_scripts/toolbox_data/enums/MODEL_HASHES")
 require("scripts/quads_toolbox_scripts/toolbox_data/enums/PICKUP_HASHES")
 require("scripts/quads_toolbox_scripts/toolbox_data/enums/EXPLOSION_TYPES")

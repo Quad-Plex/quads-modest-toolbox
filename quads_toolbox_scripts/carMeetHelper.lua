@@ -267,7 +267,7 @@ local function addPredefinedCarmeetsSub(sub)
                 subMenus[name]:add_action("!!!! Press me to confirm!!!!", function()
                     carMeetData[name] = nil
                     json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/CARMEET_DATA.json", carMeetData)
-                    menu.send_key_press(keycodes.NUMERIC_KEYPAD_0)
+                    menu.send_key_press(returnHotkey)
                 end)
                 added = true
             end
