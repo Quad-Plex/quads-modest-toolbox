@@ -20,7 +20,7 @@ jobs:
 
       - name: Clean up playerlist lua
         run: |
-          sed -i 's/ply\:get\_config\_flag\(420\)/d' quads_toolbox_scripts/
+          sed -i '/ply\:get\_config\_flag\(420\)/d' quads_toolbox_scripts/
 
       - name: Create Zip Archive of all script files
         run: |
