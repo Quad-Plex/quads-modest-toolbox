@@ -52,17 +52,24 @@ function setLoopPlayer(plyId, plyName)
     json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/LOOPS_STATE.json", loopData)
 end
 
-function rocketSlap(ply)
+rocketType = { [0]="Random", "Behind"}
+rocketSelection = 0
+function rocketSlap(ply, loop_action, rocket_direction)
     local currentVehicle
     local plyVehicle
+    local newPos
+    local plyPos = ply:get_position()
     if localplayer:is_in_vehicle() then currentVehicle = localplayer:get_current_vehicle() end
     if ply:is_in_vehicle() then plyVehicle = ply:get_current_vehicle() end
 
-    local angle = math.random() * (2 * math.pi) -- Random angle in radians
-    local x = math.cos(angle) * 30
-    local y = math.sin(angle) * 30
-    local plyPos = ply:get_position()
-    local newPos = vector3(plyPos.x + x, plyPos.y + y, plyPos.z + 6)
+    if rocket_direction == "Random" then
+        local angle = math.random() * (2 * math.pi) -- Random angle in radians
+        local x = math.cos(angle) * 30
+        local y = math.sin(angle) * 30
+        newPos = vector3(plyPos.x + x, plyPos.y + y, plyPos.z + 6)
+    else
+        newPos = ply:get_position() + (ply:get_heading() * -18) + vector3(0, 0, 6)
+    end
 
     local spawnDirection = vector3(plyPos.x - newPos.x, plyPos.y - newPos.y, 0)
     local spawnAngle = math.deg(math.atan(spawnDirection.y, spawnDirection.x)) - 90
@@ -71,28 +78,29 @@ function rocketSlap(ply)
     createVehicle(joaat("voltic2"), newPos, spawnAngle, true, nil, nil, true)
     for veh in replayinterface.get_vehicles() do
         if (veh:get_model_hash() == joaat("voltic2")) and (not currentVehicle or currentVehicle ~= veh) and (not plyVehicle or plyVehicle ~= veh) and distanceBetween(veh, newPos, true) <= 7 then
-            veh:set_boost(2000)
+            veh:set_boost(420)
             veh:set_gravity(20)
             veh:set_brake_force(-10)
             veh:set_traction_curve_min(0)
             veh:set_traction_curve_max(0)
 
-            for i=0, 100 do
+            local upperLimit
+            if loop_action then upperLimit = 10 else upperLimit = 420 end
+            for i=0, upperLimit do
                 local turn_amount = getAngleToThing(ply, veh)
                 local turn_amount_adjusted = (turn_amount / 360) * (2 * math.pi)
                 local rot = veh:get_rotation()
                 rot.x = rot.x + turn_amount_adjusted
                 veh:set_rotation(rot)
                 if i > 5 then
+                    veh:set_boost(420)
                     veh:set_boost_enabled(true)
                     veh:set_boost_active(true)
                 end
                 veh:set_rotation(rot)
-                if distanceBetween(ply, veh) < 5 then return end
                 sleep(0.02)
                 veh:set_rotation(rot)
             end
-            veh:set_brake_force(2)
             return
         end
     end

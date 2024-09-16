@@ -231,15 +231,15 @@ local function giveRamp(rampPly, type)
 
     if type == "Front" then
         if localplayer:is_in_vehicle() then
-            distanceMul = 1.7
+            distanceMul = 1.5
         else
-            distanceMul = 1.2
+            distanceMul = 1.0
         end
     else
         if localplayer:is_in_vehicle() then
-            distanceMul = 1
+            distanceMul = 1.3
         else
-            distanceMul = 0.5
+            distanceMul = 0.8
         end
     end
     if type == "Front" then
@@ -247,13 +247,14 @@ local function giveRamp(rampPly, type)
     else
         createVehicle(joaat("dune5"), rampPly:get_position() + ((plyVelocity * distanceMul) * -1) + vector3(0, 0, 0.89), angle)
     end
+    sleep(0.05)
     local forced
     for veh in replayinterface.get_vehicles() do
-        if (veh:get_model_hash() == joaat("dune5")) and (veh:get_gravity() ~= 10) and (not currentVehicle or currentVehicle ~= veh) and (not plyVehicle or plyVehicle ~= veh) and distanceBetween(veh, rampPly) <= 180 then
+        if (veh:get_model_hash() == joaat("dune5")) and (veh:get_gravity() ~= 20) and (not currentVehicle or currentVehicle ~= veh) and (not plyVehicle or plyVehicle ~= veh) then
             local oldBrakeForce = veh:get_brake_force()
             local oldHandbrakeForce = veh:get_handbrake_force()
             found = true
-            veh:set_gravity(10)
+            veh:set_gravity(20)
             veh:set_brake_force(-100000)
             veh:set_handbrake_force(-100000)
             --createVehicle will use the alternative spawning method if we're in a vehicle,
@@ -283,7 +284,6 @@ local function giveRamp(rampPly, type)
                 veh:set_position(removePos)
                 sleep(0.05)
             end
-            veh:set_health(-1)
             return
         end
     end
@@ -333,13 +333,14 @@ local function isInInterior(ply, plyId)
         return true
     end
 
+    --exclude config flag 65, which is 'is_swimming', as you can't swim inside and swimming as such usually means they're in the ocean or in a deep pool
+    if ply:get_config_flag(65) == true then
+        return false
+    end
+
     --unloaded players are stored at the -51.3 z coordinate, so exclude them from the interior check
-    --also exclude config flag 65, which is 'is_swimming', as you can't swim inside and swimming as such usually means they're in the ocean or in a deep pool
     local plyPos = ply:get_position()
-    if ply:is_in_cutscene()
-            or (plyPos.z < -30 and tostring(plyPos.z) ~= "-51.3")
-            or (plyPos.z < -30 and tostring(plyPos.z) ~= "-51.3")
-            and not ply:get_config_flag(65) then
+    if ply:is_in_cutscene() or (plyPos.z < -30 and tostring(plyPos.z) ~= "-51.3") then
         return true
     end
 
@@ -803,7 +804,9 @@ local function playerInfo(plyId, sub, plyName)
     end, null, null, null)
 
     sub:add_bare_item("❌ No godmode outside interior", function()
-        if ply() ~= localplayer and ply():get_godmode() and not isInInterior(ply(), plyId) and tostring(ply():get_position().z) ~= "-51.3" then
+        local vehicle = ply():is_in_vehicle() and ply():get_current_vehicle()
+        local vehicle_model = vehicle and vehicle:get_model_hash()
+        if ply() ~= localplayer and ply():get_godmode() and not isInInterior(ply(), plyId) and ply():get_health() ~= 0 and not (vehicle and isExcludedVehicle(vehicle_model)) then
             return "✔️ Godmode Outside Interior"
         end
     end, null, null, null)
@@ -1078,8 +1081,9 @@ function addSubActions(sub, plyName, plyId)
         rampSelection = type
         giveRamp(ply(), rampType[type])
     end)
-    trollSub:add_action("    🚀✋   ROCKET SLAP    🚀✋ ", function()
-        rocketSlap(ply())
+    trollSub:add_array_item("  🚀✋   ROCKET SLAP    🚀✋ ", rocketType, function() return rocketSelection end, function(n)
+        rocketSelection = n
+        rocketSlap(ply(), false,  rocketType[rocketSelection])
     end)
     trollSub:add_array_item("⬆️ LAUNCH " .. plyName .. " ⬆️ with:", LaunchTypes, function()
         return LaunchType
@@ -1093,7 +1097,7 @@ function addSubActions(sub, plyName, plyId)
     trollSub:add_action("|DROP Random Vehicle", function()
         randomVehicleRain(ply())
     end)
-    trollSub:add_array_item("|Drop:", dropVehicles, function()
+    trollSub:add_array_item("|Drop Vehicle:", dropVehicles, function()
         return selectedDropType
     end, function(value)
         selectedDropType = value
@@ -1366,13 +1370,18 @@ local function addHelpMenu(sub)
     addText(sub, "!GHST!: Modded Ghost (0 Health)")
     addText(sub, "!DEV!: Dev DLC active (modder/admin)")
     greyText(sub, "----------- FAQs -----------")
+    addText(sub, "Playerlist elements look weird:")
+    addText(sub, "  For best appearance, use the")
+    addText(sub, "  'Quad_Tools_Theme'. Go to")
+    addText(sub, "  Menu Settings -> Reload Themes")
+    addText(sub, "  and then select it")
     addText(sub, "Invis Cage:")
-    addText(sub, " Doesn't always work.")
-    addText(sub, " Teleports an unloaded MOC trailer")
-    addText(sub, " to cage the player. Teleports a bunch")
-    addText(sub, " of traffic aswell to get collision ")
-    addText(sub, " working. \"invis cage has collision\"")
-    addText(sub, " prevents the traffic teleport")
+    addText(sub, "  Doesn't always work.")
+    addText(sub, "  Teleports an unloaded MOC trailer")
+    addText(sub, "  to cage the player. Teleports traffic")
+    addText(sub, "  traffic aswell to get collision ")
+    addText(sub, "  working. \"invis cage has collision\"")
+    addText(sub, "  prevents the traffic teleport")
 end
 
 local function getSortedPlayers()

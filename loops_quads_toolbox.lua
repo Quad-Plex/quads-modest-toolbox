@@ -155,7 +155,7 @@ menu.register_callback('autoBikeSpam', function()
 local function autoRocketSlapThread()
     updateLoopData()
     while loopData.currentPlayerId and loopData.auto_slap and not checkAndPerformEmergencyStop() do
-        rocketSlap(autoPly()) --No sleep necessary because rocketSlap() sleeps by itself to achieve its function
+        rocketSlap(autoPly(), true, "Random") --No sleep necessary because rocketSlap() sleeps by itself to achieve its function
         updateLoopData()
     end
 end
