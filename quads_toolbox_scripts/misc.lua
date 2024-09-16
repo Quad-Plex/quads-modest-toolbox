@@ -34,11 +34,21 @@ local function buildSpecialExportSubmenu(sub)
 	greyText(sub, "Wait ~2 min between selling vehicles")
 	greyText(sub, "or the transaction might fail")
 	for i, hash in ipairs(specialExportVehicles) do
-		sub:add_action("Spawn #" .. i .. ": " .. VEHICLE[hash][1], function()
+		local veh_name
+		local veh_mods
+		local veh_data = VEHICLE[hash]
+		if not veh_data then
+			veh_name = "Unknown :("
+			veh_mods = empty_mods
+		else
+			veh_name = veh_data[1]
+			veh_mods = generateRandomMods(veh_data[3])
+		end
+		sub:add_action("Spawn #" .. i .. ": " .. veh_name, function()
 			local vector = localplayer:get_heading()
 			local angle = math.deg(math.atan(vector.y, vector.x))
 			local oldNetID = getNetIDOfLastSpawnedVehicle()
-			createVehicle(hash, localplayer:get_position() + localplayer:get_heading() * 7, angle, false, generateRandomMods(VEHICLE[hash][3]), true)
+			createVehicle(hash, localplayer:get_position() + localplayer:get_heading() * 7, angle, false, veh_mods, true)
 			sleep(0.1)
 			local newNetID = getNetIDOfLastSpawnedVehicle()
 			if newNetID ~= oldNetID then
