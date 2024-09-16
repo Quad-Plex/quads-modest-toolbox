@@ -59,3 +59,5 @@
 --CM_REPORT             - 'Report'
 --EF_RECEIVED           - 'Received'
 --OVHEAD_PED            - 'Ped'
+--IAA_USER              - 'User'
+--TR_HUD_TAIL           - 'Detection'
