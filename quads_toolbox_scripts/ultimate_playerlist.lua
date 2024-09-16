@@ -804,12 +804,7 @@ local function playerInfo(plyId, sub, plyName)
             return "✔️ Confirmed as Modder"
         end
     end, null, null, null)
-
-    sub:add_bare_item("❌ Not using my script", function()
-        if ply():get_config_flag(420) then
-            return "✔️ Using my script"
-        end
-    end, null, null, null)
+    sub:add_bare_item("❌ Not using my script", function() if ply():get_config_flag(420) then return "✔️ Using my script" end end, null, null, null)
 
     sub:add_bare_item("❌ No godmode outside interior", function()
         local vehicle = ply():is_in_vehicle() and ply():get_current_vehicle()
