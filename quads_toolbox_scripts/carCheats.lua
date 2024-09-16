@@ -30,21 +30,21 @@ function speedDisplay()
             current_vehicle = myPlayer
         else
             current_vehicle = myPlayer:get_current_vehicle()
+            oldPlate = current_vehicle:get_number_plate_text()
         end
-        if not oldPlate then oldPlate = current_vehicle:get_number_plate_text() end
         local velocity = current_vehicle:get_velocity()
         local abs_velocity = math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y + velocity.z * velocity.z)
         local trueSpeed
         if formatStyles[playerlistSettings.stringFormat] == "Metric (EU)" then
             trueSpeed = math.floor(3.6371084 * abs_velocity) --KMH
-            if playerlistSettings.speedDisplaySelection == "Banner" then
+            if playerlistSettings.speedDisplaySelection == 0 then
                 displayHudBanner("FM_AE_SORT_3", "AMCH_KMHN", math.floor(3.6371084 * abs_velocity), 108)
             elseif myPlayer:is_in_vehicle() then
                 current_vehicle:set_number_plate_text(" " .. trueSpeed .. " KMH")
             end
         else
             trueSpeed = math.floor(2.26 * abs_velocity) --MPH
-            if playerlistSettings.speedDisplaySelection == "Banner" then
+            if playerlistSettings.speedDisplaySelection == 0 then
                 displayHudBanner("FM_AE_SORT_3", "AMCH_MPHN", math.floor(2.26 * abs_velocity), 108)
             elseif myPlayer:is_in_vehicle() then
                 current_vehicle:set_number_plate_text(" " .. trueSpeed .. " MPH")
@@ -52,8 +52,9 @@ function speedDisplay()
         end
         sleep(0.09)
         speedDisplayRunning = false
-        if playerlistSettings.speedDisplaySelection ~= "Banner" then
+        if oldPlate then
             current_vehicle:set_number_plate_text(oldPlate)
+            oldPlate = nil
         end
     end
 end
@@ -67,10 +68,8 @@ end, function(toggle)
     end
 end)
 local speedDisplayTypes = { [0]="Banner", "License Plate"}
-local speedDisplayType = 0
-vehicleOptionsSub:add_array_item("Speedometer Type:", speedDisplayTypes, function() return speedDisplayType end, function(value)
-    speedDisplayType = value
-    playerlistSettings.speedDisplaySelection = speedDisplayTypes[speedDisplayType]
+vehicleOptionsSub:add_array_item("Speedometer Type:", speedDisplayTypes, function() return playerlistSettings.speedDisplaySelection end, function(value)
+    playerlistSettings.speedDisplaySelection = value
     json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/PLAYERLIST_SETTINGS.json", playerlistSettings)
 end)
 vehicleOptionsSub:add_array_item("Show Speed in: ", formatStyles, function()
