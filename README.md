@@ -7,8 +7,7 @@ options for ambient pickups, the ability to spawn/save vehicles with certain mod
 ## <ins>INSTALLATION INSTRUCTION:</ins>
 ### Scripts:
 
-Get the [>>> latest release .zip file <<<](https://github.com/Quad-Plex/quads-modest-toolbox/releases) 
-(look for the quads-modest-toolbox-\<version>.zip file) and copy EVERYTHING FROM INSIDE into your modest-menu /scripts folder. 
+Get the [>>> latest release .zip file <<< ((download the `quads-modest-toolbox-\<version>.zip` file))](https://github.com/Quad-Plex/quads-modest-toolbox/releases) and copy EVERYTHING FROM INSIDE into your modest-menu /scripts folder. 
 The structure of the folder/files should look like this afterward:
 
 ```
