@@ -4,6 +4,6 @@
   "disableModdersWarning": false,
   "disableSpectatorWarning": false,
   "pedChangerSleepTimeout": 0.020000,
-  "speedDisplaySelection": "License Plate",
+  "speedDisplaySelection": 1,
   "stringFormat": 0
 }
