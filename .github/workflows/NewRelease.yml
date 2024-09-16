@@ -37,10 +37,6 @@ jobs:
           echo 'commit_messages<<EOF' >> "$GITHUB_ENV"
           echo "$commits" >> "$GITHUB_ENV"
           echo EOF >> "$GITHUB_ENV"
-           
-          
-# cleaned_commits=$(echo "$commits" | sed -E 's/[^a-zA-Z0-9 ,.-]/-/g')
-# echo "commit_messages=$cleaned_commits" >> $GITHUB_ENV
           
       - name: Create Release
         id: create_release
@@ -55,6 +51,17 @@ jobs:
             ${{ env.commit_messages }}
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+
+        # Step to remove the source code archives
+      - name: Remove Source Code Assets
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+        run: |
+          release_id=$(curl -s -H "Authorization: token $GITHUB_TOKEN" https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ github.event.inputs.version }} | jq -r .id)
+          assets=$(curl -s -H "Authorization: token $GITHUB_TOKEN" https://api.github.com/repos/${{ github.repository }}/releases/$release_id/assets | jq -r '.[] | select(.name | endswith(".zip") or endswith(".tar.gz")) | .id')
+          for asset_id in $assets; do
+            curl -X DELETE -H "Authorization: token $GITHUB_TOKEN" https://api.github.com/repos/${{ github.repository }}/releases/assets/$asset_id
+          done
           
       - name: Upload Zip Archive to Release
         uses: actions/upload-release-asset@v1
