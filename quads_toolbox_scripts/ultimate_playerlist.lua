@@ -17,7 +17,7 @@ if not settingsLoadingSuccess then
     playerlistSettings.defaultSortingMethod = 0
     playerlistSettings.stringFormat = 0
     playerlistSettings.defaultBoostStrength = 70
-    playerlistSettings.speedDisplaySelection = "Banner"
+    playerlistSettings.speedDisplaySelection = 0
     playerlistSettings.pedChangerSleepTimeout = 0.08
     json.savefile("scripts/quads_toolbox_scripts/toolbox_data/SAVEDATA/PLAYERLIST_SETTINGS.json", playerlistSettings)
 end
@@ -407,10 +407,6 @@ local function modCheck(ply, plyName, plyId, skipVehCheck)
     end
     if getPlayerRespawnState(plyId) ~= 99 or ply:is_in_cutscene() or (getPlayerBlipType(plyId) == "LOADING") then --avoid false positives
         return false
-    end
-
-    if ply:get_run_speed() ~= 1 or ply:get_swim_speed() ~= 1 then --Modded run/swim speed
-        return true
     end
 
     local interior_bool = isInInterior(ply, plyId)
@@ -808,6 +804,12 @@ local function playerInfo(plyId, sub, plyName)
         end
     end, null, null, null)
 
+    sub:add_bare_item("❌ Not using my script", function()
+        if ply():get_config_flag(420) then
+            return "✔️ Using my script"
+        end
+    end, null, null, null)
+
     sub:add_bare_item("❌ No godmode outside interior", function()
         local vehicle = ply():is_in_vehicle() and ply():get_current_vehicle()
         local vehicle_model = vehicle and vehicle:get_model_hash()
@@ -819,12 +821,6 @@ local function playerInfo(plyId, sub, plyName)
     sub:add_bare_item("❌ Normal Max Health", function()
         if ply():get_max_health() <= 0 then
             return "✔️ Max Health 0 (Ghost)"
-        end
-    end, null, null, null)
-
-    sub:add_bare_item("❌ Normal Run/Swim Speed", function()
-        if ply():get_run_speed() ~= 1 or ply():get_swim_speed() ~= 1 then
-            return "✔️ Modded Run/Swim Speed"
         end
     end, null, null, null)
 
