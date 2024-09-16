@@ -533,7 +533,7 @@ shortformBlips = {
     ["CLOTHES_SHOP"] = "CLOTH"
 }
 
-local vehicle_blips = utils_Set({ 262144, 262145, 262148, 262149, 262156, 262164, 262165, 262208, 262212, 262248, 262276, 262277, 262660, 262661, 262724, 262784, 262789, 262788, 786564, 2627888, 2359300 })
+local vehicle_blips = utils_Set({ 262144, 262145, 262148, 262149, 262156, 262164, 262165, 262208, 262212, 262248, 262277, 262660, 262661, 262724, 262784, 262789, 262788, 786564, 2627888, 2359300 })
 local plane_ghost_blips = utils_Set({ 8388612, 8650884, 8651332, 8651396, 8651397, 8650756, 8650757, 8650820, 8651268, 8651269 })
 local ultralight_ghost_blips = utils_Set({ 262676, 262740 })
 local ls_customs_blip = utils_Set({ 2097280, 2359330, 2359458, 262178 })
@@ -544,11 +544,11 @@ local cashier_blip = utils_Set({ 2097152 })
 local clothes_shop_blip = utils_Set( { 130 } )
 local auto_shop = utils_Set({ 2359298, 2359302 })
 local beast_blips = utils_Set({ 1048580, 1049092, 1310724, 1310788, 1311236, 1572868, 1835012, 1835524 })
-local kosatka_blip = utils_Set({ 262213, 262341, 262336, 262337, 262340, 262720 })
+local kosatka_blip = utils_Set({ 262213, 262276, 262341, 262336, 262337, 262340, 262720 })
 local ammo_nation_blip = utils_Set({ 2 })
 local junk_parachute_blip = utils_Set({ 2097156, 2097220 })
 local unsure_blips = utils_Set({ 2622788, 262656, 2359299, 2359812 })
-local delivery_mission_blips = utils_Set({ 524256, 524292, 524288, 524293, 524416, 524420, 786432, 786436, 786437, 786500, 786560, 786948, 787076, 9175045, 9175044 })
+local delivery_mission_blips = utils_Set({ 524256, 524292, 524288, 524293, 524416, 524420, 524932, 786432, 786436, 786437, 786500, 786560, 786948, 787076, 9175045, 9175044 })
 local ballistic_armor_blip = utils_Set({ 16777220, 16777216, 16777348, 17039364, 17039876 })
 local shop_blips = utils_Set({ 2097282, 2097154 })
 local heist_planning_board = utils_Set({ 704 })
