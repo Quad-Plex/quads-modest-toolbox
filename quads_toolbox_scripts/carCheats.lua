@@ -20,6 +20,7 @@ end)
 
 speedDisplayEnabled = false
 local speedDisplayRunning= false
+local oldPlate
 function speedDisplay()
     local myPlayer = player.get_player_ped()
     while speedDisplayEnabled do
@@ -30,6 +31,7 @@ function speedDisplay()
         else
             current_vehicle = myPlayer:get_current_vehicle()
         end
+        if not oldPlate then oldPlate = current_vehicle:get_number_plate_text() end
         local velocity = current_vehicle:get_velocity()
         local abs_velocity = math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y + velocity.z * velocity.z)
         local trueSpeed
@@ -49,8 +51,11 @@ function speedDisplay()
             end
         end
         sleep(0.09)
+        speedDisplayRunning = false
+        if playerlistSettings.speedDisplaySelection ~= "Banner" then
+            current_vehicle:set_number_plate_text(oldPlate)
+        end
     end
-    speedDisplayRunning = false
 end
 menu.register_callback('speedDisplay', speedDisplay)
 vehicleOptionsSub:add_toggle("Toggle Speedometer", function()
