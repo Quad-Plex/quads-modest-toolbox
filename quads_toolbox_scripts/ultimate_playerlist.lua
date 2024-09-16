@@ -408,6 +408,11 @@ local function modCheck(ply, plyName, plyId, skipVehCheck)
     if getPlayerRespawnState(plyId) ~= 99 or ply:is_in_cutscene() or (getPlayerBlipType(plyId) == "LOADING") then --avoid false positives
         return false
     end
+
+    if ply:get_run_speed() ~= 1 or ply:get_swim_speed() ~= 1 then --Modded run/swim speed
+        return true
+    end
+
     local interior_bool = isInInterior(ply, plyId)
     local vehicle = ply:is_in_vehicle() and ply:get_current_vehicle()
     local vehicle_model = vehicle and vehicle:get_model_hash()
@@ -814,6 +819,12 @@ local function playerInfo(plyId, sub, plyName)
     sub:add_bare_item("❌ Normal Max Health", function()
         if ply():get_max_health() <= 0 then
             return "✔️ Max Health 0 (Ghost)"
+        end
+    end, null, null, null)
+
+    sub:add_bare_item("❌ Normal Run/Swim Speed", function()
+        if ply():get_run_speed() ~= 1 or ply():get_swim_speed() ~= 1 then
+            return "✔️ Modded Run/Swim Speed"
         end
     end, null, null, null)
 
@@ -1529,6 +1540,7 @@ local function modWatcher()
             end
             :: continue ::
         end
+        localplayer:set_config_flag(420, true)
         sleep(5)
     end
 end
